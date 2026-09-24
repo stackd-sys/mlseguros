@@ -152,13 +152,13 @@ p { margin: 0 0 1em; }
 .nav__drop .icon { color: var(--brand); flex-shrink: 0; }
 .nav__drop .all { border-top: 1px solid var(--line); margin-top: .3rem; padding-top: .8rem; color: var(--brand); }
 .header__actions { display: flex; align-items: center; gap: 1rem; }
-.header__phone { display: inline-flex; align-items: center; gap: .6rem; font-weight: 700; color: var(--ink); white-space: nowrap; }
-.header__phone span.ic { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); }
-.header__phone small { display: block; font-size: .72rem; color: var(--muted); font-weight: 600; }
 .burger { display: none; width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--ink); color: #fff; cursor: pointer; place-items: center; }
 
-@media (max-width: 1180px) { .header__phone { display: none; } }
-@media (max-width: 1020px) {
+.nav__link, .btn { white-space: nowrap; }
+/* Área de Cliente: botão reservado para o portal do CRM (ainda sem ligação). */
+.client-btn { cursor: default; }
+@media (max-width: 1240px) { .nav .client-btn { margin-top: 1.5rem; } .nav .client-btn + .btn { margin-top: .75rem; } }
+@media (max-width: 1240px) {
   .topbar .hide-md { display: none; }
   .burger { display: grid; }
   .nav {
@@ -175,7 +175,7 @@ p { margin: 0 0 1em; }
   .header__actions .btn { display: none; }
   .nav .btn { margin-top: 1.5rem; }
 }
-@media (min-width: 1021px) { .nav .nav__cta { display: none; } }
+@media (min-width: 1241px) { .nav .nav__cta { display: none; } }
 @media (max-width: 640px) { .topbar { display: none; } }
 
 /* ---------- Hero ---------- */
@@ -249,9 +249,7 @@ p { margin: 0 0 1em; }
 .tabs { display: inline-flex; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: .3rem; gap: .25rem; }
 .tabs button { border: 0; background: none; padding: .7rem 1.3rem; border-radius: 999px; font-weight: 700; cursor: pointer; color: var(--ink); }
 .tabs button[aria-selected='true'] { background: var(--ink); color: #fff; }
-.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-@media (max-width: 1000px) { .cards { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 640px) { .cards { grid-template-columns: 1fr; } }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 1.5rem; }
 .card {
   position: relative; background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
   padding: 2rem; display: flex; flex-direction: column; gap: 1rem; overflow: hidden; isolation: isolate;

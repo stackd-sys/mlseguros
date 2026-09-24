@@ -49,13 +49,11 @@ const links = [
           <li><a class="nav__link" href={l.href} aria-current={path.startsWith(l.href) ? 'page' : undefined}>{l.label}</a></li>
         ))}
       </ul>
+      <button type="button" class="btn btn--outline nav__cta client-btn" aria-disabled="true" title="Área de Cliente (brevemente)"><Icon name="user" size={18} /> Área de Cliente</button>
       <a class="btn nav__cta" href="/simulacao/">Pedir simulação <Icon name="arrow" size={18} /></a>
     </nav>
     <div class="header__actions">
-      <a class="header__phone" href={company.phoneHref}>
-        <span class="ic"><Icon name="phone" size={18} /></span>
-        <span><small>Ligue-nos</small>{company.phone}</span>
-      </a>
+      <button type="button" class="btn btn--outline btn--sm client-btn" aria-disabled="true" title="Área de Cliente (brevemente)"><Icon name="user" size={16} /> Área de Cliente</button>
       <a class="btn btn--sm" href="/simulacao/">Pedir simulação <Icon name="arrow" size={16} /></a>
       <button class="burger" type="button" aria-controls="nav" aria-expanded="false" aria-label="Abrir menu">
         <Icon name="menu" size={22} />

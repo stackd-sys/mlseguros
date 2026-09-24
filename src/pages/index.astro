@@ -3,7 +3,6 @@ import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import Photo from '../components/Photo.astro';
 import Faq from '../components/Faq.astro';
-import CtaBand from '../components/CtaBand.astro';
 import { company, insurers, ramos, ramosBySegment, generalFaq } from '../data/site.js';
 
 const faqSchema = {
@@ -65,37 +64,6 @@ const segments = [
     </div>
   </section>
 
-  <!-- SOBRE -->
-  <section class="section">
-    <div class="container split">
-      <div class="collage">
-        <div class="collage__main">
-          <Photo name="couple" alt="Casal a conversar com um mediador de seguros no escritório" sizes="(max-width: 900px) 100vw, 600px" />
-        </div>
-        <div class="collage__sub">
-          <Photo name="ericeiraHouses" alt="Casas brancas da Ericeira" sizes="300px" width={600} height={600} />
-        </div>
-        <div class="collage__badge">
-          <Icon name="handshake" size={40} />
-          <span>Um mediador que conhece o seu nome, não um número de processo.</span>
-        </div>
-      </div>
-      <div>
-        <span class="eyebrow">Parceiro de confiança</span>
-        <h2>Proteção desenhada à sua medida, <span class="hl">perto de si.</span></h2>
-        <p class="lead">Somos uma mediadora independente da Ericeira. Não vendemos o seguro de uma só companhia: comparamos várias e recomendamos a que faz sentido para si.</p>
-        <p class="quote">Quando acontece um sinistro, não fica à espera numa linha telefónica. Liga-nos a nós.</p>
-        <ul class="feature-list">
-          <li><span class="ic"><Icon name="search" /></span><div><strong>Comparação real</strong><p>Várias seguradoras, uma recomendação clara.</p></div></li>
-          <li><span class="ic"><Icon name="message" /></span><div><strong>Linguagem simples</strong><p>Explicamos coberturas e exclusões sem letras pequenas.</p></div></li>
-          <li><span class="ic"><Icon name="shield" /></span><div><strong>Apoio em sinistros</strong><p>Tratamos da participação e acompanhamos até ao fim.</p></div></li>
-          <li><span class="ic"><Icon name="clipboard" /></span><div><strong>Revisão anual</strong><p>Ajustamos as apólices quando a sua vida muda.</p></div></li>
-        </ul>
-        <a class="btn btn--dark" href="/sobre-nos/">Conhecer a ML Seguros <Icon name="arrow" size={18} /></a>
-      </div>
-    </div>
-  </section>
-
   <!-- SERVIÇOS -->
   <section class="section section--warm" id="seguros">
     <div class="container">
@@ -103,7 +71,7 @@ const segments = [
         <div>
           <span class="eyebrow">Os nossos seguros</span>
           <h2>Um seguro para cada <span class="hl">momento da vida.</span></h2>
-          <p class="lead" style="margin:0">{ramos.length} ramos de seguro, com uma página própria para cada um: o que cobre, para quem é e as perguntas mais frequentes.</p>
+          <p class="lead" style="margin:0">Escolha o que quer proteger e veja o que cobre, para quem é e as perguntas mais frequentes.</p>
         </div>
         <div class="tabs" role="tablist" aria-label="Tipo de cliente">
           {segments.map((s, i) => (
@@ -165,7 +133,7 @@ const segments = [
       <div class="stats">
         <div><strong>{company.years}<em>+</em></strong><span>anos de mediação na Ericeira</span></div>
         <div><strong>{insurers.length}<em>+</em></strong><span>seguradoras parceiras</span></div>
-        <div><strong>{ramos.length}</strong><span>ramos de seguro</span></div>
+        <div><strong>0<em>€</em></strong><span>pela análise e simulação</span></div>
         <div><strong>{company.google.rating}<em>★</em></strong><span>{company.google.count} avaliações no Google</span></div>
       </div>
     </div>
@@ -211,7 +179,6 @@ const segments = [
     </div>
   </section>
 
-  <CtaBand />
 </Base>
 
 <script>

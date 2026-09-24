@@ -6,12 +6,6 @@ import PageHero from '../components/PageHero.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { company, insurers } from '../data/site.js';
 
-const values = [
-  ['handshake', 'Proximidade', 'Conhecemos os nossos clientes pelo nome. Quando liga, fala com quem trata do seu processo.'],
-  ['search', 'Independência', 'Trabalhamos com várias seguradoras e recomendamos a que serve melhor cada caso.'],
-  ['message', 'Transparência', 'Explicamos coberturas, exclusões e franquias antes de assinar, sem letras pequenas.'],
-  ['shield', 'Compromisso', 'O nosso trabalho não acaba na venda: começa verdadeiramente no dia do sinistro.'],
-];
 ---
 <Base
   title="Sobre Nós"
@@ -43,23 +37,6 @@ const values = [
     </div>
   </section>
 
-  <section class="section section--warm">
-    <div class="container">
-      <div class="section-head section-head--center">
-        <span class="eyebrow">Os nossos valores</span>
-        <h2>O que nos <span class="hl">define</span></h2>
-      </div>
-      <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
-        {values.map(([icon, t, d]) => (
-          <article class="card">
-            <span class="card__icon"><Icon name={icon} size={30} /></span>
-            <h3>{t}</h3>
-            <p>{d}</p>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
 
   <section class="section">
     <div class="container split">
@@ -67,7 +44,7 @@ const values = [
         <span class="eyebrow">Regulação</span>
         <h2>Mediador registado <span class="hl">na ASF</span></h2>
         <p class="lead">A {company.legalName} está inscrita na Autoridade de Supervisão de Seguros e Fundos de Pensões com o n.º {company.asf}.</p>
-        <p>Pode confirmar o registo no site da ASF. Toda a informação legal sobre a nossa atividade de mediação está disponível na página de <a class="hl" href="/informacao-legal/">informação legal</a>.</p>
+        <p>Pode confirmar o registo no site da ASF. Toda a informação legal sobre a nossa atividade de mediação está disponível na página de <a class="hl" href="/politica-de-privacidade/">informação legal</a>.</p>
         <a class="link-arrow" href="https://www.asf.com.pt" target="_blank" rel="noopener">Consultar a ASF <Icon name="arrowUpRight" size={16} /></a>
       </div>
       <div class="collage" style="padding:0"><div class="collage__main" style="aspect-ratio:4/3"><Photo name="ericeiraAerial" alt="Vista aérea da Ericeira" sizes="(max-width: 900px) 100vw, 600px" /></div></div>

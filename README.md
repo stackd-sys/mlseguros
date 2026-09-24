@@ -7,7 +7,7 @@ Resolve os pontos da auditoria de 24/09/2026:
 | Problema no site atual | No site novo |
 |---|---|
 | Home com 24 MB, 6 plugins, 5 famílias de fontes | Site estático, sem plugins. Uma fonte self-hosted (~49 KB), ícones SVG inline, fotos responsivas com lazy-load |
-| Só 2 páginas de serviço | 11 páginas, uma por ramo (`/seguros/<ramo>/`), cada uma com coberturas, público, FAQ e schema |
+| Só 2 páginas de serviço | 7 páginas, uma por ramo (`/seguros/<ramo>/`), cada uma com coberturas, público, FAQ e schema |
 | Formulário com prefixo +1 | +351 por defeito e validação de número PT |
 | SEO duplicado e genérico | Um título, descrição e H1 por página, canonical, Open Graph, `InsuranceAgency` + `LocalBusiness`, `FAQPage`, `BreadcrumbList` e sitemap automático |
 | Nada sobre sinistros | Página `/sinistros/` com passo-a-passo, documentos por tipo e seguradoras |
@@ -16,6 +16,12 @@ Resolve os pontos da auditoria de 24/09/2026:
 | Animações que escondem conteúdo | Conteúdo visível à partida, só transições de hover, respeita `prefers-reduced-motion` |
 | Banner de cookies PT-BR | Sem cookies: o mapa Google só carrega se o visitante o pedir |
 | Botão WhatsApp tapa texto no mobile | Substituído por uma barra inferior (Ligar / WhatsApp / Simulação) |
+
+## Estrutura (13 páginas)
+
+Home · Particulares · Empresas · 7 ramos (Automóvel e frota, Habitação, Saúde individual e de grupo, Vida, Acidentes de Trabalho, Multirriscos Empresarial, Responsabilidade Civil) · Sinistros · Simulação · Contactos · Sobre nós · Informação legal e privacidade.
+
+O header tem um botão **Área de Cliente**, reservado para o portal de cliente do CRM. Ainda não tem ligação: quando o portal estiver pronto, basta trocar o `<button>` por um `<a href="…">` em `src/components/Header.astro` (aparece duas vezes: desktop e menu mobile).
 
 ## Comandos
 
@@ -37,4 +43,5 @@ Tudo está em `src/data/site.js`: contactos, seguradoras, fotografias, ramos (te
 - [ ] **Equipa e avaliações**: a página "Sobre nós" não tem nomes nem citações, porque não se devem inventar. Acrescentar a equipa (nomes e funções) e 2 a 3 avaliações reais do Google, com autorização.
 - [ ] **Rever textos**: os textos de "Sobre nós" (história) e as FAQ de cada ramo devem ser validados pela ML Seguros.
 - [ ] **Alojamento**: fazer um único redirect `http://www` → `https://mlseguros.pt` e redirects 301 das páginas antigas (`/particulares/` → `/seguros-particulares/`, etc.).
+- [ ] **Área de Cliente**: ligar o botão ao portal do CRM.
 - [ ] Confirmar o link do Facebook antes de o voltar a incluir.

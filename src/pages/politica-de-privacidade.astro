@@ -3,22 +3,31 @@ import Base from '../layouts/Base.astro';
 import LegalPage from '../components/LegalPage.astro';
 import { company } from '../data/site.js';
 ---
-<Base title="Política de Privacidade e Cookies" description="Como a ML Seguros trata os dados pessoais recolhidos no site e nos pedidos de simulação.">
-  <LegalPage title="Privacidade e cookies">
-    <p class="lead">Esta política explica como a {company.legalName} trata os dados pessoais que nos envia através deste site.</p>
-    <h2>Responsável pelo tratamento</h2>
+<Base title="Informação Legal e Privacidade" description="Informação legal sobre a ML Seguros, mediador registado na ASF, meios de reclamação e como tratamos os dados pessoais recolhidos no site.">
+  <LegalPage title="Informação legal e privacidade">
+    <h2>Identificação</h2>
+    <p>{company.legalName}<br />NIF {company.nif}<br />{company.address.street}, {company.address.postalCode} {company.address.locality}<br />{company.phone} ({company.phoneNote.toLowerCase()}) · <a href={`mailto:${company.email}`}>{company.email}</a></p>
+    <h2>Registo de mediador</h2>
+    <p>Mediador de seguros inscrito na Autoridade de Supervisão de Seguros e Fundos de Pensões (ASF) com o n.º {company.asf}. O registo pode ser verificado em <a href="https://www.asf.com.pt" target="_blank" rel="noopener">www.asf.com.pt</a>.</p>
+    <h2>Reclamações</h2>
+    <p>Pode apresentar reclamação diretamente para {company.email}, no <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">Livro de Reclamações Eletrónico</a> ou junto da ASF.</p>
+    <h2>Resolução alternativa de litígios</h2>
+    <p>Em caso de litígio, o consumidor pode recorrer ao CIMPAS – Centro de Informação, Mediação e Arbitragem de Seguros (<a href="https://www.cimpas.pt" target="_blank" rel="noopener">www.cimpas.pt</a>). Mais informação no Portal do Consumidor (<a href="https://www.consumidor.gov.pt" target="_blank" rel="noopener">www.consumidor.gov.pt</a>).</p>
+    <h2>Privacidade e cookies</h2>
+    <p>Esta secção explica como a {company.legalName} trata os dados pessoais que nos envia através deste site.</p>
+    <h3>Responsável pelo tratamento</h3>
     <p>{company.legalName}, NIF {company.nif}, {company.address.street}, {company.address.postalCode} {company.address.locality}. Contacto: <a href={`mailto:${company.email}`}>{company.email}</a>.</p>
-    <h2>Que dados recolhemos</h2>
+    <h3>Que dados recolhemos</h3>
     <p>Os dados que indica nos formulários (nome, contactos, dados sobre o seguro pretendido) e a mensagem que nos envia. Não pedimos dados de saúde através do site.</p>
-    <h2>Para que os usamos</h2>
+    <h3>Para que os usamos</h3>
     <p>Apenas para responder ao seu pedido, preparar propostas de seguro e, se se tornar cliente, gerir os seus contratos. A base legal é o seu consentimento e as diligências pré-contratuais a seu pedido.</p>
-    <h2>Com quem partilhamos</h2>
+    <h3>Com quem partilhamos</h3>
     <p>Com as seguradoras a quem pedimos propostas em seu nome, e com prestadores que nos ajudam a operar o site e o email, sempre no âmbito do pedido. Não vendemos dados a terceiros.</p>
-    <h2>Durante quanto tempo</h2>
+    <h3>Durante quanto tempo</h3>
     <p>Pedidos que não resultem em contrato são apagados ao fim de 12 meses. Os dados de clientes são conservados durante o contrato e pelos prazos legais aplicáveis.</p>
-    <h2>Os seus direitos</h2>
+    <h3>Os seus direitos</h3>
     <p>Pode pedir acesso, retificação, apagamento, limitação ou portabilidade dos seus dados, ou retirar o consentimento, escrevendo para {company.email}. Pode também apresentar reclamação à Comissão Nacional de Proteção de Dados (<a href="https://www.cnpd.pt" target="_blank" rel="noopener">cnpd.pt</a>).</p>
-    <h2>Cookies</h2>
+    <h3>Cookies</h3>
     <p>Este site não usa cookies de publicidade nem de estatística. O mapa do Google só é carregado se carregar em «Mostrar mapa» na página de contactos; nesse momento a Google pode instalar os seus próprios cookies, de acordo com a política de privacidade da Google.</p>
   </LegalPage>
 </Base>
