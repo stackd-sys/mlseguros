@@ -43,23 +43,23 @@ export const insurers = [
 
 // Fotografias do Pexels (licença livre, sem atribuição obrigatória).
 export const photos = {
-  heroAdvisor: 8441861, // mediadora com casal sénior, sorridentes
-  couple: 7731318,
+  heroAdvisor: 8441861, // mediador com casal sénior, sorridentes
+  couple: 7647387, // casal a assinar com o mediador
   elderly: 8441780,
-  explaining: 7735626,
+  advisorCouple: 8292884, // mediador a mostrar proposta a um casal
   homeVisit: 8439647,
   familyHome: 3875141,
-  familyMeal: 7492954,
+  familyPark: 5290308, // família a passear no parque
   ericeiraAerial: 20414673,
   ericeiraHouses: 23856802,
   ericeiraBeach: 24350498,
   ericeiraBoats: 32473806,
   driving: 1051071,
-  worker: 28196526,
-  construction: 4956918,
+  worker: 3772616, // trabalhador com capacete
+  handshake: 7691709, // aperto de mão em reunião de escritório
   doctor: 7579831,
-  medicalForm: 7088834,
 };
+// Regra: sem texto legível em inglês e pessoas coerentes com um público português.
 
 export const pexels = (id, w = 1200) =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
@@ -155,7 +155,7 @@ export const ramos = [
     short: 'Proteção para a família e para o crédito à habitação, em caso de morte ou invalidez.',
     seoTitle: 'Seguro de Vida e Crédito Habitação',
     seoDescription: 'Seguro de vida para crédito habitação ou proteção familiar. Poupe ao transferir o seguro do banco para outra seguradora, com apoio de um mediador na Ericeira.',
-    image: 'familyMeal',
+    image: 'familyPark',
     intro: 'O seguro de vida protege quem depende de si. No crédito à habitação é exigido pelo banco, mas pode ser contratado noutra seguradora, e a poupança ao longo do empréstimo pode ser significativa. Fazemos as contas e tratamos da transferência.',
     coverages: [
       ['Morte', 'Pagamento do capital seguro aos beneficiários ou ao banco.'],
@@ -231,7 +231,7 @@ export const ramos = [
     short: 'Exploração, profissional e produtos: proteção contra reclamações de clientes e terceiros.',
     seoTitle: 'Seguro de Responsabilidade Civil Profissional e de Exploração',
     seoDescription: 'Seguros de responsabilidade civil de exploração, profissional e de produtos para empresas e profissionais liberais. Análise gratuita do risco.',
-    image: 'explaining',
+    image: 'advisorCouple',
     intro: 'Um erro, um acidente com um cliente ou um produto defeituoso podem dar origem a pedidos de indemnização elevados. Algumas atividades têm seguro de responsabilidade civil obrigatório; noutras é simplesmente prudente. Ajudamos a perceber o que precisa e com que capitais.',
     coverages: [
       ['RC de exploração', 'Danos a terceiros resultantes da atividade da empresa.'],

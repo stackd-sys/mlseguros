@@ -39,7 +39,7 @@ Tudo está em `src/data/site.js`: contactos, seguradoras, fotografias, ramos (te
 
 - [ ] **Logótipo oficial**: `public/favicon.svg` é uma recriação aproximada. Substituir pelo ficheiro original em SVG.
 - [ ] **Formulários**: definir `formEndpoint` em `src/data/site.js` (Formspree, Make/n8n ou webhook do CRM). Sem endpoint, os formulários abrem o email do visitante já preenchido.
-- [ ] **Fotografias**: são fotos do Pexels (licença gratuita) carregadas diretamente do CDN do Pexels. O ideal é substituí-las por fotos reais da equipa e do escritório da Ericeira (ponto "pessoas reais" da auditoria).
+- [ ] **Fotografias**: são fotos do Pexels (licença gratuita) carregadas diretamente do CDN do Pexels, todas revistas: sem texto legível em inglês e com pessoas coerentes com um público português. Ao trocar uma foto, manter estas regras. O ideal é substituí-las por fotos reais da equipa e do escritório da Ericeira (ponto "pessoas reais" da auditoria).
 - [ ] **Equipa e avaliações**: a página "Sobre nós" não tem nomes nem citações, porque não se devem inventar. Acrescentar a equipa (nomes e funções) e 2 a 3 avaliações reais do Google, com autorização.
 - [ ] **Rever textos**: os textos de "Sobre nós" (história) e as FAQ de cada ramo devem ser validados pela ML Seguros.
 - [ ] **Alojamento**: fazer um único redirect `http://www` → `https://mlseguros.pt` e redirects 301 das páginas antigas (`/particulares/` → `/seguros-particulares/`, etc.).
