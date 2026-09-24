@@ -1,0 +1,19 @@
+---
+import Photo from './Photo.astro';
+interface Props { title: string; lead?: string; image?: string; crumbs?: { label: string; href?: string }[] }
+const { title, lead, image, crumbs = [] } = Astro.props;
+---
+<section class="page-hero">
+  {image && <Photo name={image} alt="" sizes="100vw" priority />}
+  <div class="container">
+    <nav aria-label="Caminho">
+      <ol class="crumbs">
+        <li><a href="/">Início</a></li>
+        {crumbs.map((c) => c.href ? <li><a href={c.href}>{c.label}</a></li> : <li aria-current="page">{c.label}</li>)}
+      </ol>
+    </nav>
+    <h1 set:html={title} />
+    {lead && <p>{lead}</p>}
+    <slot />
+  </div>
+</section>

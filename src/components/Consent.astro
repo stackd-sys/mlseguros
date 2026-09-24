@@ -1,0 +1,9 @@
+---
+import { company } from '../data/site.js';
+---
+<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
+<label class="check">
+  <input type="checkbox" name="consentimento" value="sim" required />
+  <span>Autorizo a {company.name} a usar estes dados para responder ao meu pedido, nos termos da <a href="/politica-de-privacidade/">política de privacidade</a>.</span>
+</label>
+<p class="form-status" role="status" aria-live="polite" hidden></p>

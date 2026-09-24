@@ -1,0 +1,11 @@
+---
+import PageHero from './PageHero.astro';
+interface Props { title: string }
+const { title } = Astro.props;
+---
+<PageHero title={title} crumbs={[{ label: title }]} />
+<section class="section">
+  <div class="container prose" style="max-width:820px">
+    <slot />
+  </div>
+</section>

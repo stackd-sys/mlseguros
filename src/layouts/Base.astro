@@ -1,0 +1,77 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { company, photos, pexels } from '../data/site.js';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  schema?: object[];
+}
+const { title, description, image = 'heroAdvisor', schema = [] } = Astro.props;
+const fullTitle = Astro.url.pathname === '/' ? title : `${title} | ML Seguros`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = pexels((photos as Record<string, number>)[image], 1200);
+
+const agency = {
+  '@context': 'https://schema.org',
+  '@type': ['InsuranceAgency', 'LocalBusiness'],
+  '@id': 'https://mlseguros.pt/#agency',
+  name: company.name,
+  legalName: company.legalName,
+  url: 'https://mlseguros.pt/',
+  logo: 'https://mlseguros.pt/favicon.svg',
+  image: ogImage,
+  telephone: company.phone.replace(/\s/g, ''),
+  email: company.email,
+  taxID: company.nif,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: company.address.street,
+    postalCode: company.address.postalCode,
+    addressLocality: company.address.locality,
+    addressRegion: 'Lisboa',
+    addressCountry: company.address.country,
+  },
+  areaServed: company.areaServed.map((name) => ({ '@type': 'City', name })),
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '5', reviewCount: company.google.count },
+  hasMap: company.mapsHref,
+};
+---
+<!doctype html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#15171c" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/plus-jakarta-sans.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preconnect" href="https://images.pexels.com" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta property="og:site_name" content="ML Seguros" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(agency)} />
+    {schema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+  </head>
+  <body>
+    <a class="skip" href="#conteudo">Saltar para o conteúdo</a>
+    <Header />
+    <main id="conteudo">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

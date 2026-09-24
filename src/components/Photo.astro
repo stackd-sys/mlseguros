@@ -1,0 +1,19 @@
+---
+// Fotografia do Pexels com srcset responsivo; lazy-load por defeito.
+import { photos, pexels, pexelsSrcset } from '../data/site.js';
+interface Props { name: keyof typeof photos | string; alt: string; sizes?: string; priority?: boolean; width?: number; height?: number; class?: string }
+const { name, alt, sizes = '(max-width: 900px) 100vw, 50vw', priority = false, width = 1200, height = 1400, class: cls } = Astro.props;
+const id = (photos as Record<string, number>)[name];
+---
+<img
+  src={pexels(id, 1200)}
+  srcset={pexelsSrcset(id)}
+  sizes={sizes}
+  alt={alt}
+  width={width}
+  height={height}
+  loading={priority ? 'eager' : 'lazy'}
+  fetchpriority={priority ? 'high' : 'auto'}
+  decoding="async"
+  class={cls}
+/>

@@ -1,0 +1,12 @@
+---
+interface Props { items: [string, string][]; openFirst?: boolean }
+const { items, openFirst = true } = Astro.props;
+---
+<div class="faq">
+  {items.map(([q, a], i) => (
+    <details open={openFirst && i === 0}>
+      <summary>{q}<span class="pm" aria-hidden="true"></span></summary>
+      <div><p>{a}</p></div>
+    </details>
+  ))}
+</div>

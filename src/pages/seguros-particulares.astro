@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import SegmentPage from '../components/SegmentPage.astro';
+---
+<Base
+  title="Seguros para Particulares na Ericeira"
+  description="Seguros automóvel, habitação, saúde, vida, acidentes pessoais e viagem para famílias da Ericeira e Mafra. Compare seguradoras com um mediador local."
+  image="familyHome"
+>
+  <SegmentPage
+    segment="particulares"
+    title="Seguros para <span class='hl'>particulares</span> e famílias"
+    lead="Carro, casa, saúde e as pessoas de quem gosta. Comparamos as principais seguradoras e explicamos cada apólice em linguagem simples."
+    image="familyHome"
+    crumb="Particulares"
+    introTitle="Proteção pessoal e familiar, <span class='hl'>sem surpresas</span>"
+    introText="Um seguro só mostra o que vale quando é preciso. Por isso começamos por perceber a sua vida, e só depois procuramos a apólice."
+    introImage="homeVisit"
+    points={[
+      ['search', 'Revemos o que já tem', 'Muitas famílias pagam coberturas repetidas entre casa, carro e cartões.'],
+      ['handshake', 'Negociamos por si', 'Com várias seguradoras, conseguimos condições que sozinho não teria.'],
+      ['shield', 'Estamos lá no sinistro', 'Participação, peritagem e acompanhamento, sem call centers.'],
+    ]}
+  />
+</Base>

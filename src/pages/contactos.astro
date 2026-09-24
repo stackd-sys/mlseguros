@@ -1,0 +1,76 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import PageHero from '../components/PageHero.astro';
+import PhoneField from '../components/PhoneField.astro';
+import Consent from '../components/Consent.astro';
+import { company } from '../data/site.js';
+---
+<Base
+  title="Contactos"
+  description="Contacte a ML Seguros na Ericeira: Rua Dr. Eduardo Burnay, 20-B. Telefone +351 919 400 228, WhatsApp e geral@mlseguros.pt."
+  image="ericeiraAerial"
+>
+  <PageHero
+    title="Fale <span class='hl'>connosco</span>"
+    lead="Visite-nos na Ericeira, ligue ou envie mensagem. Respondemos no próprio dia útil."
+    image="ericeiraAerial"
+    crumbs={[{ label: 'Contactos' }]}
+  />
+
+  <section class="section">
+    <div class="container split" style="align-items:start">
+      <div>
+        <span class="eyebrow">Contactos</span>
+        <h2>Estamos na <span class="hl">Ericeira</span></h2>
+        <p class="lead">Atendemos presencialmente no escritório e à distância clientes de todo o país.</p>
+        <div class="contact-cards">
+          <a class="contact-card" href={company.phoneHref}><span class="ic"><Icon name="phone" /></span><span><strong>{company.phone}</strong><small>{company.phoneNote}</small></span></a>
+          <a class="contact-card" href={company.whatsappHref} target="_blank" rel="noopener"><span class="ic" style="background:#25d366"><Icon name="whatsapp" /></span><span><strong>WhatsApp</strong><small>Envie mensagem, fotos ou documentos</small></span></a>
+          <a class="contact-card" href={`mailto:${company.email}`}><span class="ic"><Icon name="mail" /></span><span><strong>{company.email}</strong><small>Resposta no próximo dia útil</small></span></a>
+          <a class="contact-card" href={company.mapsHref} target="_blank" rel="noopener"><span class="ic"><Icon name="pin" /></span><span><strong>{company.address.street}</strong><small>{company.address.postalCode} {company.address.locality} · Ver no Google Maps</small></span></a>
+        </div>
+      </div>
+      <form class="panel form" id="contact-form" novalidate>
+        <h2 style="font-size:1.6rem;margin:0">Envie-nos uma mensagem</h2>
+        <div class="form-row">
+          <div class="field"><label for="nome">Nome</label><input id="nome" name="nome" autocomplete="name" required /></div>
+          <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required /></div>
+        </div>
+        <PhoneField />
+        <div class="field"><label for="assunto">Assunto</label>
+          <select id="assunto" name="assunto_pedido"><option>Pedido de proposta</option><option>Participar um sinistro</option><option>Alteração a uma apólice</option><option>Outro assunto</option></select>
+        </div>
+        <div class="field"><label for="mensagem">Mensagem</label><textarea id="mensagem" name="mensagem" required></textarea></div>
+        <Consent />
+        <button class="btn" type="submit">Enviar mensagem <Icon name="arrow" size={18} /></button>
+      </form>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="map" id="map">
+        <div style="padding:2rem">
+          <Icon name="map" size={40} />
+          <p style="margin:1rem 0">O mapa é carregado do Google Maps apenas se o pedir.</p>
+          <button class="btn btn--dark" type="button" id="load-map">Mostrar mapa</button>
+          <p style="margin:1rem 0 0"><a class="link-arrow" href={company.mapsHref} target="_blank" rel="noopener">Abrir no Google Maps <Icon name="arrowUpRight" size={16} /></a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script define:vars={{ endpoint: company.formEndpoint, email: company.email, embed: company.mapsEmbed }}>
+  window.__form = { endpoint, email, embed };
+</script>
+<script>
+  import { setupForm } from '../scripts/forms';
+  const cfg = (window as any).__form;
+  setupForm(document.getElementById('contact-form') as HTMLFormElement, { endpoint: cfg.endpoint, email: cfg.email, subject: 'Contacto — site' });
+  document.getElementById('load-map')?.addEventListener('click', () => {
+    const map = document.getElementById('map')!;
+    map.innerHTML = `<iframe src="${cfg.embed}" title="Mapa: ML Seguros na Ericeira" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+  });
+</script>

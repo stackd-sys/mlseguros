@@ -1,0 +1,134 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import PageHero from '../components/PageHero.astro';
+import Faq from '../components/Faq.astro';
+import { company, insurers } from '../data/site.js';
+
+const steps = [
+  ['Garanta a segurança', 'Se houver feridos ou perigo, ligue 112. Sinalize o local e proteja as pessoas antes de tudo.'],
+  ['Registe o que aconteceu', 'Tire fotografias dos danos, do local e dos documentos. Anote nomes, contactos e matrículas de testemunhas e terceiros.'],
+  ['Ligue-nos', 'Explique o que aconteceu. Dizemos-lhe que documentos juntar e tratamos da participação à seguradora.'],
+  ['Acompanhamos até ao fim', 'Peritagem, reparação e indemnização: fazemos o seguimento com a seguradora e mantemo-lo informado.'],
+];
+
+const docs = [
+  { icon: 'car', title: 'Acidente automóvel', items: [
+    'Declaração Amigável de Acidente (DAAA), assinada pelos dois condutores',
+    'Fotografias dos veículos e do local',
+    'Carta de condução, Documento Único e apólice',
+    'Auto da polícia, se tiver sido chamada',
+    'Participação até 8 dias após o acidente',
+  ] },
+  { icon: 'home', title: 'Danos em casa', items: [
+    'Fotografias dos danos antes de reparar',
+    'Descrição da causa (rotura, tempestade, infiltração)',
+    'Orçamento de reparação ou faturas',
+    'Em caso de furto: participação à PSP ou GNR',
+    'Evite deitar fora bens danificados até à peritagem',
+  ] },
+  { icon: 'hardhat', title: 'Acidente de trabalho', items: [
+    'Garanta a assistência médica ao trabalhador',
+    'Nome, NIF e data de nascimento do sinistrado',
+    'Data, hora, local e descrição do acidente',
+    'Testemunhas, se as houver',
+    'Contacte-nos de imediato: a participação tem prazos curtos',
+  ] },
+  { icon: 'heart', title: 'Saúde e acidentes pessoais', items: [
+    'Faturas com NIF e descrição dos atos médicos',
+    'Relatório médico ou prescrição',
+    'Número da apólice ou cartão de beneficiário',
+    'Em acidentes: relatório da urgência',
+    'Guarde os originais até ao reembolso',
+  ] },
+];
+
+const faq: [string, string][] = [
+  ['Tenho de participar o sinistro diretamente à seguradora?', 'Não. Enquanto seu mediador, tratamos da participação por si e acompanhamos o processo. Em situações de assistência urgente (reboque, canalizador), ligue também para a linha de assistência indicada na sua apólice.'],
+  ['Onde encontro o número de assistência 24 horas?', 'Está nas condições particulares da apólice, no cartão de assistência e, no automóvel, no certificado internacional de seguro (antiga carta verde). Se não o encontrar, ligue-nos e indicamos o contacto certo.'],
+  ['Quanto tempo demora um processo?', 'Depende do tipo de sinistro e da peritagem. Casos simples resolvem-se em poucas semanas. Mantemo-lo informado em cada passo.'],
+  ['Não concordo com a decisão da seguradora. O que posso fazer?', 'Falamos com a seguradora para rever o processo. Se não houver acordo, pode recorrer ao provedor do cliente da seguradora, à ASF ou ao CIMPAS, o centro de arbitragem de seguros.'],
+];
+---
+<Base
+  title="Participar um Sinistro"
+  description="Como participar um sinistro automóvel, habitação, acidente de trabalho ou saúde. Passo-a-passo, documentos necessários e contactos. A ML Seguros trata da participação por si."
+  image="ericeiraBeach"
+>
+  <PageHero
+    title="Aconteceu alguma coisa? <span class='hl'>Estamos consigo.</span>"
+    lead="É o momento em que mais precisa do seu mediador. Explicamos o que fazer, que documentos juntar e tratamos da participação por si."
+    image="ericeiraBeach"
+    crumbs={[{ label: 'Sinistros' }]}
+  >
+    <div class="hero__ctas">
+      <a class="btn" href={company.phoneHref}><Icon name="phone" size={18} /> Ligar {company.phone}</a>
+      <a class="btn btn--light" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> Enviar fotos por WhatsApp</a>
+    </div>
+  </PageHero>
+
+  <section class="section">
+    <div class="container">
+      <div class="emergency" role="note">
+        <Icon name="alert" size={32} />
+        <span>Em caso de feridos, incêndio ou perigo imediato, ligue primeiro <strong>112</strong>. Depois, contacte-nos.</span>
+      </div>
+
+      <div class="section-head">
+        <span class="eyebrow">Passo-a-passo</span>
+        <h2>Como participar um <span class="hl">sinistro</span></h2>
+      </div>
+      <ol class="steps">
+        {steps.map(([t, d], i) => (
+          <li class="step" style="background:var(--bg-warm);border-color:var(--line)">
+            <span class="step__num">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{t}</h3>
+            <p>{d}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--warm">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Documentos</span>
+        <h2>O que deve <span class="hl">ter à mão</span></h2>
+        <p class="lead">Não precisa de ter tudo para nos ligar. Esta lista ajuda a acelerar o processo.</p>
+      </div>
+      <div class="doc-grid">
+        {docs.map((d) => (
+          <div class="doc">
+            <h3><Icon name={d.icon} /> {d.title}</h3>
+            <ul>{d.items.map((i) => <li>{i}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split" style="align-items:start">
+      <div>
+        <span class="eyebrow">Seguradoras</span>
+        <h2>Participação online e <span class="hl">assistência</span></h2>
+        <p class="lead">Se preferir, pode também participar diretamente no site da sua seguradora. Avise-nos na mesma para acompanharmos o processo.</p>
+        <table class="insurer-table">
+          <thead><tr><th scope="col">Seguradora</th><th scope="col">Site oficial</th></tr></thead>
+          <tbody>
+            {insurers.map((i) => (
+              <tr><td>{i.name}</td><td><a href={i.href} target="_blank" rel="noopener">{i.href.replace('https://www.', '')} <Icon name="arrowUpRight" size={16} /></a></td></tr>
+            ))}
+          </tbody>
+        </table>
+        <p class="form-note" style="margin-top:1rem">O número de assistência 24h da sua apólice está nas condições particulares e no cartão de assistência.</p>
+      </div>
+      <div>
+        <span class="eyebrow">Perguntas frequentes</span>
+        <h2 style="font-size:clamp(1.6rem,3vw,2.2rem)">Dúvidas sobre sinistros</h2>
+        <Faq items={faq} />
+      </div>
+    </div>
+  </section>
+</Base>

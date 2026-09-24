@@ -1,0 +1,119 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import Photo from '../../components/Photo.astro';
+import PageHero from '../../components/PageHero.astro';
+import Faq from '../../components/Faq.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { company, ramos, ramosBySegment } from '../../data/site.js';
+
+export function getStaticPaths() {
+  return ramos.map((ramo) => ({ params: { slug: ramo.slug }, props: { ramo } }));
+}
+const { ramo } = Astro.props;
+const hub = ramo.segment === 'particulares'
+  ? { label: 'Particulares', href: '/seguros-particulares/' }
+  : { label: 'Empresas', href: '/seguros-empresas/' };
+const related = ramosBySegment(ramo.segment).filter((r) => r.slug !== ramo.slug).slice(0, 3);
+const url = new URL(Astro.url.pathname, Astro.site).href;
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: ramo.name,
+    serviceType: ramo.name,
+    description: ramo.seoDescription,
+    url,
+    provider: { '@id': 'https://mlseguros.pt/#agency' },
+    areaServed: company.areaServed.map((name) => ({ '@type': 'City', name })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: ramo.faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Início', item: 'https://mlseguros.pt/' },
+      { '@type': 'ListItem', position: 2, name: hub.label, item: new URL(hub.href, Astro.site).href },
+      { '@type': 'ListItem', position: 3, name: ramo.name, item: url },
+    ],
+  },
+];
+---
+<Base title={ramo.seoTitle} description={ramo.seoDescription} image={ramo.image} schema={schema}>
+  <PageHero title={ramo.name} lead={ramo.short} image={ramo.image} crumbs={[hub, { label: ramo.name }]}>
+    <div class="hero__ctas">
+      <a class="btn" href={`/simulacao/?tipo=${ramo.slug}`}>Simular {ramo.name.toLowerCase()} <Icon name="arrow" size={18} /></a>
+      <a class="btn btn--light" href={company.phoneHref}><Icon name="phone" size={18} /> {company.phone}</a>
+    </div>
+  </PageHero>
+
+  <section class="section">
+    <div class="container layout-aside">
+      <div class="prose">
+        <span class="eyebrow">Porque é importante</span>
+        <h2>O que precisa de saber</h2>
+        <p class="lead">{ramo.intro}</p>
+
+        <h2>Coberturas <span class="hl">principais</span></h2>
+        <div class="cover-grid">
+          {ramo.coverages.map(([t, d]) => (
+            <div class="cover">
+              <Icon name="shield" size={28} />
+              <h3>{t}</h3>
+              <p>{d}</p>
+            </div>
+          ))}
+        </div>
+        <p class="form-note" style="margin-top:1rem">As coberturas, capitais e exclusões variam entre seguradoras. Confirmamos tudo por escrito antes de contratar.</p>
+
+        <h2>Para quem é</h2>
+        <ul class="pill-list">{ramo.audience.map((a) => <li><Icon name="check" size={18} /> {a}</li>)}</ul>
+
+        <h2>Perguntas frequentes</h2>
+        <Faq items={ramo.faq} />
+      </div>
+
+      <aside class="aside-card" aria-label="Pedir proposta">
+        <h3>Receba uma proposta sem compromisso</h3>
+        <p>Comparamos as condições da Fidelidade, Allianz, Generali Tranquilidade e Ageas e explicamos as diferenças.</p>
+        <a class="btn btn--block" href={`/simulacao/?tipo=${ramo.slug}`}>Pedir simulação <Icon name="arrow" size={18} /></a>
+        <hr />
+        <a class="plain" href={company.phoneHref}><Icon name="phone" size={20} /> {company.phone}</a>
+        <a class="plain" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={20} /> WhatsApp</a>
+        <a class="plain" href={`mailto:${company.email}?subject=${encodeURIComponent(ramo.name)}`}><Icon name="mail" size={20} /> {company.email}</a>
+        <hr />
+        <a class="plain" href="/sinistros/"><Icon name="alert" size={20} /> Já é cliente? Participar sinistro</a>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section--warm">
+    <div class="container">
+      <div class="section-head section-head--split">
+        <div>
+          <span class="eyebrow">Outros seguros</span>
+          <h2>Também para <span class="hl">{hub.label.toLowerCase()}</span></h2>
+        </div>
+        <a class="link-arrow" href={hub.href}>Ver todos <Icon name="arrow" size={18} /></a>
+      </div>
+      <div class="cards">
+        {related.map((r) => (
+          <article class="card">
+            <span class="card__icon"><Icon name={r.icon} size={30} /></span>
+            <h3>{r.name}</h3>
+            <p>{r.short}</p>
+            <a class="link-arrow stretched" href={`/seguros/${r.slug}/`}>Saber mais <Icon name="arrow" size={18} /></a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <div style="height:clamp(4rem,9vw,7.5rem)"></div>
+  <CtaBand title={`Pedir proposta: ${ramo.name}`} tipo={ramo.slug} />
+</Base>

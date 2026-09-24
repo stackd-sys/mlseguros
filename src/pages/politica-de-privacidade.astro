@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import LegalPage from '../components/LegalPage.astro';
+import { company } from '../data/site.js';
+---
+<Base title="Política de Privacidade e Cookies" description="Como a ML Seguros trata os dados pessoais recolhidos no site e nos pedidos de simulação.">
+  <LegalPage title="Privacidade e cookies">
+    <p class="lead">Esta política explica como a {company.legalName} trata os dados pessoais que nos envia através deste site.</p>
+    <h2>Responsável pelo tratamento</h2>
+    <p>{company.legalName}, NIF {company.nif}, {company.address.street}, {company.address.postalCode} {company.address.locality}. Contacto: <a href={`mailto:${company.email}`}>{company.email}</a>.</p>
+    <h2>Que dados recolhemos</h2>
+    <p>Os dados que indica nos formulários (nome, contactos, dados sobre o seguro pretendido) e a mensagem que nos envia. Não pedimos dados de saúde através do site.</p>
+    <h2>Para que os usamos</h2>
+    <p>Apenas para responder ao seu pedido, preparar propostas de seguro e, se se tornar cliente, gerir os seus contratos. A base legal é o seu consentimento e as diligências pré-contratuais a seu pedido.</p>
+    <h2>Com quem partilhamos</h2>
+    <p>Com as seguradoras a quem pedimos propostas em seu nome, e com prestadores que nos ajudam a operar o site e o email, sempre no âmbito do pedido. Não vendemos dados a terceiros.</p>
+    <h2>Durante quanto tempo</h2>
+    <p>Pedidos que não resultem em contrato são apagados ao fim de 12 meses. Os dados de clientes são conservados durante o contrato e pelos prazos legais aplicáveis.</p>
+    <h2>Os seus direitos</h2>
+    <p>Pode pedir acesso, retificação, apagamento, limitação ou portabilidade dos seus dados, ou retirar o consentimento, escrevendo para {company.email}. Pode também apresentar reclamação à Comissão Nacional de Proteção de Dados (<a href="https://www.cnpd.pt" target="_blank" rel="noopener">cnpd.pt</a>).</p>
+    <h2>Cookies</h2>
+    <p>Este site não usa cookies de publicidade nem de estatística. O mapa do Google só é carregado se carregar em «Mostrar mapa» na página de contactos; nesse momento a Google pode instalar os seus próprios cookies, de acordo com a política de privacidade da Google.</p>
+  </LegalPage>
+</Base>

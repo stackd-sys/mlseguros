@@ -1,0 +1,236 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
+import Faq from '../components/Faq.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { company, insurers, ramos, ramosBySegment, generalFaq } from '../data/site.js';
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: generalFaq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+};
+const segments = [
+  { id: 'particulares', label: 'Particulares', items: ramosBySegment('particulares') },
+  { id: 'empresas', label: 'Empresas', items: ramosBySegment('empresas') },
+];
+---
+<Base
+  title="ML Seguros | Mediador de Seguros na Ericeira e Mafra"
+  description="Mediador de seguros na Ericeira há mais de 25 anos. Seguros automóvel, habitação, saúde, vida e acidentes de trabalho. Comparamos Fidelidade, Allianz, Generali e Ageas."
+  schema={[faqSchema]}
+>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div>
+        <span class="eyebrow">Mediação de seguros na Ericeira</span>
+        <h1>O descanso de saber que tudo o que construiu <span class="hl">está seguro.</span></h1>
+        <p class="lead">A sua família e o seu negócio merecem mais do que um seguro padrão. Comparamos as principais seguradoras e ficamos do seu lado nos momentos em que mais precisa, sem call centers.</p>
+        <div class="hero__ctas">
+          <a class="btn" href="/seguros-particulares/">Proteção particular <Icon name="arrow" size={18} /></a>
+          <a class="btn btn--outline" href="/seguros-empresas/">Soluções para empresas</a>
+        </div>
+        <ul class="checks">
+          <li><Icon name="check" /> +{company.years} anos de experiência</li>
+          <li><Icon name="check" /> Rigor e transparência</li>
+          <li><Icon name="check" /> Consultoria sem custos</li>
+        </ul>
+      </div>
+      <div class="hero__media">
+        <div class="hero__img">
+          <Photo name="heroAdvisor" alt="Mediadora de seguros a rever uma apólice com um casal sorridente" sizes="(max-width: 960px) 100vw, 560px" priority />
+        </div>
+        <div class="float-card float-card--years">
+          <strong>+{company.years}</strong>
+          <span>anos na Ericeira</span>
+        </div>
+        <a class="float-card float-card--rating" href={company.google.href} target="_blank" rel="noopener">
+          <span class="rating-big">{company.google.rating}</span>
+          <span>
+            <span class="stars">{[1,2,3,4,5].map(() => <Icon name="star" />)}</span>
+            <small>{company.google.count} avaliações no Google</small>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEGURADORAS -->
+  <section class="partners" aria-label="Seguradoras parceiras">
+    <div class="container">
+      <p>Trabalhamos com as principais seguradoras do mercado</p>
+      <ul>{insurers.map((i) => <li><a href={i.href} target="_blank" rel="noopener">{i.name}</a></li>)}</ul>
+    </div>
+  </section>
+
+  <!-- SOBRE -->
+  <section class="section">
+    <div class="container split">
+      <div class="collage">
+        <div class="collage__main">
+          <Photo name="couple" alt="Casal a conversar com um mediador de seguros no escritório" sizes="(max-width: 900px) 100vw, 600px" />
+        </div>
+        <div class="collage__sub">
+          <Photo name="ericeiraHouses" alt="Casas brancas da Ericeira" sizes="300px" width={600} height={600} />
+        </div>
+        <div class="collage__badge">
+          <Icon name="handshake" size={40} />
+          <span>Um mediador que conhece o seu nome, não um número de processo.</span>
+        </div>
+      </div>
+      <div>
+        <span class="eyebrow">Parceiro de confiança</span>
+        <h2>Proteção desenhada à sua medida, <span class="hl">perto de si.</span></h2>
+        <p class="lead">Somos uma mediadora independente da Ericeira. Não vendemos o seguro de uma só companhia: comparamos várias e recomendamos a que faz sentido para si.</p>
+        <p class="quote">Quando acontece um sinistro, não fica à espera numa linha telefónica. Liga-nos a nós.</p>
+        <ul class="feature-list">
+          <li><span class="ic"><Icon name="search" /></span><div><strong>Comparação real</strong><p>Várias seguradoras, uma recomendação clara.</p></div></li>
+          <li><span class="ic"><Icon name="message" /></span><div><strong>Linguagem simples</strong><p>Explicamos coberturas e exclusões sem letras pequenas.</p></div></li>
+          <li><span class="ic"><Icon name="shield" /></span><div><strong>Apoio em sinistros</strong><p>Tratamos da participação e acompanhamos até ao fim.</p></div></li>
+          <li><span class="ic"><Icon name="clipboard" /></span><div><strong>Revisão anual</strong><p>Ajustamos as apólices quando a sua vida muda.</p></div></li>
+        </ul>
+        <a class="btn btn--dark" href="/sobre-nos/">Conhecer a ML Seguros <Icon name="arrow" size={18} /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVIÇOS -->
+  <section class="section section--warm" id="seguros">
+    <div class="container">
+      <div class="section-head section-head--split">
+        <div>
+          <span class="eyebrow">Os nossos seguros</span>
+          <h2>Um seguro para cada <span class="hl">momento da vida.</span></h2>
+          <p class="lead" style="margin:0">{ramos.length} ramos de seguro, com uma página própria para cada um: o que cobre, para quem é e as perguntas mais frequentes.</p>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Tipo de cliente">
+          {segments.map((s, i) => (
+            <button role="tab" type="button" id={`tab-${s.id}`} aria-controls={`panel-${s.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>{s.label}</button>
+          ))}
+        </div>
+      </div>
+      {segments.map((s, i) => (
+        <div class="cards" role="tabpanel" id={`panel-${s.id}`} aria-labelledby={`tab-${s.id}`} hidden={i !== 0}>
+          {s.items.map((r, n) => (
+            <article class="card">
+              <span class="card__num" aria-hidden="true">{String(n + 1).padStart(2, '0')}</span>
+              <span class="card__icon"><Icon name={r.icon} size={30} /></span>
+              <h3>{r.name}</h3>
+              <p>{r.short}</p>
+              <a class="link-arrow stretched" href={`/seguros/${r.slug}/`}>Saber mais <Icon name="arrow" size={18} /></a>
+            </article>
+          ))}
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- AUDITORIA PME -->
+  <section class="section" style="padding-bottom:0">
+    <div class="container">
+      <div class="promo">
+        <div class="promo__body">
+          <span class="eyebrow">Para empresas</span>
+          <h2>Auditoria gratuita à carteira de seguros da sua empresa</h2>
+          <p>Muitas empresas pagam coberturas que não usam e ficam descobertas onde mais importa. Analisamos as apólices atuais e entregamos um relatório claro, sem custos nem compromisso.</p>
+          <ul>
+            <li><Icon name="check" /> Coberturas em falta e duplicadas</li>
+            <li><Icon name="check" /> Enquadramento correto de acidentes de trabalho</li>
+            <li><Icon name="check" /> Comparação de preços entre seguradoras</li>
+          </ul>
+          <a class="btn btn--light" href="/simulacao/?tipo=auditoria-empresas">Pedir auditoria gratuita <Icon name="arrow" size={18} /></a>
+        </div>
+        <div class="promo__img">
+          <Photo name="explaining" alt="Consultora a explicar um documento a um empresário" sizes="(max-width: 860px) 100vw, 500px" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESSO + NÚMEROS -->
+  <section class="section section--dark" style="margin-top:clamp(4rem,9vw,7.5rem)">
+    <div class="container">
+      <div class="section-head section-head--center">
+        <span class="eyebrow">Como trabalhamos</span>
+        <h2>Do primeiro contacto ao sinistro, <span class="hl">sempre connosco.</span></h2>
+      </div>
+      <ol class="steps">
+        <li class="step"><span class="step__num">01</span><h3>Conversa inicial</h3><p>Percebemos o que tem, o que precisa proteger e quanto paga hoje.</p></li>
+        <li class="step"><span class="step__num">02</span><h3>Comparação</h3><p>Pedimos propostas a várias seguradoras com as mesmas coberturas.</p></li>
+        <li class="step"><span class="step__num">03</span><h3>Proposta clara</h3><p>Explicamos as diferenças e recomendamos, sem pressão.</p></li>
+        <li class="step"><span class="step__num">04</span><h3>Acompanhamento</h3><p>Alterações, renovações e sinistros tratados por nós.</p></li>
+      </ol>
+      <div class="stats">
+        <div><strong>{company.years}<em>+</em></strong><span>anos de mediação na Ericeira</span></div>
+        <div><strong>{insurers.length}<em>+</em></strong><span>seguradoras parceiras</span></div>
+        <div><strong>{ramos.length}</strong><span>ramos de seguro</span></div>
+        <div><strong>{company.google.rating}<em>★</em></strong><span>{company.google.count} avaliações no Google</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AVALIAÇÕES -->
+  <section class="section section--warm">
+    <div class="container reviews">
+      <div class="review-score">
+        <span class="eyebrow">Avaliações Google</span>
+        <div class="num">{company.google.rating}</div>
+        <span class="stars">{[1,2,3,4,5].map(() => <Icon name="star" />)}</span>
+        <p>Com base em {company.google.count} avaliações de clientes no Google.</p>
+        <a class="btn btn--dark" href={company.google.href} target="_blank" rel="noopener">Ler as avaliações <Icon name="arrowUpRight" size={18} /></a>
+      </div>
+      <div>
+        <span class="eyebrow">O que dizem os clientes</span>
+        <h2>Atendimento próximo, <span class="hl">de pessoas reais.</span></h2>
+        <p class="lead">Os nossos clientes destacam a disponibilidade, a clareza das explicações e o acompanhamento quando algo corre mal. É isso que queremos continuar a ser: a pessoa a quem liga quando precisa.</p>
+        <ul class="pill-list">
+          <li><Icon name="check" size={18} /> Disponibilidade</li>
+          <li><Icon name="check" size={18} /> Explicações claras</li>
+          <li><Icon name="check" size={18} /> Apoio em sinistros</li>
+          <li><Icon name="check" size={18} /> Preços competitivos</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="container split" style="align-items:start">
+      <div>
+        <span class="eyebrow">Perguntas frequentes</span>
+        <h2>Dúvidas sobre <span class="hl">mediação de seguros?</span></h2>
+        <p class="lead">Se não encontrar aqui a resposta, ligue-nos ou envie uma mensagem por WhatsApp.</p>
+        <div class="hero__ctas">
+          <a class="btn" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> Falar por WhatsApp</a>
+          <a class="btn btn--outline" href="/contactos/">Contactos</a>
+        </div>
+      </div>
+      <Faq items={generalFaq} />
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<script>
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+  const select = (tab: HTMLButtonElement) => {
+    tabs.forEach((t) => {
+      const on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')!)!.hidden = !on;
+    });
+  };
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => select(tab));
+    tab.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+      next.focus();
+      select(next);
+    });
+  });
+</script>

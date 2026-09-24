@@ -1,0 +1,207 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import PageHero from '../components/PageHero.astro';
+import PhoneField from '../components/PhoneField.astro';
+import Consent from '../components/Consent.astro';
+import { company, ramosBySegment } from '../data/site.js';
+
+const groups = [
+  { label: 'Particulares', items: ramosBySegment('particulares') },
+  { label: 'Empresas', items: [...ramosBySegment('empresas'), { slug: 'auditoria-empresas', name: 'Auditoria gratuita', icon: 'clipboard' }] },
+];
+const empresas = [...ramosBySegment('empresas').map((r) => r.slug), 'auditoria-empresas'].join(' ');
+---
+<Base
+  title="Pedir Simulação de Seguro"
+  description="Peça uma simulação de seguro gratuita em 3 passos: automóvel, habitação, saúde, vida, acidentes de trabalho e seguros para empresas. Resposta no próximo dia útil."
+  image="couple"
+>
+  <PageHero
+    title="Simulação gratuita <span class='hl'>em 3 passos</span>"
+    lead="Diga-nos o que quer proteger. Comparamos as seguradoras e enviamos uma proposta clara, sem compromisso."
+    image="couple"
+    crumbs={[{ label: 'Simulação' }]}
+  />
+
+  <section class="section section--warm">
+    <div class="container layout-aside">
+      <form class="panel form" id="sim" novalidate>
+        <ol class="progress" aria-label="Progresso">
+          <li class="is-active">1. Tipo de seguro</li>
+          <li>2. Dados base</li>
+          <li>3. Contacto</li>
+        </ol>
+
+        <!-- Passo 1 -->
+        <fieldset class="sim-step" data-step="1">
+          <legend class="sr-only">Tipo de seguro</legend>
+          <h2 style="font-size:1.6rem">Que seguro procura?</h2>
+          {groups.map((g) => (
+            <>
+              <p class="choice-group-title">{g.label}</p>
+              <div class="choice-grid">
+                {g.items.map((r) => (
+                  <label class="choice">
+                    <input type="radio" name="tipo_de_seguro" value={r.slug} data-label={r.name} required />
+                    <span><Icon name={r.icon} size={22} /> {r.name}</span>
+                  </label>
+                ))}
+              </div>
+            </>
+          ))}
+        </fieldset>
+
+        <!-- Passo 2 -->
+        <div class="sim-step" data-step="2" hidden>
+          <h2 style="font-size:1.6rem">Alguns dados base</h2>
+          <p class="form-note" style="margin-bottom:1rem">Só o essencial para prepararmos a comparação. Os pormenores tratamos por telefone.</p>
+
+          <fieldset class="form" data-for="automovel">
+            <div class="form-row">
+              <div class="field"><label for="a1">Marca e modelo</label><input id="a1" name="marca_modelo" required placeholder="Ex.: Renault Clio" /></div>
+              <div class="field"><label for="a2">Ano da matrícula</label><input id="a2" name="ano_matricula" inputmode="numeric" pattern="(19|20)\d{2}" required placeholder="2020" /></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label for="a3">Idade do condutor principal</label><input id="a3" name="idade_condutor" type="number" min="18" max="99" required /></div>
+              <div class="field"><label for="a4">Coberturas pretendidas</label>
+                <select id="a4" name="coberturas"><option>Só responsabilidade civil</option><option>Com vidros e assistência</option><option>Danos próprios</option><option>Ainda não sei</option></select>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="form" data-for="habitacao">
+            <div class="form-row">
+              <div class="field"><label for="h1">Tipo de imóvel</label><select id="h1" name="tipo_imovel"><option>Apartamento</option><option>Moradia</option><option>Casa de férias / alojamento local</option></select></div>
+              <div class="field"><label for="h2">Código postal do imóvel</label><input id="h2" name="codigo_postal" pattern="\d{4}-?\d{3}" placeholder="2655-000" required /></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label for="h3">O que quer segurar</label><select id="h3" name="segurar"><option>Edifício e recheio</option><option>Só edifício</option><option>Só recheio</option></select></div>
+              <div class="field"><label for="h4">Tem crédito à habitação?</label><select id="h4" name="credito_habitacao"><option>Sim</option><option>Não</option></select></div>
+            </div>
+          </fieldset>
+
+          <fieldset class="form" data-for="saude vida acidentes-pessoais viagem">
+            <div class="form-row">
+              <div class="field"><label for="p1">Pessoas a segurar</label><input id="p1" name="pessoas" type="number" min="1" max="20" value="1" required /></div>
+              <div class="field"><label for="p2">Idades</label><input id="p2" name="idades" placeholder="Ex.: 42, 40, 12" required /></div>
+            </div>
+            <div class="field"><label for="p3">Algum pormenor importante?</label><input id="p3" name="pormenores" placeholder="Ex.: capital do crédito, destino da viagem, desporto que pratica" /></div>
+          </fieldset>
+
+          <fieldset class="form" data-for={empresas}>
+            <div class="form-row">
+              <div class="field"><label for="e1">Nome da empresa</label><input id="e1" name="empresa" autocomplete="organization" required /></div>
+              <div class="field"><label for="e2">NIF <span class="hint">(opcional)</span></label><input id="e2" name="nif" inputmode="numeric" pattern="\d{9}" /></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label for="e3">Atividade</label><input id="e3" name="atividade" placeholder="Ex.: restauração, construção" required /></div>
+              <div class="field"><label for="e4">N.º de trabalhadores</label><select id="e4" name="trabalhadores"><option>Só eu (independente)</option><option>2–9</option><option>10–49</option><option>50 ou mais</option></select></div>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- Passo 3 -->
+        <div class="sim-step form" data-step="3" hidden>
+          <h2 style="font-size:1.6rem">Como o contactamos?</h2>
+          <div class="field"><label for="nome">Nome</label><input id="nome" name="nome" autocomplete="name" required /></div>
+          <div class="form-row">
+            <PhoneField />
+            <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required /></div>
+          </div>
+          <div class="field"><label for="pref">Preferência de contacto</label>
+            <select id="pref" name="preferencia"><option>Telefone</option><option>WhatsApp</option><option>Email</option></select>
+          </div>
+          <div class="field"><label for="msg">Mensagem <span class="hint">(opcional)</span></label><textarea id="msg" name="mensagem" rows="3"></textarea></div>
+          <Consent />
+        </div>
+
+        <div class="sim-nav">
+          <button type="button" class="btn btn--outline" data-prev hidden>Anterior</button>
+          <button type="button" class="btn" data-next style="margin-left:auto">Seguinte <Icon name="arrow" size={18} /></button>
+          <button type="submit" class="btn" data-submit hidden style="margin-left:auto">Enviar pedido <Icon name="arrow" size={18} /></button>
+        </div>
+      </form>
+
+      <aside class="aside-card">
+        <h3>Prefere falar já?</h3>
+        <p>Ligue-nos ou envie mensagem. Respondemos no próprio dia útil.</p>
+        <a class="plain" href={company.phoneHref}><Icon name="phone" size={20} /> {company.phone}</a>
+        <small>{company.phoneNote}</small>
+        <a class="plain" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={20} /> WhatsApp</a>
+        <a class="plain" href={`mailto:${company.email}`}><Icon name="mail" size={20} /> {company.email}</a>
+        <hr />
+        <p style="margin:0;font-size:.9rem">A simulação é gratuita e não o obriga a nada. Os seus dados são usados apenas para responder ao pedido.</p>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<script define:vars={{ endpoint: company.formEndpoint, email: company.email }}>
+  window.__form = { endpoint, email };
+</script>
+
+<script>
+  import { setupForm, validatePhone } from '../scripts/forms';
+
+  const form = document.getElementById('sim') as HTMLFormElement;
+  const steps = [...form.querySelectorAll<HTMLElement>('.sim-step')];
+  const bars = [...form.querySelectorAll('.progress li')];
+  const prev = form.querySelector<HTMLButtonElement>('[data-prev]')!;
+  const next = form.querySelector<HTMLButtonElement>('[data-next]')!;
+  const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+  const groups = [...form.querySelectorAll<HTMLFieldSetElement>('[data-for]')];
+  let current = 0;
+
+  const syncType = () => {
+    const tipo = (form.querySelector('[name="tipo_de_seguro"]:checked') as HTMLInputElement | null)?.value ?? '';
+    groups.forEach((g) => {
+      const on = g.dataset.for!.split(' ').includes(tipo);
+      g.hidden = !on;
+      g.disabled = !on;
+    });
+  };
+
+  const go = (i: number) => {
+    current = i;
+    steps.forEach((s, n) => (s.hidden = n !== i));
+    bars.forEach((b, n) => {
+      b.classList.toggle('is-active', n === i);
+      b.classList.toggle('is-done', n < i);
+    });
+    prev.hidden = i === 0;
+    next.hidden = i === steps.length - 1;
+    submit.hidden = i !== steps.length - 1;
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const stepValid = () => {
+    const fields = [...steps[current].querySelectorAll<HTMLInputElement>('input, select, textarea')].filter((f) => !f.disabled);
+    if (current === steps.length - 1) validatePhone(form);
+    for (const f of fields) {
+      if (!f.checkValidity()) {
+        f.reportValidity();
+        return false;
+      }
+    }
+    return true;
+  };
+
+  form.addEventListener('change', (e) => {
+    if ((e.target as HTMLInputElement).name === 'tipo_de_seguro') syncType();
+  });
+  next.addEventListener('click', () => stepValid() && go(current + 1));
+  prev.addEventListener('click', () => go(current - 1));
+
+  // Pré-seleção a partir de ?tipo= (links das páginas de cada ramo).
+  const preset = new URLSearchParams(location.search).get('tipo');
+  const radio = preset && form.querySelector<HTMLInputElement>(`[name="tipo_de_seguro"][value="${CSS.escape(preset)}"]`);
+  if (radio) radio.checked = true;
+  syncType();
+  if (radio) go(1);
+  window.scrollTo(0, 0);
+
+  const cfg = (window as any).__form;
+  setupForm(form, { endpoint: cfg.endpoint, email: cfg.email, subject: 'Pedido de simulação — site' });
+  form.addEventListener('sent', () => { syncType(); go(0); });
+</script>

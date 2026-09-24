@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { company, insurers } from '../data/site.js';
+
+const values = [
+  ['handshake', 'Proximidade', 'Conhecemos os nossos clientes pelo nome. Quando liga, fala com quem trata do seu processo.'],
+  ['search', 'Independência', 'Trabalhamos com várias seguradoras e recomendamos a que serve melhor cada caso.'],
+  ['message', 'Transparência', 'Explicamos coberturas, exclusões e franquias antes de assinar, sem letras pequenas.'],
+  ['shield', 'Compromisso', 'O nosso trabalho não acaba na venda: começa verdadeiramente no dia do sinistro.'],
+];
+---
+<Base
+  title="Sobre Nós"
+  description="A ML Seguros é uma mediadora de seguros independente na Ericeira, com mais de 25 anos de experiência a proteger famílias e empresas do concelho de Mafra."
+  image="ericeiraHouses"
+>
+  <PageHero
+    title={`Mais de ${company.years} anos a proteger <span class="hl">a Ericeira</span>`}
+    lead="Somos uma mediadora de seguros independente, com escritório na Ericeira e clientes em todo o concelho de Mafra."
+    image="ericeiraHouses"
+    crumbs={[{ label: 'Sobre nós' }]}
+  />
+
+  <section class="section">
+    <div class="container split">
+      <div class="collage">
+        <div class="collage__main"><Photo name="homeVisit" alt="Mediadora a conversar com um casal na sala de casa" sizes="(max-width: 900px) 100vw, 600px" /></div>
+        <div class="collage__sub"><Photo name="ericeiraBoats" alt="Barcos de pesca coloridos na Ericeira" sizes="300px" width={600} height={600} /></div>
+        <div class="collage__badge"><strong>{company.years}+</strong><span>anos de mediação de seguros</span></div>
+      </div>
+      <div>
+        <span class="eyebrow">A nossa história</span>
+        <h2>Um mediador local, <span class="hl">não um call center</span></h2>
+        <p class="lead">A ML Seguros nasceu na Ericeira com uma ideia simples: as pessoas merecem alguém que conheça o seu caso e que esteja lá quando algo corre mal.</p>
+        <p>Ao longo de mais de {company.years} anos, acompanhámos famílias na compra da primeira casa, no primeiro carro dos filhos e em momentos difíceis como acidentes e doenças. Ajudámos empresas locais, da restauração à construção, a cumprir as obrigações legais e a proteger o que construíram.</p>
+        <p>Trabalhamos com seguradoras como {insurers.map((i) => i.name).join(', ').replace(/, ([^,]*)$/, ' e $1')}, o que nos permite comparar e escolher sempre do lado do cliente.</p>
+        <a class="btn btn--dark" href="/contactos/">Visitar o escritório <Icon name="arrow" size={18} /></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--warm">
+    <div class="container">
+      <div class="section-head section-head--center">
+        <span class="eyebrow">Os nossos valores</span>
+        <h2>O que nos <span class="hl">define</span></h2>
+      </div>
+      <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+        {values.map(([icon, t, d]) => (
+          <article class="card">
+            <span class="card__icon"><Icon name={icon} size={30} /></span>
+            <h3>{t}</h3>
+            <p>{d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split">
+      <div>
+        <span class="eyebrow">Regulação</span>
+        <h2>Mediador registado <span class="hl">na ASF</span></h2>
+        <p class="lead">A {company.legalName} está inscrita na Autoridade de Supervisão de Seguros e Fundos de Pensões com o n.º {company.asf}.</p>
+        <p>Pode confirmar o registo no site da ASF. Toda a informação legal sobre a nossa atividade de mediação está disponível na página de <a class="hl" href="/informacao-legal/">informação legal</a>.</p>
+        <a class="link-arrow" href="https://www.asf.com.pt" target="_blank" rel="noopener">Consultar a ASF <Icon name="arrowUpRight" size={16} /></a>
+      </div>
+      <div class="collage" style="padding:0"><div class="collage__main" style="aspect-ratio:4/3"><Photo name="ericeiraAerial" alt="Vista aérea da Ericeira" sizes="(max-width: 900px) 100vw, 600px" /></div></div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>

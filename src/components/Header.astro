@@ -1,0 +1,83 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { company, ramosBySegment } from '../data/site.js';
+
+const path = Astro.url.pathname;
+const groups = [
+  { label: 'Particulares', href: '/seguros-particulares/', items: ramosBySegment('particulares') },
+  { label: 'Empresas', href: '/seguros-empresas/', items: ramosBySegment('empresas') },
+];
+const links = [
+  { label: 'Sinistros', href: '/sinistros/' },
+  { label: 'Sobre nós', href: '/sobre-nos/' },
+  { label: 'Contactos', href: '/contactos/' },
+];
+---
+<div class="topbar">
+  <div class="container">
+    <ul>
+      <li><a href={company.mapsHref} target="_blank" rel="noopener"><Icon name="pin" size={16} /> {company.address.street}, {company.address.locality}</a></li>
+      <li class="hide-md"><a href={`mailto:${company.email}`}><Icon name="mail" size={16} /> {company.email}</a></li>
+    </ul>
+    <ul>
+      <li class="hide-md"><span>Registo ASF n.º {company.asf}</span></li>
+      <li><a href={company.phoneHref}><Icon name="phone" size={16} /> {company.phone}</a></li>
+    </ul>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container">
+    <Logo />
+    <nav class="nav" id="nav" aria-label="Principal">
+      <ul>
+        {groups.map((g) => (
+          <li class="nav__item">
+            <button class="nav__link" type="button" aria-expanded="false" aria-current={path.startsWith(g.href) ? 'page' : undefined}>
+              {g.label} <Icon name="chevron" size={16} />
+            </button>
+            <ul class="nav__drop">
+              {g.items.map((r) => (
+                <li><a href={`/seguros/${r.slug}/`}><Icon name={r.icon} size={20} /> {r.name}</a></li>
+              ))}
+              <li><a class="all" href={g.href}>Ver todos os seguros para {g.label.toLowerCase()} <Icon name="arrow" size={16} /></a></li>
+            </ul>
+          </li>
+        ))}
+        {links.map((l) => (
+          <li><a class="nav__link" href={l.href} aria-current={path.startsWith(l.href) ? 'page' : undefined}>{l.label}</a></li>
+        ))}
+      </ul>
+      <a class="btn nav__cta" href="/simulacao/">Pedir simulação <Icon name="arrow" size={18} /></a>
+    </nav>
+    <div class="header__actions">
+      <a class="header__phone" href={company.phoneHref}>
+        <span class="ic"><Icon name="phone" size={18} /></span>
+        <span><small>Ligue-nos</small>{company.phone}</span>
+      </a>
+      <a class="btn btn--sm" href="/simulacao/">Pedir simulação <Icon name="arrow" size={16} /></a>
+      <button class="burger" type="button" aria-controls="nav" aria-expanded="false" aria-label="Abrir menu">
+        <Icon name="menu" size={22} />
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  const burger = document.querySelector<HTMLButtonElement>('.burger');
+  const nav = document.getElementById('nav');
+  burger?.addEventListener('click', () => {
+    const open = nav!.classList.toggle('is-open');
+    burger.setAttribute('aria-expanded', String(open));
+    burger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  document.querySelectorAll<HTMLButtonElement>('.nav__item > .nav__link').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const item = btn.parentElement!;
+      const open = item.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', String(open));
+    });
+  });
+</script>

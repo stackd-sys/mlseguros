@@ -1,0 +1,30 @@
+---
+import Icon from './Icon.astro';
+import Photo from './Photo.astro';
+import { company } from '../data/site.js';
+interface Props { title?: string; text?: string; tipo?: string }
+const {
+  title = 'Vamos rever os seus seguros?',
+  text = 'Diga-nos o que precisa proteger. Respondemos no próprio dia útil, com uma proposta clara e sem compromisso.',
+  tipo,
+} = Astro.props;
+---
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="cta-band">
+      <Photo name="ericeiraAerial" alt="" sizes="100vw" />
+      <div class="cta-band__inner">
+        <div>
+          <span class="eyebrow">Fale connosco</span>
+          <h2>{title}</h2>
+          <p>{text}</p>
+        </div>
+        <div class="cta-band__actions">
+          <a class="btn" href={tipo ? `/simulacao/?tipo=${tipo}` : '/simulacao/'}>Pedir simulação gratuita <Icon name="arrow" size={18} /></a>
+          <a class="btn btn--light" href={company.phoneHref}><Icon name="phone" size={18} /> {company.phone}</a>
+          <small style="color:#9da2ad;text-align:center">{company.phoneNote}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

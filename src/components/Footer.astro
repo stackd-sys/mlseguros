@@ -1,0 +1,59 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { company, ramosBySegment } from '../data/site.js';
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__about">
+        <Logo inverse />
+        <p>Mediação de seguros na Ericeira há mais de {company.years} anos. Comparamos as principais seguradoras e acompanhamos cada cliente, sobretudo quando é preciso participar um sinistro.</p>
+        <div class="footer__reg">
+          {company.legalName}<br />
+          Mediador de seguros inscrito na ASF com o n.º {company.asf} ·
+          <a href="https://www.asf.com.pt" target="_blank" rel="noopener">asf.com.pt</a><br />
+          NIF {company.nif}
+        </div>
+      </div>
+      <div>
+        <h3>Particulares</h3>
+        <ul>{ramosBySegment('particulares').map((r) => <li><a href={`/seguros/${r.slug}/`}>{r.name}</a></li>)}</ul>
+      </div>
+      <div>
+        <h3>Empresas</h3>
+        <ul>
+          {ramosBySegment('empresas').map((r) => <li><a href={`/seguros/${r.slug}/`}>{r.name}</a></li>)}
+          <li><a href="/seguros-empresas/#auditoria">Auditoria gratuita</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Contactos</h3>
+        <ul class="footer__contact">
+          <li><Icon name="pin" size={18} /><a href={company.mapsHref} target="_blank" rel="noopener">{company.address.street}<br />{company.address.postalCode} {company.address.locality}</a></li>
+          <li><Icon name="phone" size={18} /><span><a href={company.phoneHref}>{company.phone}</a><br /><small>{company.phoneNote}</small></span></li>
+          <li><Icon name="mail" size={18} /><a href={`mailto:${company.email}`}>{company.email}</a></li>
+          <li><Icon name="alert" size={18} /><a href="/sinistros/">Participar um sinistro</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__legal">
+      <span>© {year} {company.name}. Todos os direitos reservados.</span>
+      <ul>
+        <li><a href="/politica-de-privacidade/">Privacidade e cookies</a></li>
+        <li><a href="/informacao-legal/">Informação legal</a></li>
+        <li><a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">Livro de Reclamações</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float" href={company.whatsappHref} target="_blank" rel="noopener" aria-label="Falar por WhatsApp">
+  <Icon name="whatsapp" size={28} />
+</a>
+<nav class="mobile-bar" aria-label="Contacto rápido">
+  <a href={company.phoneHref}><Icon name="phone" size={18} /> Ligar</a>
+  <a href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> WhatsApp</a>
+  <a class="primary" href="/simulacao/">Simulação <Icon name="arrow" size={16} /></a>
+</nav>

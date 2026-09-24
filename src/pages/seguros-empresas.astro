@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import SegmentPage from '../components/SegmentPage.astro';
+import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
+---
+<Base
+  title="Seguros para Empresas em Mafra e Ericeira"
+  description="Seguros para PME: acidentes de trabalho, multirriscos empresarial, responsabilidade civil, frota e saúde de grupo. Auditoria gratuita à carteira de seguros."
+  image="worker"
+>
+  <SegmentPage
+    segment="empresas"
+    title="Seguros para <span class='hl'>empresas</span> e profissionais"
+    lead="Do seguro obrigatório de acidentes de trabalho à proteção das instalações e da atividade. Um só interlocutor para todos os seguros da empresa."
+    image="construction"
+    crumb="Empresas"
+    introTitle="Menos tempo com seguros, <span class='hl'>mais tempo no negócio</span>"
+    introText="Tratamos das apólices, das folhas de férias, das renovações e dos sinistros para que se possa concentrar no que faz melhor."
+    introImage="explaining"
+    points={[
+      ['clipboard', 'Enquadramento correto', 'Atividade e massa salarial bem declaradas evitam acertos e recusas.'],
+      ['users', 'Um só interlocutor', 'Todos os seguros da empresa geridos por quem conhece o seu negócio.'],
+      ['alert', 'Resposta rápida em sinistros', 'Ajudamos a participar dentro dos prazos e a manter a atividade.'],
+    ]}
+  >
+    <section class="section" id="auditoria" style="padding-top:0">
+      <div class="container">
+        <div class="promo">
+          <div class="promo__body">
+            <span class="eyebrow">Oferta para PME</span>
+            <h2>Auditoria gratuita à carteira de seguros</h2>
+            <p>Envie-nos as apólices atuais. Em poucos dias recebe um relatório com coberturas em falta, duplicações e uma comparação de preços, sem custos nem compromisso.</p>
+            <ul>
+              <li><Icon name="check" /> Análise de todas as apólices da empresa</li>
+              <li><Icon name="check" /> Riscos descobertos identificados</li>
+              <li><Icon name="check" /> Proposta de otimização de custos</li>
+            </ul>
+            <a class="btn btn--light" href="/simulacao/?tipo=auditoria-empresas">Pedir auditoria gratuita <Icon name="arrow" size={18} /></a>
+          </div>
+          <div class="promo__img"><Photo name="elderly" alt="Consultor a analisar documentos com um empresário" sizes="(max-width: 860px) 100vw, 500px" /></div>
+        </div>
+      </div>
+    </section>
+  </SegmentPage>
+</Base>

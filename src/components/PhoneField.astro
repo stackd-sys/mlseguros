@@ -1,0 +1,19 @@
+---
+// Telemóvel com +351 por defeito (o formulário antigo começava em "Estados Unidos +1").
+---
+<div class="field">
+  <label for="telemovel">Telemóvel</label>
+  <div class="tel">
+    <select name="indicativo" aria-label="Indicativo do país">
+      <option value="+351" selected>🇵🇹 +351</option>
+      <option value="+34">🇪🇸 +34</option>
+      <option value="+33">🇫🇷 +33</option>
+      <option value="+44">🇬🇧 +44</option>
+      <option value="+41">🇨🇭 +41</option>
+      <option value="+49">🇩🇪 +49</option>
+      <option value="+55">🇧🇷 +55</option>
+      <option value="outro">Outro</option>
+    </select>
+    <input id="telemovel" name="telemovel" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="912 345 678" required />
+  </div>
+</div>
