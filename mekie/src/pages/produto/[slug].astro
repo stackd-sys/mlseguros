@@ -1,0 +1,265 @@
+---
+import Base from '../../layouts/Base.astro';
+import Carousel from '../../components/Carousel.astro';
+import { products, getCategory, discount, type Product } from '../../data/products';
+import { site, formatPrice } from '../../data/site';
+
+export function getStaticPaths() {
+  return products.map((p) => ({ params: { slug: p.slug }, props: { product: p } }));
+}
+interface Props { product: Product }
+const { product: p } = Astro.props;
+const cat = getCategory(p.category)!;
+const off = discount(p);
+const variants = products.filter((o) => o.name === p.name);
+const related = [
+  ...products.filter((o) => o.category === p.category && o.slug !== p.slug),
+  ...products.filter((o) => o.category !== p.category),
+].slice(0, 8);
+const cartData = { id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0] };
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: `${p.name} ${p.color}`,
+  image: p.images.map((i) => new URL(i, site.url).href),
+  description: p.description,
+  brand: { '@type': 'Brand', name: site.name },
+  offers: {
+    '@type': 'Offer',
+    priceCurrency: 'EUR',
+    price: p.price.toFixed(2),
+    availability: 'https://schema.org/InStock',
+    url: new URL(`/produto/${p.slug}/`, site.url).href,
+  },
+};
+---
+<Base title={`${p.name} ${p.color}`} description={`${p.name} (${p.color}) — ${p.description} ${formatPrice(p.price)}. Envio em ${site.deliveryDays} dias úteis.`} image={p.images[0]}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
+
+  <div class="container pdp">
+    <div class="gallery" data-gallery>
+      <div class="gallery__main">
+        {p.images.map((src, i) => (
+          <img src={src} alt={`${p.name} ${p.color} — imagem ${i + 1}`} width="1000" height="1250" loading={i === 0 ? 'eager' : 'lazy'} class:list={['gallery__img', { 'is-cover': i > 0 }]} data-slide={i} />
+        ))}
+      </div>
+      {p.images.length > 1 && (
+        <div class="gallery__thumbs">
+          {p.images.map((src, i) => (
+            <button type="button" class:list={['gallery__thumb', { 'is-active': i === 0 }]} data-thumb={i} aria-label={`Ver imagem ${i + 1}`}>
+              <img src={src} alt="" width="120" height="150" loading="lazy" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <div class="info">
+      <nav class="crumbs eyebrow" aria-label="Navegação estrutural">
+        <a href="/loja/">Loja</a> / <a href={`/loja/${cat.slug}/`}>{cat.plural}</a>
+      </nav>
+      <h1 class="info__title">{p.name}</h1>
+      <p class="price info__price">
+        {off > 0 && <del>{formatPrice(p.regularPrice)}</del>}
+        {off > 0 ? <ins>{formatPrice(p.price)}</ins> : <span>{formatPrice(p.price)}</span>}
+        {off > 0 && <span class="info__off eyebrow">-{off}%</span>}
+      </p>
+      <p class="info__tax">IVA incluído. Envio grátis acima de {site.freeShippingFrom}€.</p>
+
+      <div class="opt">
+        <p class="opt__label eyebrow">Cor: <span>{p.color}</span></p>
+        {variants.length > 1 && (
+          <div class="swatches">
+            {variants.map((v) => (
+              <a href={`/produto/${v.slug}/`} class:list={['swatch', { 'is-active': v.slug === p.slug }]} aria-label={v.color} aria-current={v.slug === p.slug ? 'page' : undefined}>
+                <img src={v.images[0]} alt="" width="64" height="64" loading="lazy" />
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <form class="buy" data-buy data-product={JSON.stringify(cartData)}>
+        {p.sizes ? (
+          <fieldset class="opt">
+            <legend class="opt__label eyebrow">Tamanho: <span data-size-label>escolhe</span></legend>
+            <div class="sizes">
+              {p.sizes.map((s) => (
+                <label class="size">
+                  <input type="radio" name="size" value={s} required />
+                  <span>{s}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ) : (
+          <p class="opt__label eyebrow">Tamanho: <span>Único</span></p>
+        )}
+
+        <div class="buy__row">
+          <div class="qty qty--lg">
+            <button type="button" data-step="-1" aria-label="Diminuir quantidade">−</button>
+            <input type="number" name="qty" value="1" min="1" max="10" aria-label="Quantidade" />
+            <button type="button" data-step="1" aria-label="Aumentar quantidade">+</button>
+          </div>
+          <button type="submit" class="pill buy__btn">Adicionar ao carrinho</button>
+        </div>
+        <p class="buy__error" role="alert" hidden>Escolhe um tamanho.</p>
+      </form>
+
+      <div class="acc">
+        <details open>
+          <summary class="eyebrow">Descrição</summary>
+          <p>{p.description}</p>
+          <p>Cor: {p.color}.{p.sizes ? ` Disponível nos tamanhos ${p.sizes.join(', ')}.` : ''}</p>
+        </details>
+        <details>
+          <summary class="eyebrow">Envios</summary>
+          <p>Enviamos para Portugal Continental, Madeira, Açores e Europa através dos CTT. Entrega estimada em {site.deliveryDays} dias úteis após confirmação do pagamento. Envio gratuito em encomendas acima de {site.freeShippingFrom}€.</p>
+          <a class="link-underline" href="/politica-de-envios-e-entregas/">Política de envios</a>
+        </details>
+        <details>
+          <summary class="eyebrow">Devoluções</summary>
+          <p>Tens 14 dias após a receção para devolver, sem indicar o motivo. O artigo deve estar nas condições originais e com as etiquetas intactas.</p>
+          <a class="link-underline" href="/politica-de-devolucoes-e-reembolsos/">Política de devoluções</a>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <section class="section related">
+    <div class="container">
+      <p class="section-title eyebrow">Também vais gostar</p>
+      <Carousel products={related} label="Produtos relacionados" />
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { cart } from '../../scripts/cart';
+  import { openCart } from '../../scripts/ui';
+
+  const gallery = document.querySelector<HTMLElement>('[data-gallery]');
+  gallery?.querySelectorAll<HTMLButtonElement>('[data-thumb]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const i = btn.dataset.thumb;
+      gallery.querySelectorAll('[data-thumb]').forEach((b) => b.classList.toggle('is-active', b === btn));
+      const slide = gallery.querySelector<HTMLElement>(`[data-slide="${i}"]`);
+      const mobile = matchMedia('(max-width: 900px)').matches;
+      slide?.scrollIntoView({ behavior: 'smooth', block: mobile ? 'nearest' : 'center', inline: 'start' });
+    }),
+  );
+
+  const form = document.querySelector<HTMLFormElement>('[data-buy]');
+  if (form) {
+    const product = JSON.parse(form.dataset.product!);
+    const qty = form.querySelector<HTMLInputElement>('input[name=qty]')!;
+    const error = form.querySelector<HTMLElement>('.buy__error')!;
+    const sizeLabel = form.querySelector<HTMLElement>('[data-size-label]');
+    form.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((b) =>
+      b.addEventListener('click', () => {
+        qty.value = String(Math.min(10, Math.max(1, Number(qty.value) + Number(b.dataset.step))));
+      }),
+    );
+    form.addEventListener('change', (e) => {
+      const t = e.target as HTMLInputElement;
+      if (t.name === 'size') {
+        error.hidden = true;
+        if (sizeLabel) sizeLabel.textContent = t.value;
+      }
+    });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const hasSizes = !!form.querySelector('input[name=size]');
+      const size = data.get('size') as string | null;
+      if (hasSizes && !size) {
+        error.hidden = false;
+        return;
+      }
+      cart.add({ ...product, size: size ?? undefined }, Math.min(10, Math.max(1, Number(qty.value) || 1)));
+      openCart();
+    });
+    form.querySelectorAll<HTMLInputElement>('input[name=size]').forEach((r) =>
+      r.addEventListener('invalid', (e) => { e.preventDefault(); error.hidden = false; }),
+    );
+  }
+</script>
+
+<style>
+  .pdp {
+    display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: clamp(28px, 5vw, 80px);
+    padding-top: clamp(24px, 4vw, 48px);
+  }
+  .gallery { display: grid; grid-template-columns: 76px 1fr; gap: 16px; align-items: start; }
+  .gallery__main { grid-column: 2; grid-row: 1; display: grid; gap: 16px; }
+  .gallery__img { width: 100%; aspect-ratio: 4 / 5; object-fit: contain; background: var(--surface); padding: 6%; }
+  .gallery__img.is-cover { object-fit: cover; padding: 0; }
+  .gallery__thumbs { grid-column: 1; grid-row: 1; position: sticky; top: 130px; display: grid; gap: 10px; }
+  .gallery__thumb { border: 1px solid transparent; background: var(--surface); }
+  .gallery__thumb.is-active { border-color: var(--ink); }
+  .gallery__thumb img { aspect-ratio: 4/5; object-fit: cover; }
+
+  .info { position: sticky; top: 130px; align-self: start; padding-bottom: 24px; }
+  .crumbs { font-size: 10.5px; color: var(--ink-soft); }
+  .crumbs a:hover { color: var(--ink); }
+  .info__title { font-family: var(--font-display); font-weight: 600; font-size: clamp(28px, 3vw, 38px); line-height: 1.1; margin: 14px 0 12px; }
+  .info__price { font-size: 17px; }
+  .info__off { background: var(--ink); color: #fff; padding: 3px 8px; border-radius: 999px; font-size: 10px; }
+  .info__tax { margin: 6px 0 28px; font-size: 12.5px; color: var(--ink-soft); }
+
+  .opt { border: 0; margin: 0 0 22px; padding: 0; }
+  .opt__label { margin: 0 0 12px; padding: 0; font-size: 11px; }
+  .opt__label span { color: var(--ink-soft); }
+  .swatches { display: flex; gap: 10px; }
+  .swatch { width: 60px; height: 60px; border: 1px solid var(--line); background: var(--surface); }
+  .swatch img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+  .swatch.is-active { border-color: var(--ink); }
+
+  .sizes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .size input { position: absolute; opacity: 0; pointer-events: none; }
+  .size span {
+    display: grid; place-items: center; min-width: 52px; height: 42px; padding: 0 12px;
+    border: 1px solid var(--line); border-radius: 999px; font-size: 12.5px; cursor: pointer;
+    transition: border-color .2s, background .2s, color .2s;
+  }
+  .size span:hover { border-color: var(--ink); }
+  .size input:checked + span { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .size input:focus-visible + span { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  .buy__row { display: flex; gap: 12px; }
+  .buy__btn { flex: 1; min-height: 50px; }
+  .qty--lg { height: 50px; border-radius: 999px; padding: 0 6px; display: inline-flex; align-items: center; border: 1px solid var(--line); }
+  .qty--lg button { width: 34px; height: 100%; font-size: 18px; }
+  .qty--lg input { width: 34px; border: 0; background: transparent; text-align: center; -moz-appearance: textfield; }
+  .qty--lg input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .buy__error { margin: 10px 0 0; color: var(--sale); font-size: 13px; }
+
+  .acc { margin-top: 34px; border-top: 1px solid var(--line); }
+  .acc details { border-bottom: 1px solid var(--line); }
+  .acc summary {
+    list-style: none; cursor: pointer; padding: 18px 0; font-size: 11px;
+    display: flex; justify-content: space-between;
+  }
+  .acc summary::-webkit-details-marker { display: none; }
+  .acc summary::after { content: '+'; font-size: 16px; line-height: 1; }
+  .acc details[open] summary::after { content: '−'; }
+  .acc p { margin: 0 0 12px; font-size: 14px; color: var(--ink-soft); }
+  .acc a { display: inline-block; margin-bottom: 18px; font-size: 13px; }
+
+  .related { border-top: 1px solid var(--line); margin-top: clamp(40px, 6vw, 80px); }
+
+  @media (max-width: 900px) {
+    .pdp { grid-template-columns: 1fr; }
+    .info { position: static; }
+    .gallery { grid-template-columns: 1fr; }
+    .gallery__main {
+      grid-column: 1; display: grid; grid-auto-flow: column; grid-auto-columns: 100%;
+      overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; gap: 0;
+    }
+    .gallery__main::-webkit-scrollbar { display: none; }
+    .gallery__img { scroll-snap-align: start; }
+    .gallery__thumbs { grid-column: 1; grid-row: 2; position: static; grid-auto-flow: column; justify-content: start; grid-auto-columns: 60px; }
+  }
+</style>

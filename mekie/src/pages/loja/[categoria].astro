@@ -1,0 +1,38 @@
+---
+import Base from '../../layouts/Base.astro';
+import Collection from '../../components/Collection.astro';
+import { categories, products, productsIn, discount, type Product } from '../../data/products';
+
+export function getStaticPaths() {
+  const special = [
+    {
+      slug: 'novidades',
+      title: 'Novidades',
+      intro: 'As peças mais recentes da Mekie.',
+      image: '/images/site/banner-94.webp',
+      items: [...products].sort((a, b) => b.id - a.id).slice(0, 8),
+    },
+    {
+      slug: 'ultimas-unidades',
+      title: 'Últimas unidades',
+      intro: '25% de desconto enquanto houver stock.',
+      image: '/images/site/hero.webp',
+      items: products.filter((p) => discount(p) > 0),
+    },
+  ];
+  return [
+    ...special.map((s) => ({ params: { categoria: s.slug }, props: { title: s.title, intro: s.intro, image: s.image, items: s.items } })),
+    ...categories.map((c) => ({
+      params: { categoria: c.slug },
+      props: { title: c.plural, intro: undefined, image: c.image, items: productsIn(c.slug) },
+    })),
+  ];
+}
+
+interface Props { title: string; intro?: string; image?: string; items: Product[] }
+const { title, intro, image, items } = Astro.props;
+const { categoria } = Astro.params;
+---
+<Base title={title} description={`${title} Mekie — streetwear português com envio em 5 dias úteis.`}>
+  <Collection title={title} intro={intro} image={image} products={items} current={categoria!} />
+</Base>

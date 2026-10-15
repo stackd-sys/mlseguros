@@ -1,0 +1,53 @@
+---
+import { type Product, discount } from '../data/products';
+import { formatPrice } from '../data/site';
+interface Props { product: Product; eager?: boolean }
+const { product: p, eager = false } = Astro.props;
+const off = discount(p);
+---
+<article class="card">
+  <a href={`/produto/${p.slug}/`} class="card__media" aria-label={`${p.name} — ${p.color}`}>
+    {off > 0 && <span class="card__tag eyebrow">-{off}%</span>}
+    {p.badge && <span class="card__tag card__tag--right eyebrow">{p.badge}</span>}
+    <img src={p.images[0]} alt={`${p.name} ${p.color}`} width="600" height="600" loading={eager ? 'eager' : 'lazy'} class="card__img" />
+    {p.images[1] && <img src={p.images[1]} alt="" width="600" height="750" loading="lazy" class="card__img card__img--hover" />}
+  </a>
+  <div class="card__body">
+    <h3 class="card__title"><a href={`/produto/${p.slug}/`}>{p.name}</a></h3>
+    <p class="price">
+      {off > 0 && <del>{formatPrice(p.regularPrice)}</del>}
+      {off > 0 ? <ins>{formatPrice(p.price)}</ins> : <span>{formatPrice(p.price)}</span>}
+    </p>
+    <p class="card__meta eyebrow">{p.color}{p.sizes ? ` · ${p.sizes.length} tamanhos` : ' · Tamanho único'}</p>
+  </div>
+</article>
+
+<style>
+  .card { display: flex; flex-direction: column; text-align: center; }
+  .card__media {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .card__img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: contain;
+    padding: 8%;
+    transition: opacity .5s var(--ease), transform .8s var(--ease);
+  }
+  .card__img--hover { object-fit: cover; padding: 0; opacity: 0; }
+  .card__media:hover .card__img--hover { opacity: 1; }
+  .card__media:hover .card__img:not(.card__img--hover) { transform: scale(1.03); }
+  .card__tag {
+    position: absolute; top: 10px; left: 10px; z-index: 2;
+    font-size: 10.5px; color: var(--ink);
+  }
+  .card__tag--right { left: auto; right: 10px; }
+  .card__body { padding-top: 14px; display: grid; gap: 4px; justify-items: center; }
+  .card__title { margin: 0; font-size: 13.5px; font-weight: 500; }
+  .card__meta { margin: 6px 0 0; font-size: 10.5px; color: var(--ink-soft); }
+  @media (hover: none) { .card__img--hover { display: none; } }
+</style>

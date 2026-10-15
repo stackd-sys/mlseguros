@@ -1,0 +1,121 @@
+---
+import Base from '../layouts/Base.astro';
+import Carousel from '../components/Carousel.astro';
+import { products, categories, discount } from '../data/products';
+import { site } from '../data/site';
+
+const tiles = ['t-shirts', 'hoodie', 'meias'].map((s) => categories.find((c) => c.slug === s)!);
+const editorial = [
+  { href: '/sobre/', image: '/images/site/banner-92.webp', title: 'Sobre nós', cta: 'Ler mais' },
+  { href: site.instagram, image: '/images/site/banner-93.webp', title: 'O nosso mundo', cta: 'Seguir no Instagram', external: true },
+  { href: '/contactos/', image: '/images/products/tshirt-khaki-mushrooms-2.webp', title: 'Fala connosco', cta: 'Contactos' },
+];
+const maxOff = Math.max(...products.map(discount));
+---
+<Base overlayHeader popup>
+  <section class="hero">
+    <img class="hero__img" src="/images/site/hero.webp" alt="A comunidade Mekie vestida com a coleção, numa floresta" width="1600" height="1067" fetchpriority="high" />
+    <div class="hero__shade"></div>
+    <div class="hero__content">
+      <p class="eyebrow hero__kicker">Últimas unidades · -{maxOff}%</p>
+      <a href="/loja/ultimas-unidades/" class="pill pill--light">Comprar agora</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <p class="section-title eyebrow">Browse Mekie</p>
+      <Carousel products={products} label="Produtos em destaque" />
+      <div class="center"><a href="/loja/" class="pill">Ver tudo</a></div>
+    </div>
+  </section>
+
+  <section class="tiles">
+    <div class="container tiles__grid">
+      {tiles.map((c) => (
+        <a href={`/loja/${c.slug}/`} class="tile reveal">
+          <div class="tile__media"><img src={c.image} alt="" width="540" height="675" loading="lazy" /></div>
+          <span class="pill">Ver {c.plural}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="drop" id="novo-drop">
+    <img class="drop__img" src="/images/site/drop.webp" alt="Parede de tijolo com graffiti e o M da Mekie em denim, novelos de lã e um skate" width="1200" height="691" loading="lazy" />
+    <div class="drop__shade"></div>
+    <div class="drop__content container reveal">
+      <p class="eyebrow">Novo drop a caminho</p>
+      <h2 class="display drop__title">Consegues<br />esperar?</h2>
+      <button type="button" class="pill pill--light" data-popup-open>Sê o primeiro a saber</button>
+    </div>
+  </section>
+
+  <section class="editorial section">
+    <div class="container editorial__grid">
+      {editorial.map((e) => (
+        <a href={e.href} class="ed reveal" {...(e.external ? { target: '_blank', rel: 'noopener' } : {})}>
+          <div class="ed__media"><img src={e.image} alt="" width="540" height="675" loading="lazy" /></div>
+          <p class="ed__title eyebrow">{e.title}</p>
+          <span class="ed__cta eyebrow link-underline">{e.cta}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    height: calc(100svh - 34px);
+    min-height: 520px;
+    overflow: hidden;
+    color: #fff;
+    background: #222;
+  }
+  .hero__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; }
+  .hero__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,.15) 35%, rgba(0,0,0,.35) 100%); }
+  .hero__content {
+    position: absolute; left: 0; right: 0; bottom: clamp(40px, 8vh, 80px);
+    display: grid; justify-items: center; gap: 16px;
+  }
+  .hero__kicker { margin: 0; font-size: 11px; text-shadow: 0 1px 8px rgba(0,0,0,.4); }
+
+  .center { display: flex; justify-content: center; margin-top: 40px; }
+
+  .tiles { padding-bottom: clamp(56px, 8vw, 110px); }
+  .tiles__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .tile { display: grid; justify-items: center; gap: 18px; }
+  .tile__media { width: 100%; aspect-ratio: 3 / 4; overflow: hidden; }
+  .tile__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
+  .tile:hover .tile__media img { transform: scale(1.04); }
+
+  .drop {
+    position: relative;
+    min-height: clamp(460px, 70vh, 720px);
+    display: grid; align-items: center;
+    background: #000; color: #fff;
+    overflow: hidden;
+  }
+  .drop__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .drop__shade { position: absolute; inset: 0; background: rgba(0,0,0,.45); }
+  .drop__content { position: relative; display: grid; justify-items: center; text-align: center; gap: 22px; }
+  .drop__content .eyebrow { margin: 0; }
+  .drop__title { margin: 0; font-size: clamp(44px, 8vw, 104px); text-transform: uppercase; }
+
+  .editorial__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .ed { display: grid; gap: 12px; }
+  .ed__media { aspect-ratio: 1 / 1.08; overflow: hidden; }
+  .ed__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
+  .ed:hover .ed__media img { transform: scale(1.04); }
+  .ed__title { margin: 14px 0 0; font-size: 13px; }
+  .ed__cta { font-size: 10.5px; }
+
+  @media (max-width: 800px) {
+    .tiles__grid, .editorial__grid {
+      grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 78%;
+      overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    }
+    .tile, .ed { scroll-snap-align: start; }
+  }
+</style>

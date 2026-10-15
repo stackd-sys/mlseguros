@@ -1,0 +1,60 @@
+---
+import Icon from './Icon.astro';
+---
+<div class="popup" data-popup hidden>
+  <div class="popup__backdrop" data-popup-close></div>
+  <div class="popup__box" role="dialog" aria-modal="true" aria-labelledby="popup-title">
+    <div class="popup__content">
+      <img src="/images/site/logo.png" alt="Mekie" width="160" height="53" class="popup__logo" />
+      <p id="popup-title" class="popup__title">Novo drop a caminho.</p>
+      <p class="popup__sub">Sê o primeiro a saber quando chegar.</p>
+      <form class="popup__form" data-newsletter>
+        <label class="sr-only" for="popup-email">E-mail</label>
+        <input class="popup__input" id="popup-email" type="email" name="email" placeholder="E-MAIL" required autocomplete="email" />
+        <button class="pill pill--block" type="submit">Quero saber</button>
+        <p class="popup__msg" role="status" hidden></p>
+      </form>
+    </div>
+    <div class="popup__media">
+      <img src="/images/site/banner-93.webp" alt="" width="540" height="675" loading="lazy" />
+    </div>
+    <button type="button" class="popup__close" aria-label="Fechar" data-popup-close><Icon name="close" size={18} /></button>
+  </div>
+</div>
+
+<style>
+  .popup { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; padding: 16px; }
+  .popup[hidden] { display: none; }
+  .popup__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.45); animation: fadeP .3s; }
+  .popup__box {
+    position: relative;
+    display: grid; grid-template-columns: 1.45fr 1fr;
+    width: min(780px, 100%);
+    background: var(--bg);
+    box-shadow: 0 30px 60px rgba(0,0,0,.25);
+    animation: popIn .4s var(--ease);
+  }
+  .popup__content { padding: 48px 28px; display: grid; justify-items: center; text-align: center; align-content: center; }
+  .popup__logo { height: 40px; width: auto; margin-bottom: 22px; }
+  .popup__title { margin: 0; font-size: 20px; }
+  .popup__sub { margin: 2px 0 26px; font-size: 13px; }
+  .popup__form { width: 100%; display: grid; gap: 14px; }
+  .popup__input {
+    height: 46px; border-radius: 999px; border: 1px solid var(--ink);
+    padding: 0 18px; background: transparent; font-size: 12px; letter-spacing: .06em;
+  }
+  .popup__input:focus { outline: none; box-shadow: 0 0 0 2px var(--ink); }
+  .popup__msg { margin: 0; font-size: 13px; }
+  .popup__media img { width: 100%; height: 100%; object-fit: cover; }
+  .popup__close {
+    position: absolute; top: 12px; right: 12px;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255,255,255,.85); display: grid; place-items: center;
+  }
+  @keyframes popIn { from { opacity: 0; transform: translateY(16px) scale(.98); } }
+  @keyframes fadeP { from { opacity: 0; } }
+  @media (max-width: 640px) {
+    .popup__box { grid-template-columns: 1fr; }
+    .popup__media { display: none; }
+  }
+</style>
