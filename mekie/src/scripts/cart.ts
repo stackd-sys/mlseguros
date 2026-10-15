@@ -77,3 +77,11 @@ window.addEventListener('storage', (e) => {
 });
 
 export const money = (v: number) => `${v.toFixed(2).replace('.', ',')}€`;
+
+/* Caminhos do site; `data-base` só existe em pré-visualizações servidas numa subpasta. */
+export const href = (path: string) => {
+  const base = document.documentElement.dataset.base;
+  if (!base) return path;
+  const rel = path.replace(/^\//, '');
+  return base + (rel === '' || rel.endsWith('/') ? `${rel}index.html` : rel);
+};

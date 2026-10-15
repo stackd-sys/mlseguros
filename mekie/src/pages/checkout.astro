@@ -58,7 +58,7 @@ import { site } from '../data/site';
 </Base>
 
 <script>
-  import { cart, money } from '../scripts/cart';
+  import { cart, money, href } from '../scripts/cart';
   const FREE = Number(document.documentElement.dataset.freeShipping || 60);
   const EMAIL = document.documentElement.dataset.email || '';
   const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
@@ -71,7 +71,7 @@ import { site } from '../data/site';
     document.querySelector<HTMLElement>('[data-co-ship]')!.textContent = free ? 'Grátis' : 'A confirmar';
     document.querySelector<HTMLElement>('[data-co-total]')!.textContent = money(sub) + (free ? '' : ' + portes');
     document.querySelector<HTMLElement>('[data-co-lines]')!.innerHTML = lines
-      .map((l) => `<li><img src="${esc(l.image)}" alt="" width="64" height="80" /><span class="q">${l.qty}</span>
+      .map((l) => `<li><img src="${href(esc(l.image))}" alt="" width="64" height="80" /><span class="q">${l.qty}</span>
         <div><p>${esc(l.name)}</p><small>${esc(l.color)}${l.size ? ` · ${esc(l.size)}` : ''}</small></div>
         <span>${money(l.qty * l.price)}</span></li>`)
       .join('');

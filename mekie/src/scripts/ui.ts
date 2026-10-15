@@ -1,4 +1,4 @@
-import { cart, money } from './cart';
+import { cart, money, href } from './cart';
 
 const FREE_FROM = Number(document.documentElement.dataset.freeShipping || 60);
 const NEWSLETTER = document.documentElement.dataset.newsletterEndpoint || '';
@@ -90,9 +90,9 @@ cart.subscribe((lines) => {
       .map(
         (l) => `
       <li class="line" data-key="${esc(l.key)}">
-        <a href="/produto/${esc(l.slug)}/"><img class="line__img" src="${esc(l.image)}" alt="" width="84" height="105" /></a>
+        <a href="${href(`/produto/${esc(l.slug)}/`)}"><img class="line__img" src="${href(esc(l.image))}" alt="" width="84" height="105" /></a>
         <div>
-          <p class="line__name"><a href="/produto/${esc(l.slug)}/">${esc(l.name)}</a></p>
+          <p class="line__name"><a href="${href(`/produto/${esc(l.slug)}/`)}">${esc(l.name)}</a></p>
           <p class="line__meta">${esc(l.color)}${l.size ? ` · Tamanho ${esc(l.size)}` : ''}</p>
           <div class="qty">
             <button type="button" data-qty="-1" aria-label="Diminuir quantidade">−</button>
