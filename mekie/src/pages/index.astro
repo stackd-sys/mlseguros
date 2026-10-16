@@ -3,12 +3,11 @@ import Base from '../layouts/Base.astro';
 import Carousel from '../components/Carousel.astro';
 import Img from '../components/Img.astro';
 import { products } from '../data/products';
-import { site } from '../data/site';
 
 const tiles = [
-  { image: '/images/lookbook/mushrooms-hoodie-yellow.webp', alt: 'Rafa com o hoodie Cogumelos amarelo pastel, visto de baixo entre as mãos' },
-  { image: '/images/lookbook/hoodie-black-cuff.webp', alt: 'Punho de um hoodie preto com MEKIE bordado a vermelho' },
-  { image: '/images/lookbook/hands-duo.webp', alt: 'Duas amigas a tapar a cara com a mão, uma de t-shirt branca e outra de sweatshirt preta Mekie' },
+  { image: '/images/lookbook/mushrooms-sleeve.webp', alt: 'Logótipo Mekie bordado na manga de uma t-shirt bege' },
+  { image: '/images/lookbook/stack-leaves.webp', alt: 'Hoodies e t-shirts Mekie com cogumelos bordados e um bucket hat, entre folhas' },
+  { image: '/images/lookbook/tee-sky.webp', alt: 'Rapariga com a t-shirt Cogumelos bege, fotografada de baixo contra o céu' },
 ];
 const bands = [
   {
@@ -26,13 +25,8 @@ const bands = [
     alts: ['Rapariga de capuz com o hoodie Esqueleto preto, junto ao lago', 'Rapaz com o hoodie Esqueleto amarelo pastel e rapariga com sweatshirt preta Mekie'],
   },
 ];
-const editorial = [
-  { href: '/sobre/', image: '/images/lookbook/mushrooms-sleeve.webp', title: 'Sobre nós', cta: 'Ler mais' },
-  { href: site.instagram, image: '/images/lookbook/stack-leaves.webp', title: 'O nosso mundo', cta: 'Seguir no Instagram', external: true },
-  { href: '/contactos/', image: '/images/lookbook/tee-sky.webp', title: 'Fala connosco', cta: 'Contactos' },
-];
 /* Um produto de cada modelo: um cap, umas meias, um scrunchie, uma t-shirt e um hoodie de cada bordado */
-const family = (p: (typeof products)[number]) => (['caps', 'meias', 'scrunchies'].includes(p.category) ? p.category : p.name);
+const family = (p: (typeof products)[number]) => (['caps', 'meias', 'scrunchies', 'tote-bag'].includes(p.category) ? p.category : p.name);
 const featured = products.filter((p, i) => products.findIndex((o) => family(o) === family(p)) === i);
 
 ---
@@ -68,28 +62,17 @@ const featured = products.filter((p, i) => products.findIndex((o) => family(o) =
       </a>
       {i === bands.length - 1 && (
         <section class="tiles section">
-          <a href="/loja/hoodies-crewnecks/" class="tiles__grid" aria-label="Ver hoodies">
+          <a href="/loja/" class="tiles__grid" aria-label="Ver loja">
             {tiles.map((t) => (
               <div class="tile__media"><Img src={t.image} sizes="(max-width: 800px) 78vw, 33vw" alt={t.alt} width="1024" height="1536" loading="lazy" /></div>
             ))}
           </a>
-          <div class="center"><a href="/loja/hoodies-crewnecks/" class="pill">Ver hoodies</a></div>
+          <div class="center"><a href="/loja/" class="pill">Ver loja</a></div>
         </section>
       )}
     </>
   ))}
 
-  <section class="editorial section">
-    <div class="container editorial__grid">
-      {editorial.map((e) => (
-        <a href={e.href} class="ed" {...(e.external ? { target: '_blank', rel: 'noopener' } : {})}>
-          <div class="ed__media"><Img src={e.image} sizes="(max-width: 800px) 78vw, 33vw" alt="" width="540" height="675" loading="lazy" /></div>
-          <p class="ed__title eyebrow">{e.title}</p>
-          <span class="ed__cta eyebrow link-underline">{e.cta}</span>
-        </a>
-      ))}
-    </div>
-  </section>
 </Base>
 
 <style>
@@ -134,27 +117,21 @@ const featured = products.filter((p, i) => products.findIndex((o) => family(o) =
   .band__overlay .eyebrow { margin: 0; font-size: 11px; }
   .band__title { margin: 0 0 10px; font-size: clamp(34px, 8.5vw, 128px); text-transform: uppercase; }
 
-  .tiles { padding-top: 8px; }
+  .band + .band { margin-top: clamp(16px, 2vw, 28px); }
+  .tiles { padding-top: clamp(56px, 8vw, 120px); }
   .tiles__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 8px; }
   .tile__media { width: 100%; aspect-ratio: 2 / 3; overflow: hidden; }
   .tile__media :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
   .tiles__grid:hover .tile__media :global(img) { transform: scale(1.02); }
 
-  .editorial__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
-  .ed { display: grid; gap: 12px; }
-  .ed__media { aspect-ratio: 1 / 1.08; overflow: hidden; }
-  .ed__media :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
-  .ed:hover .ed__media :global(img) { transform: scale(1.04); }
-  .ed__title { margin: 14px 0 0; font-size: 13px; }
-  .ed__cta { font-size: 10.5px; }
 
   @media (max-width: 800px) {
-    .tiles__grid, .editorial__grid {
+    .tiles__grid {
       grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 78%;
       overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
     }
-    .tiles__grid::-webkit-scrollbar, .editorial__grid::-webkit-scrollbar { display: none; }
-    .tile__media, .ed { scroll-snap-align: start; }
+    .tiles__grid::-webkit-scrollbar { display: none; }
+    .tile__media { scroll-snap-align: start; }
   }
   @media (max-width: 700px) {
     .hero { height: min(88svh, 720px); }

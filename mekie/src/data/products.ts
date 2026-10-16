@@ -51,7 +51,7 @@ export const categories: Category[] = [
   { slug: 'bucket-hat', name: 'Bucket Hat', parent: 'acessorios', image: '/images/products/bucket-white-1.webp' },
   { slug: 'meias', name: 'Meias', parent: 'acessorios', image: '/images/products/socks-mekie-1.webp' },
   { slug: 'scrunchies', name: 'Scrunchies', parent: 'acessorios', image: '/images/products/scrunchie-rosa-1.webp' },
-  { slug: 'tote-bag', name: 'Tote Bag', parent: 'acessorios', image: '/images/lookbook/stack-leaves.webp' },
+  { slug: 'tote-bag', name: 'Tote Bag', parent: 'acessorios', image: '/images/products/tote-planetas-black-1.webp' },
 ];
 
 export const collections: Collection[] = [
@@ -130,7 +130,7 @@ const bucket: ProductDetails = {
   ],
 };
 
-/* Prontas para quando a sweatshirt e a tote bag entrarem na loja */
+/* Pronta para quando a sweatshirt entrar na loja */
 export const sweatshirtDetails: ProductDetails = {
   features: [
     'Sweatshirt unissexo de gola redonda clássica',
@@ -145,7 +145,7 @@ export const sweatshirtDetails: ProductDetails = {
   composition: ['100% algodão', '288 g/m², um tecido encorpado'],
 };
 
-export const toteDetails: ProductDetails = {
+const toteDetails: ProductDetails = {
   features: [
     'Tote bag em sarja de algodão orgânico, de cor lisa',
     'Espaçosa: cabe compras, livros e muito mais',
@@ -319,6 +319,19 @@ export const products: Product[] = [
     details: cap,
   },
   {
+    id: 9003,
+    slug: 'cap-mekie-castanho',
+    name: 'Cap Mekie',
+    category: 'caps',
+    color: 'Castanho',
+    regularPrice: 30,
+    price: 30,
+    stock: 0,
+    images: [img('cap-brown-1')],
+    description: TAGLINE,
+    details: cap,
+  },
+  {
     id: 3583,
     slug: 'bucket-hat-mekie',
     name: 'Bucket Hat Mekie',
@@ -385,6 +398,60 @@ export const products: Product[] = [
     images: [img('scrunchie-dourado-1'), img('scrunchie-dourado')],
     details: scrunchie,
     description: TAGLINE,
+  },
+  {
+    id: 9004,
+    slug: 'tote-bag-planetas-preta',
+    name: 'Tote Bag Planetas',
+    category: 'tote-bag',
+    color: 'Preto',
+    regularPrice: 25,
+    price: 25,
+    stock: 1,
+    images: [img('tote-planetas-black-1')],
+    description: TAGLINE,
+    details: toteDetails,
+  },
+  {
+    id: 9005,
+    slug: 'tote-bag-planetas-bege',
+    name: 'Tote Bag Planetas',
+    category: 'tote-bag',
+    color: 'Bege',
+    regularPrice: 25,
+    price: 25,
+    stock: 0,
+    images: [img('tote-planetas-beige-1')],
+    description: TAGLINE,
+    details: toteDetails,
+  },
+  {
+    id: 9006,
+    slug: 'tote-bag-cogumelos-bege',
+    name: 'Tote Bag Cogumelos',
+    category: 'tote-bag',
+    collection: 'cogumelos',
+    color: 'Bege',
+    regularPrice: 25,
+    price: 25,
+    stock: 1,
+    images: [img('tote-cogumelos-beige-1')],
+    description: TAGLINE,
+    details: toteDetails,
+  },
+  {
+    id: 9007,
+    slug: 'tote-bag-cogumelos-preta',
+    name: 'Tote Bag Cogumelos',
+    category: 'tote-bag',
+    collection: 'cogumelos',
+    color: 'Preto',
+    regularPrice: 25,
+    price: 25,
+    stock: 0,
+    images: [img('tote-cogumelos-black-1')],
+    description: TAGLINE,
+    details: toteDetails,
   },
 ];
 
