@@ -6,7 +6,6 @@ interface Props { overlay?: boolean }
 const { overlay = false } = Astro.props;
 const path = Astro.url.pathname;
 const nav = [
-  { href: '/loja/novidades/', label: 'Novidades' },
   { href: '/loja/', label: 'Loja', mega: 'shop' },
   { href: '/loja/ultimas-unidades/', label: 'Últimas unidades' },
   { href: '/sobre/', label: 'Sobre nós' },
@@ -73,7 +72,6 @@ const current = nav
                 <div class="mega__col">
                   <p class="mega__heading eyebrow">Destaques</p>
                   <a href="/loja/" class="mega__link">Ver tudo</a>
-                  <a href="/loja/novidades/" class="mega__link">Novidades</a>
                   <a href="/loja/ultimas-unidades/" class="mega__link">Últimas unidades</a>
                 </div>
                 <a href="/loja/hoodies-crewnecks/" class="mega__card">
@@ -97,7 +95,6 @@ const current = nav
       <button type="button" class="header__icon" aria-label="Fechar menu" data-menu-close><Icon name="close" size={22} /></button>
     </div>
     <ul class="mnav__list">
-      <li><a href="/loja/novidades/">Novidades</a></li>
       <li><a href="/loja/">Loja</a></li>
       {topCategories.map((c) => (
         <>

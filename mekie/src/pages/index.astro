@@ -22,8 +22,8 @@ const bands = [
     href: '/colecoes/esqueleto/',
     kicker: 'Coleção',
     title: 'Esqueleto',
-    images: ['/images/products/hoodie-skeleton-2.webp', '/images/site/banner-94.webp'],
-    alts: ['Rapaz com o hoodie Esqueleto preto num skate park junto ao mar', 'Rapaz com o hoodie Esqueleto claro numa falésia'],
+    images: ['/images/lookbook/esqueleto-black-hood.webp', '/images/lookbook/esqueleto-duo.webp'],
+    alts: ['Rapariga de capuz com o hoodie Esqueleto preto, junto ao lago', 'Rapaz com o hoodie Esqueleto amarelo pastel e rapariga com sweatshirt preta Mekie'],
   },
 ];
 const editorial = [
@@ -31,26 +31,25 @@ const editorial = [
   { href: site.instagram, image: '/images/lookbook/mushrooms-sleeve.webp', title: 'O nosso mundo', cta: 'Seguir no Instagram', external: true },
   { href: '/contactos/', image: '/images/products/scrunchie-dourado.webp', title: 'Fala connosco', cta: 'Contactos' },
 ];
-/* Um de cada modelo primeiro (novidades à frente), depois as outras cores */
-const byNew = [...products].sort((a, b) => Number(b.badge === 'Novo') - Number(a.badge === 'Novo'));
-const firsts = byNew.filter((p, i) => byNew.findIndex((o) => o.name === p.name) === i);
-const featured = [...firsts, ...byNew.filter((p) => !firsts.includes(p))];
+/* Um produto de cada modelo: um cap, umas meias, um scrunchie, uma t-shirt e um hoodie de cada bordado */
+const family = (p: (typeof products)[number]) => (['caps', 'meias', 'scrunchies'].includes(p.category) ? p.category : p.name);
+const featured = products.filter((p, i) => products.findIndex((o) => family(o) === family(p)) === i);
 
 ---
 <Base overlayHeader popup>
   <section class="hero">
-    <Img class="hero__img" src="/images/site/hero.webp" largeW={1600} sizes="100vw" alt="A comunidade Mekie vestida com a coleção, numa floresta" width="1600" height="1067" fetchpriority="high" />
+    <Img class="hero__img" src="/images/site/hero.webp" largeW={1536} sizes="100vw" alt="Amigos da Mekie junto a um lago, com hoodie amarelo, sweatshirt preta e t-shirts com cogumelos" width="1536" height="1024" fetchpriority="high" />
     <div class="hero__shade"></div>
     <div class="hero__content">
       <h1 class="hero__title">Bro, o básico nunca falha</h1>
-      <a href="/loja/novidades/" class="pill pill--light hero__cta">Comprar agora</a>
+      <a href="/loja/" class="pill pill--light hero__cta">Comprar agora</a>
     </div>
   </section>
 
   <section class="section browse">
     <div class="container">
-      <h2 class="sr-only">Novidades</h2>
-      <Carousel products={featured} label="Novidades" />
+      <h2 class="sr-only">Produtos</h2>
+      <Carousel products={featured} label="Produtos" />
       <div class="center"><a href="/loja/" class="pill">Ver tudo</a></div>
     </div>
   </section>
@@ -101,7 +100,7 @@ const featured = [...firsts, ...byNew.filter((p) => !firsts.includes(p))];
     color: #fff;
     background: #1d2318;
   }
-  .hero :global(.hero__img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
+  .hero :global(.hero__img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
   .hero__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,.1) 30%, rgba(0,0,0,.15) 55%, rgba(0,0,0,.55) 100%); }
   .hero__content {
     position: absolute; left: 0; right: 0; bottom: clamp(44px, 8vh, 80px);

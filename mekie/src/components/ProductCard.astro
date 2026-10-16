@@ -7,7 +7,7 @@ const { product: p, eager = false } = Astro.props;
 const off = discount(p);
 const colors = variantsOf(p).length;
 const label = p.badge ?? (off > 0 ? `-${off}%` : undefined);
-const cartData = JSON.stringify({ id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0], stock: p.stock });
+const cartData = JSON.stringify({ id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0], stock: p.stock, madeToOrderDays: p.madeToOrderDays });
 const sizes = '(max-width: 700px) 50vw, 25vw';
 /* recortes de produto (fundo transparente) ficam inteiros; fotos ocupam o cartão */
 const cutout = /\/products\/.+-1\.webp$/.test(p.images[0]);
@@ -39,7 +39,7 @@ const cutout = /\/products\/.+-1\.webp$/.test(p.images[0]);
       {off > 0 ? <ins><span class="sr-only">Preço atual </span>{formatPrice(p.price)}</ins> : <span>{formatPrice(p.price)}</span>}
     </p>
     <p class="card__meta eyebrow">{colors > 1 ? `${colors} cores disponíveis` : p.color}</p>
-    {p.stock !== undefined && p.stock <= 3 && <p class="card__stock eyebrow">{p.stock === 1 ? 'Última unidade' : `Últimas ${p.stock} unidades`}</p>}
+    {!p.madeToOrderDays && p.stock !== undefined && p.stock <= 3 && <p class="card__stock eyebrow">{p.stock === 1 ? 'Última unidade' : `Últimas ${p.stock} unidades`}</p>}
   </div>
 </article>
 

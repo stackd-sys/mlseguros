@@ -18,7 +18,7 @@ const related = [
   ...products.filter((o) => o.category === p.category && o.slug !== p.slug && o.collection !== p.collection),
   ...products.filter((o) => o.category !== p.category && o.collection !== p.collection),
 ].slice(0, 8);
-const cartData = { id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0], stock: p.stock };
+const cartData = { id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0], stock: p.stock, madeToOrderDays: p.madeToOrderDays };
 const payments = ['MB WAY', 'Multibanco', 'Visa', 'Mastercard', 'Apple Pay', 'Google Pay'];
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -71,7 +71,12 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
         {off > 0 && <span class="info__off">-{off}%</span>}
       </p>
       <p class="info__tax">IVA incluído. Portes calculados no checkout.</p>
-      {p.stock !== undefined && p.stock <= 3 && (
+      {p.madeToOrderDays ? (
+        <div class="info__order">
+          <p><strong>{p.stock === 1 ? '1 unidade pronta a enviar.' : `${p.stock ?? 0} unidades prontas a enviar.`}</strong> Depois disso fazemos por encomenda, com entrega em {p.madeToOrderDays} dias úteis.</p>
+          <a href="/contactos/" class="link-underline">Queres outra cor? Fala connosco</a>
+        </div>
+      ) : p.stock !== undefined && p.stock <= 3 && (
         <p class="info__stock"><span class="info__dot"></span>{p.stock === 1 ? 'Só resta 1 unidade' : `Só restam ${p.stock} unidades`}</p>
       )}
 
@@ -136,12 +141,16 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
             </ul>
           </div>
         </details>
-        {p.details && (
+        {p.details && (p.details.composition.length > 0 || p.details.care) && (
           <details>
             <summary class="eyebrow">Composição e cuidados</summary>
             <div class="acc__body">
-              <p class="acc__label">Composição</p>
-              <ul>{p.details.composition.map((c) => <li>{c}</li>)}</ul>
+              {p.details.composition.length > 0 && (
+                <>
+                  <p class="acc__label">Composição</p>
+                  <ul>{p.details.composition.map((c) => <li>{c}</li>)}</ul>
+                </>
+              )}
               {p.details.care && (
                 <>
                   <p class="acc__label">Cuidados</p>
@@ -307,6 +316,9 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
   .acc__body p { margin: 0 0 10px; }
   .acc__body ul { margin: 0 0 12px; padding-left: 18px; display: grid; gap: 4px; }
   .acc__label { color: var(--ink); font-size: 12.5px; margin: 4px 0 6px !important; }
+  .info__order { margin: -14px 0 24px; padding: 14px 16px; background: var(--surface); font-size: 13px; }
+  .info__order p { margin: 0 0 8px; }
+  .info__order a { font-size: 12.5px; }
   .info__stock { display: flex; align-items: center; gap: 8px; margin: -14px 0 24px; font-size: 12.5px; color: var(--sale); }
   .info__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sale); animation: pulse 1.8s ease-in-out infinite; }
   @keyframes pulse { 50% { opacity: .35; } }

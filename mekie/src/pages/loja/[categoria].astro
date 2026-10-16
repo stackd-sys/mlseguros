@@ -6,12 +6,6 @@ import { categories, products, productsIn, lowStock, type Product } from '../../
 export function getStaticPaths() {
   const special = [
     {
-      slug: 'novidades',
-      title: 'Novidades',
-      intro: 'As peças que chegaram agora à loja.',
-      items: products.filter((p) => p.badge === 'Novo'),
-    },
-    {
       slug: 'ultimas-unidades',
       title: 'Últimas unidades',
       intro: 'Peças com poucas unidades em stock.',

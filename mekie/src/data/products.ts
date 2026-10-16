@@ -31,6 +31,8 @@ export type Product = {
   sizes?: string[];
   /** Unidades em stock quando são poucas; sem valor = stock normal. */
   stock?: number;
+  /** Feito por encomenda quando não há stock: prazo de entrega em dias úteis. */
+  madeToOrderDays?: number;
   images: string[];
   badge?: string;
   description: string;
@@ -44,7 +46,7 @@ export const categories: Category[] = [
   { slug: 'caps', name: 'Caps', parent: 'acessorios', image: '/images/products/cap-black-1.webp' },
   { slug: 'bucket-hat', name: 'Bucket Hat', parent: 'acessorios', image: '/images/products/bucket-white-1.webp' },
   { slug: 'meias', name: 'Meias', parent: 'acessorios', image: '/images/products/socks-mekie-1.webp' },
-  { slug: 'scrunchies', name: 'Scrunchies', parent: 'acessorios', image: '/images/products/scrunchie-rosa.webp' },
+  { slug: 'scrunchies', name: 'Scrunchies', parent: 'acessorios', image: '/images/products/scrunchie-rosa-1.webp' },
   { slug: 'tote-bag', name: 'Tote Bag', parent: 'acessorios', image: '/images/lookbook/stack-leaves.webp' },
 ];
 
@@ -59,8 +61,7 @@ export const collections: Collection[] = [
     slug: 'esqueleto',
     name: 'Esqueleto',
     intro: 'O esqueleto Mekie bordado em hoodies e estampado em meias.',
-    // TODO: substituir pelas fotos reais da coleção Esqueleto (a Mekie vai enviar)
-    image: '/images/products/hoodie-skeleton-2.webp',
+    image: '/images/lookbook/esqueleto-black-hood.webp',
   },
 ];
 
@@ -110,6 +111,59 @@ const cap: ProductDetails = {
   composition: ['100% algodão (bombazina)'],
 };
 
+const bucket: ProductDetails = {
+  features: [
+    'Bucket hat que protege do sol e completa qualquer look',
+    'Aba clássica e perfil alto',
+    'Tamanho único, que serve a maioria das pessoas',
+    'Tecido respirável e costura cuidada',
+    'Ideal para o verão',
+  ],
+  composition: [
+    'Sarja 100% algodão orgânico',
+    'Algodão orgânico com certificação GOTS',
+    'Tecido com certificação OEKO-TEX Standard 100',
+  ],
+};
+
+/* Prontas para quando a sweatshirt e a tote bag entrarem na loja */
+export const sweatshirtDetails: ProductDetails = {
+  features: [
+    'Sweatshirt unissexo de gola redonda clássica',
+    'Corte unissexo que valoriza a silhueta',
+    'Exterior macio',
+    'Malha de trama fechada com 3 fios',
+    'Costuras laterais',
+    'Aplique de tecido na parte de trás',
+    'Gola, punhos e bainha em canelado com costura dupla',
+    'Etiqueta removível',
+  ],
+  composition: ['100% algodão', '288 g/m², um tecido encorpado'],
+};
+
+export const toteDetails: ProductDetails = {
+  features: [
+    'Tote bag em sarja de algodão orgânico, de cor lisa',
+    'Espaçosa: cabe compras, livros e muito mais',
+    'Compartimento principal aberto',
+    'Alças duplas com 2,5 cm de largura e 62,2 cm de comprimento',
+    'Dimensões: 40,6 × 35,6 × 12,7 cm',
+    'Aguenta até 13,6 kg',
+  ],
+  composition: [
+    'Sarja 3/1 100% algodão orgânico',
+    '272 g/m²',
+    'Algodão orgânico com certificações GOTS e OCS',
+    'Certificação OEKO-TEX Standard 100',
+    'Selo vegano aprovado pela PETA',
+  ],
+};
+
+const scrunchie: ProductDetails = {
+  features: ['Feito à mão em crochet'],
+  composition: [],
+};
+
 const socks: ProductDetails = {
   features: [
     'Meias de cano médio (crew), unissexo',
@@ -131,7 +185,6 @@ export const products: Product[] = [
     price: 30,
     stock: 1,
     images: [img('cap-black-1')],
-    badge: 'Novo',
     description: TAGLINE,
     details: cap,
   },
@@ -145,7 +198,6 @@ export const products: Product[] = [
     price: 30,
     stock: 1,
     images: [img('cap-navy-1')],
-    badge: 'Novo',
     description: TAGLINE,
     details: cap,
   },
@@ -159,7 +211,6 @@ export const products: Product[] = [
     price: 30,
     stock: 1,
     images: [img('cap-olive-1')],
-    badge: 'Novo',
     description: TAGLINE,
     details: cap,
   },
@@ -173,8 +224,8 @@ export const products: Product[] = [
     price: 30,
     stock: 1,
     images: [img('bucket-white-1'), look('stack-leaves')],
-    badge: 'Novo',
-    description: TAGLINE,
+    details: bucket,
+    description: 'Bro, o básico nunca falha. Feito em algodão orgânico certificado.',
   },
   {
     id: 3572,
@@ -187,7 +238,6 @@ export const products: Product[] = [
     price: 70,
     sizes: SIZES,
     images: [img('hoodie-cogumelos-yellow-1'), look('mushrooms-hoodie-yellow'), look('stack-leaves')],
-    badge: 'Novo',
     description: TAGLINE,
     details: hoodie('cogumelos'),
   },
@@ -202,7 +252,6 @@ export const products: Product[] = [
     price: 70,
     sizes: SIZES,
     images: [img('hoodie-cogumelos-black-1'), look('hoodie-black-cuff')],
-    badge: 'Novo',
     description: TAGLINE,
     details: hoodie('cogumelos'),
   },
@@ -216,8 +265,7 @@ export const products: Product[] = [
     regularPrice: 70,
     price: 70,
     sizes: SIZES,
-    images: [img('hoodie-esqueleto-pastel-1')],
-    badge: 'Novo',
+    images: [img('hoodie-esqueleto-yellow-1'), look('esqueleto-duo')],
     description: TAGLINE,
     details: hoodie('esqueleto'),
   },
@@ -231,7 +279,7 @@ export const products: Product[] = [
     regularPrice: 70,
     price: 70,
     sizes: SIZES,
-    images: [img('hoodie-skeleton-1')],
+    images: [img('hoodie-skeleton-1'), look('esqueleto-black-hood'), look('hoodie-black-cuff')],
     description: TAGLINE,
     details: hoodie('esqueleto'),
   },
@@ -258,7 +306,7 @@ export const products: Product[] = [
     regularPrice: 20,
     price: 20,
     stock: 1,
-    images: [img('socks-mekie-1')],
+    images: [img('socks-mekie-1'), img('socks-mekie-2')],
     description: TAGLINE,
     details: socks,
   },
@@ -270,8 +318,10 @@ export const products: Product[] = [
     color: 'Rosa',
     regularPrice: 15,
     price: 15,
-    images: [img('scrunchie-rosa')],
-    badge: 'Novo',
+    stock: 1,
+    madeToOrderDays: 10,
+    images: [img('scrunchie-rosa-1'), img('scrunchie-rosa')],
+    details: scrunchie,
     description: TAGLINE,
   },
   {
@@ -282,8 +332,10 @@ export const products: Product[] = [
     color: 'Dourado',
     regularPrice: 15,
     price: 15,
-    images: [img('scrunchie-dourado')],
-    badge: 'Novo',
+    stock: 1,
+    madeToOrderDays: 10,
+    images: [img('scrunchie-dourado-1'), img('scrunchie-dourado')],
+    details: scrunchie,
     description: TAGLINE,
   },
   {
@@ -334,7 +386,7 @@ export const productsIn = (slug: string) => {
   return products.filter((p) => slugs.includes(p.category));
 };
 export const productsInCollection = (slug: string) => products.filter((p) => p.collection === slug);
-export const lowStock = () => products.filter((p) => p.stock !== undefined && p.stock <= 3);
+export const lowStock = () => products.filter((p) => p.stock !== undefined && p.stock <= 3 && !p.madeToOrderDays);
 export const variantsOf = (p: Product) => products.filter((o) => o.name === p.name);
 export const discount = (p: Product) =>
   p.regularPrice > p.price ? Math.round((1 - p.price / p.regularPrice) * 100) : 0;
