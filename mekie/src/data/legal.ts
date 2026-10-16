@@ -42,12 +42,12 @@ export const legalPages: LegalPage[] = [
       },
       {
         heading: 'Prazos de entrega',
-        body: ['O prazo estimado de entrega é de 5 dias úteis após a confirmação do pagamento da encomenda. Note que em épocas festivas ou de saldos, este prazo poderá sofrer ligeiras alterações.'],
+        body: ['O prazo estimado de entrega é de 7 dias úteis após a confirmação do pagamento da encomenda. Note que em épocas festivas ou de saldos, este prazo poderá sofrer ligeiras alterações.'],
       },
       {
         heading: 'Custos de envio',
         body: [
-          'Envio gratuito: para encomendas de valor igual ou superior a 60€.',
+          'Envio gratuito: para encomendas de valor igual ou superior a 65€.',
           'Restantes envios: o custo do envio é calculado e apresentado de forma transparente no momento do checkout, antes de finalizar o pagamento.',
         ],
       },

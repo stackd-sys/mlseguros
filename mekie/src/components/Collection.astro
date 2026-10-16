@@ -7,7 +7,7 @@ const { title, intro, products, current, image } = Astro.props;
 const chips = [
   { href: '/loja/', label: 'Tudo', key: '' },
   ...(lowStock().length ? [{ href: '/loja/ultimas-unidades/', label: 'Últimas unidades', key: 'ultimas-unidades' }] : []),
-  ...categories.map((c) => ({ href: `/loja/${c.slug}/`, label: c.name, key: c.slug, soon: productsIn(c.slug).length === 0 })),
+  ...categories.filter((c) => c.slug !== 'acessorios').map((c) => ({ href: `/loja/${c.slug}/`, label: c.name, key: c.slug, soon: productsIn(c.slug).length === 0 })),
 ];
 ---
 {image ? (

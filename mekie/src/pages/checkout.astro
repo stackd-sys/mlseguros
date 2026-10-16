@@ -68,12 +68,14 @@ import { site } from '../data/site';
 
 <script>
   import { cart, money, href } from '../scripts/cart';
-  const FREE = Number(document.documentElement.dataset.freeShipping || 60);
-  const CODE = (document.documentElement.dataset.welcomeCode || '').toUpperCase();
+  import * as newsletter from '../scripts/newsletter';
+  const FREE = Number(document.documentElement.dataset.freeShipping || 65);
+  const CODE = newsletter.CODE;
   const RATE = 0.1;
   let applied = '';
   try { applied = localStorage.getItem('mekie-code-applied') || ''; } catch {}
   const EMAIL = document.documentElement.dataset.email || '';
+  const made = (l: (typeof cart.lines)[number]) => (l.madeToOrderDays ? Math.max(0, l.qty - (l.stock ?? 0)) : 0);
   const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
   const codeInput = document.querySelector<HTMLInputElement>('[data-code-input]')!;
@@ -102,7 +104,8 @@ import { site } from '../data/site';
 
   const render = (lines: typeof cart.lines) => {
     const { sub, disc, after } = totals();
-    const free = after >= FREE;
+    /* os portes grátis contam pelo subtotal, antes do desconto, tal como o carrinho mostra */
+    const free = sub >= FREE;
     const discRow = document.querySelector<HTMLElement>('[data-co-discount-row]')!;
     discRow.hidden = disc === 0;
     document.querySelector<HTMLElement>('[data-co-discount-label]')!.textContent = `Desconto ${applied}`;
@@ -113,25 +116,56 @@ import { site } from '../data/site';
     document.querySelector<HTMLElement>('[data-co-total]')!.textContent = money(after) + (free ? '' : ' + portes');
     document.querySelector<HTMLElement>('[data-co-lines]')!.innerHTML = lines
       .map((l) => `<li><img src="${href(esc(l.image))}" alt="" width="64" height="80" /><span class="q">${l.qty}</span>
-        <div><p>${esc(l.name)}</p><small>${esc(l.color)}${l.size ? ` · ${esc(l.size)}` : ''}</small></div>
+        <div><p>${esc(l.name)}</p><small>${esc(l.color)}${l.size ? ` · ${esc(l.size)}` : ''}${made(l) ? `<br>${made(l)} por encomenda, entrega em ${l.madeToOrderDays} dias úteis` : ''}</small></div>
         <span>${money(l.qty * l.price)}</span></li>`)
       .join('');
   };
   cart.subscribe(render);
 
-  document.querySelector<HTMLFormElement>('[data-co-form]')?.addEventListener('submit', (e) => {
+  const form = document.querySelector<HTMLFormElement>('[data-co-form]');
+  const submitBtn = form?.querySelector<HTMLButtonElement>('[type=submit]');
+  const codeError = (text: string) => {
+    applied = '';
+    try { localStorage.setItem('mekie-code-applied', ''); } catch {}
+    codeMsg.hidden = false;
+    codeMsg.textContent = text;
+    codeMsg.classList.add('is-error');
+    render(cart.lines);
+    codeInput.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  };
+
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const f = new FormData(e.currentTarget as HTMLFormElement);
+    const f = new FormData(form);
+    const email = String(f.get('email') || '');
+
+    /* O código de boas-vindas é de quem subscreveu com este email e só vale uma vez */
+    if (applied && newsletter.hasWebhook()) {
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const res = await newsletter.check(email);
+        if (res.status !== 'unknown' && !res.subscribed) {
+          return codeError(`O código ${CODE} é para quem subscreve a newsletter. Usa o email com que subscreveste ou subscreve no fundo da página.`);
+        }
+        if (res.used) return codeError(`O código ${CODE} já foi usado numa encomenda com este email.`);
+      } catch {
+        /* sem resposta do webhook: segue e confirmamos à mão */
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    }
+
     const lines = cart.lines;
     const { sub, disc, after } = totals();
+    const free = sub >= FREE;
     const body = [
       'Olá Mekie! Quero fazer esta encomenda:',
       '',
-      ...lines.map((l) => `• ${l.qty}x ${l.name}, ${l.color}${l.size ? `, tamanho ${l.size}` : ''}: ${money(l.qty * l.price)}`),
+      ...lines.map((l) => `• ${l.qty}x ${l.name}, ${l.color}${l.size ? `, tamanho ${l.size}` : ''}: ${money(l.qty * l.price)}${made(l) ? ` (${made(l)} por encomenda, ${l.madeToOrderDays} dias úteis)` : ''}`),
       '',
       `Subtotal: ${money(sub)}`,
       disc ? `Desconto ${applied} (10%): -${money(disc)}` : '',
-      `Total: ${money(after)}${after >= FREE ? ' (envio grátis)' : ' + portes'}`,
+      `Total: ${money(after)}${free ? ' (envio grátis)' : ' + portes'}`,
       '',
       `Nome: ${f.get('nome')} ${f.get('apelido')}`,
       `Email: ${f.get('email')}`,
@@ -140,6 +174,7 @@ import { site } from '../data/site';
       f.get('nif') ? `NIF: ${f.get('nif')}` : '',
       f.get('notas') ? `Notas: ${f.get('notas')}` : '',
     ].filter((x, i, a) => x !== '' || a[i - 1] !== '').join('\n');
+    if (applied) newsletter.redeem(email, lines.map((l) => `${l.qty}x ${l.name} ${l.color}`).join(', ')).catch(() => {});
     window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent('Nova encomenda no site Mekie')}&body=${encodeURIComponent(body)}`;
   });
 </script>

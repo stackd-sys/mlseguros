@@ -8,6 +8,7 @@ import Footer from '../components/Footer.astro';
 import CartDrawer from '../components/CartDrawer.astro';
 import Popup from '../components/Popup.astro';
 import { site } from '../data/site';
+import { products } from '../data/products';
 
 interface Props {
   title?: string;
@@ -17,9 +18,11 @@ interface Props {
   popup?: boolean;
   noindex?: boolean;
 }
+/* Preço e stock atuais, para o carrinho guardado no browser se manter certo */
+const catalog = Object.fromEntries(products.map((p) => [p.id, { slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0], stock: p.stock, madeToOrderDays: p.madeToOrderDays }]));
 const {
   title,
-  description = 'Mekie Planet, marca de roupa da Ericeira. T-shirts, hoodies, caps e meias com os bordados Mekie. Envio em 5 dias úteis, grátis acima de 60€.',
+  description = 'Mekie Planet, marca de roupa da Ericeira. T-shirts, hoodies, caps e meias com os bordados Mekie. Envio em 7 dias úteis, grátis acima de 65€.',
   image = '/images/site/hero.webp',
   overlayHeader = false,
   popup = true,
@@ -63,7 +66,6 @@ const ogImage = new URL(image, Astro.site);
         logo: new URL('/images/site/logo.png', site.url).href,
         email: site.email,
         sameAs: [site.instagram],
-        address: { '@type': 'PostalAddress', streetAddress: 'Rua Dr. Eduardo Burnay 26B', postalCode: '2655-420', addressLocality: 'Ericeira', addressCountry: 'PT' },
       })} />
     )}
     <slot name="head" />
@@ -77,6 +79,7 @@ const ogImage = new URL(image, Astro.site);
     <Footer />
     <CartDrawer />
     {popup && <Popup />}
+    <script type="application/json" id="mekie-catalog" set:html={JSON.stringify(catalog)} />
     <script>
       import '../scripts/ui';
     </script>

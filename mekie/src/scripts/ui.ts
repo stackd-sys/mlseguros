@@ -1,7 +1,7 @@
-import { cart, money, href } from './cart';
+import { cart, money, href, maxQty } from './cart';
+import * as newsletter from './newsletter';
 
-const FREE_FROM = Number(document.documentElement.dataset.freeShipping || 60);
-const NEWSLETTER = document.documentElement.dataset.newsletterEndpoint || '';
+const FREE_FROM = Number(document.documentElement.dataset.freeShipping || 65);
 
 const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
@@ -102,7 +102,7 @@ cart.subscribe((lines) => {
           <div class="qty">
             <button type="button" data-qty="-1" aria-label="Diminuir quantidade">−</button>
             <span aria-live="polite">${l.qty}</span>
-            <button type="button" data-qty="1" aria-label="Aumentar quantidade"${l.qty >= (l.madeToOrderDays ? 10 : l.stock ?? 10) ? ' disabled title="Sem mais unidades em stock"' : ''}>+</button>
+            <button type="button" data-qty="1" aria-label="Aumentar quantidade"${l.qty >= maxQty(l) ? ' disabled title="Sem mais unidades em stock"' : ''}>+</button>
           </div>
         </div>
         <div class="line__right">
@@ -128,39 +128,36 @@ list?.addEventListener('click', (e) => {
 });
 
 /* ---------- Newsletter com 10% de boas-vindas ---------- */
-const CODE = document.documentElement.dataset.welcomeCode || '';
 const store = {
   get: (k: string) => { try { return localStorage.getItem(k); } catch { return null; } },
   set: (k: string, v: string) => { try { localStorage.setItem(k, v); } catch {} },
 };
 const subscribed = () => store.get('mekie-newsletter') === 'subscribed';
 
-async function sendToWebhook(email: string, source: string) {
-  const body = new URLSearchParams({
-    email,
-    consent: 'true',
-    source,
-    page: location.pathname,
-    code: CODE,
-    created_at: new Date().toISOString(),
-  });
-  if (!NEWSLETTER) {
-    console.warn('[Mekie] Sem webhook configurado em site.newsletterWebhook: o email não foi guardado.');
-    return;
-  }
-  /* pedido simples (sem preflight) para funcionar com qualquer webhook */
-  await fetch(NEWSLETTER, { method: 'POST', mode: 'no-cors', body });
-}
+type Outcome = 'new' | 'exists' | 'used';
+const SUCCESS: Record<Outcome, { title: string; sub: string; code: boolean }> = {
+  new: { title: 'Já estás na lista.', sub: 'Usa este código no checkout:', code: true },
+  exists: { title: 'Este email já estava na lista.', sub: 'O teu código continua válido:', code: true },
+  used: {
+    title: 'Este email já está na lista.',
+    sub: 'O código de boas-vindas já foi usado numa encomenda com este email. É válido uma vez por cliente.',
+    code: false,
+  },
+};
 
-function showSuccess(form: HTMLFormElement) {
+function showSuccess(form: HTMLFormElement, outcome: Outcome = 'new') {
   const box = form.closest<HTMLElement>('[data-newsletter-box]') ?? form;
+  const text = SUCCESS[outcome];
+  box.querySelectorAll<HTMLElement>('[data-success-title]').forEach((el) => (el.textContent = text.title));
+  box.querySelectorAll<HTMLElement>('[data-success-sub]').forEach((el) => (el.textContent = text.sub));
+  box.querySelectorAll<HTMLElement>('[data-code-wrap]').forEach((el) => (el.hidden = !text.code));
   box.querySelectorAll<HTMLElement>('[data-success]').forEach((el) => (el.hidden = false));
   box.querySelectorAll<HTMLElement>('[data-before]').forEach((el) => (el.hidden = true));
   form.hidden = true;
 }
 
 document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach((form) => {
-  if (subscribed()) showSuccess(form);
+  if (subscribed()) showSuccess(form, (store.get('mekie-newsletter-outcome') as Outcome) || 'new');
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = new FormData(form);
@@ -175,11 +172,16 @@ document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach((form) =
       if (msg) { msg.textContent = 'Para continuar, aceita receber os nossos emails.'; msg.hidden = false; }
       return;
     }
+    if (msg) msg.hidden = true;
     if (btn) btn.disabled = true;
     try {
-      await sendToWebhook(email, form.dataset.newsletter || 'site');
+      const before = newsletter.knownLocally(email);
+      const res = await newsletter.subscribe(email, form.dataset.newsletter || 'site');
+      const outcome: Outcome = res.used ? 'used' : res.status === 'exists' || (res.status === 'unknown' && before) ? 'exists' : 'new';
+      newsletter.rememberLocally(email);
       store.set('mekie-newsletter', 'subscribed');
-      document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach(showSuccess);
+      store.set('mekie-newsletter-outcome', outcome);
+      document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach((f) => showSuccess(f, outcome));
       document.querySelector<HTMLElement>('[data-popup-tab]')?.setAttribute('hidden', '');
     } catch {
       if (msg) { msg.textContent = 'Não conseguimos guardar o teu email. Tenta outra vez daqui a pouco.'; msg.hidden = false; }
@@ -189,6 +191,7 @@ document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach((form) =
   });
 });
 
+const CODE = newsletter.CODE;
 document.querySelectorAll<HTMLButtonElement>('[data-copy-code]').forEach((btn) =>
   btn.addEventListener('click', async () => {
     try {

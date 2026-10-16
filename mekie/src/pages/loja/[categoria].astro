@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Collection from '../../components/Collection.astro';
+import { site } from '../../data/site';
 import { categories, products, productsIn, lowStock, type Product } from '../../data/products';
 
 export function getStaticPaths() {
@@ -25,6 +26,6 @@ interface Props { title: string; intro?: string; items: Product[] }
 const { title, intro, items } = Astro.props;
 const { categoria } = Astro.params;
 ---
-<Base title={title} description={`${title} da Mekie Planet. Envio em 5 dias úteis, grátis acima de 60€.`}>
+<Base title={title} description={`${title} da Mekie Planet. Envio em ${site.deliveryDays} dias úteis, grátis acima de ${site.freeShippingFrom}€.`}>
   <Collection title={title} intro={intro} products={items} current={categoria!} />
 </Base>

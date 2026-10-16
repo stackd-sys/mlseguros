@@ -25,9 +25,9 @@ import { site } from '../data/site';
       </form>
 
       <div class="popup__done" data-success hidden>
-        <p class="popup__title">Já estás na lista.</p>
-        <p class="popup__sub">Usa este código no checkout:</p>
-        <div class="code"><code>{site.welcomeCode}</code><button type="button" class="code__copy eyebrow" data-copy-code>Copiar</button></div>
+        <p class="popup__title" data-success-title>Já estás na lista.</p>
+        <p class="popup__sub" data-success-sub>Usa este código no checkout:</p>
+        <div class="code" data-code-wrap><code>{site.welcomeCode}</code><button type="button" class="code__copy eyebrow" data-copy-code>Copiar</button></div>
         <button type="button" class="pill pill--block" data-popup-close>Continuar a comprar</button>
       </div>
 

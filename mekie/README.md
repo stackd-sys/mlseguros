@@ -16,7 +16,7 @@ npm run build    # gera o site estático em dist/
 | --- | --- |
 | Produtos, preços, tamanhos, imagens | `src/data/products.ts` |
 | Categorias do menu | `src/data/products.ts` (`categories`) |
-| Email, Instagram, morada, envio grátis, avisos do topo | `src/data/site.ts` |
+| Email, Instagram, envio grátis, prazo de entrega, avisos do topo | `src/data/site.ts` |
 | Textos legais | `src/data/legal.ts` |
 | Cores e tipografia | `src/styles/global.css` |
 | Imagens | `public/images/products` e `public/images/site` |
@@ -31,18 +31,21 @@ O carrinho funciona no browser (guardado em `localStorage`). Por agora, o checko
 
 O popup (e o formulário do rodapé) pede o email e o consentimento e mostra o código `MEKIE10`.
 
-Para guardar os emails, põe o URL de um webhook em `newsletterWebhook` (`src/data/site.ts`). O site envia um `POST` (`application/x-www-form-urlencoded`) com:
+Para guardar os emails, põe o URL de um webhook em `newsletterWebhook` (`src/data/site.ts`). O mais simples é o Google Apps Script em `integrations/newsletter.gs`, que escreve numa Google Sheet (as instruções estão no topo do ficheiro). Esse script:
 
-| Campo | Exemplo |
-| --- | --- |
-| `email` | `cliente@exemplo.pt` |
-| `consent` | `true` |
-| `source` | `popup` ou `footer` |
-| `page` | `/loja/` |
-| `code` | `MEKIE10` |
-| `created_at` | `2026-10-16T10:19:21.325Z` |
+- não deixa o mesmo email entrar duas vezes e avisa a pessoa que já estava na lista;
+- no checkout, confirma que o email da encomenda subscreveu a newsletter e ainda não usou o código;
+- marca na folha quando o código é usado e em que encomenda.
 
-Funciona com Make, Zapier, n8n ou um Google Apps Script que escreve numa Google Sheet. Enquanto o campo estiver vazio, o código aparece na mesma mas o email **não fica guardado**.
+O site envia `POST` (`application/x-www-form-urlencoded`) com o campo `action`:
+
+| `action` | Campos | Resposta (JSON) |
+| --- | --- | --- |
+| `subscribe` | `email`, `consent`, `source` (`popup` ou `footer`), `page`, `code`, `created_at` | `{ "status": "new" \| "exists", "used": false }` |
+| `check` | `email` | `{ "subscribed": true, "used": false }` |
+| `redeem` | `email`, `code`, `order`, `created_at` | `{ "used": true }` |
+
+Também funciona com Make, Zapier ou n8n. Se o webhook não responder em JSON, o email é guardado na mesma mas o site não consegue saber se já estava inscrito. Enquanto o campo estiver vazio, o código aparece mas o email **não fica guardado**.
 
 O código e a percentagem estão em `welcomeCode` e `welcomeDiscount`. O código tem de ser criado também no sistema de pagamento, com uso único por cliente e sem acumular com outras promoções.
 

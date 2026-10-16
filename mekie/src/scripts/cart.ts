@@ -35,7 +35,34 @@ function write(lines: CartLine[]) {
   listeners.forEach((fn) => fn(lines));
 }
 
-let memory: CartLine[] = read();
+/* Catálogo atual (preço, stock, imagem) publicado pelo layout. Um carrinho guardado
+   antes de uma mudança de preço ou de stock é corrigido ao abrir o site. */
+type CatalogItem = Pick<CartLine, 'slug' | 'name' | 'color' | 'price' | 'image' | 'stock' | 'madeToOrderDays'>;
+function catalog(): Record<string, CatalogItem> | null {
+  try {
+    const el = document.getElementById('mekie-catalog');
+    return el ? JSON.parse(el.textContent || '{}') : null;
+  } catch {
+    return null;
+  }
+}
+export const maxQty = (l: Pick<CartLine, 'stock' | 'madeToOrderDays'>) => (l.madeToOrderDays ? 10 : l.stock ?? 10);
+
+function sync(lines: CartLine[]): CartLine[] {
+  const cat = catalog();
+  if (!cat) return lines;
+  return lines
+    .filter((l) => cat[l.id])
+    .map((l) => {
+      const c = cat[l.id];
+      const next = { ...l, ...c, stock: c.stock, madeToOrderDays: c.madeToOrderDays };
+      return { ...next, qty: Math.min(l.qty, maxQty(next)) };
+    })
+    .filter((l) => l.qty > 0);
+}
+
+let memory: CartLine[] = sync(read());
+if (JSON.stringify(memory) !== JSON.stringify(read())) write(memory);
 
 export const cart = {
   get lines() {
@@ -49,7 +76,7 @@ export const cart = {
   },
   add(line: Omit<CartLine, 'key' | 'qty'>, qty = 1) {
     const key = `${line.id}:${line.size ?? ''}`;
-    const max = line.madeToOrderDays ? 10 : line.stock ?? 10;
+    const max = maxQty(line);
     const existing = memory.find((l) => l.key === key);
     const next = existing
       ? memory.map((l) => (l.key === key ? { ...l, qty: Math.min(l.qty + qty, max) } : l))
@@ -57,7 +84,7 @@ export const cart = {
     write(next);
   },
   setQty(key: string, qty: number) {
-    write(qty <= 0 ? memory.filter((l) => l.key !== key) : memory.map((l) => (l.key === key ? { ...l, qty: Math.min(qty, l.madeToOrderDays ? 10 : l.stock ?? 10) } : l)));
+    write(qty <= 0 ? memory.filter((l) => l.key !== key) : memory.map((l) => (l.key === key ? { ...l, qty: Math.min(qty, maxQty(l)) } : l)));
   },
   remove(key: string) {
     write(memory.filter((l) => l.key !== key));
@@ -74,7 +101,7 @@ export const cart = {
 
 window.addEventListener('storage', (e) => {
   if (e.key === KEY) {
-    memory = read();
+    memory = sync(read());
     listeners.forEach((fn) => fn(memory));
   }
 });
