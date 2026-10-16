@@ -19,11 +19,12 @@ const cutout = /\/products\/.+-1\.webp$/.test(p.images[0]);
     <a href={`/produto/${p.slug}/`} class="card__link" aria-label={`${p.name}, ${p.color}`}>
       {label && <span class="card__tag eyebrow">{label}</span>}
       <Img src={p.images[0]} sizes={sizes} alt={`${p.name} ${p.color}`} width="600" height="750" loading={eager ? 'eager' : 'lazy'} class:list={['card__img', { 'card__img--photo': !cutout }]} />
-      {p.images[1] && <Img src={p.images[1]} sizes={sizes} alt="" width="600" height="750" loading="lazy" class="card__img card__img--hover" />}
     </a>
     <div class="quick" aria-label={`Adicionar ${p.name} ao carrinho`}>
       {soldOut ? (
         <p class="quick__label eyebrow">Esgotado</p>
+      ) : p.customizable ? (
+        <a href={`/produto/${p.slug}/`} class="quick__one eyebrow">Escolher cores</a>
       ) : p.sizes ? (
         <>
           <p class="quick__label eyebrow">Adicionar rápido</p>
@@ -61,16 +62,12 @@ const cutout = /\/products\/.+-1\.webp$/.test(p.images[0]);
     padding: 6%;
     transition: opacity .5s var(--ease), transform .8s var(--ease);
   }
-  .card__img--hover { object-fit: cover; padding: 0; opacity: 0; }
   .card__img--photo { object-fit: cover; padding: 0; }
-  .card__media:hover .card__img--hover { opacity: 1; }
-  .card__media:hover .card__img:not(.card__img--hover) { transform: scale(1.03); }
+  .card__media:hover .card__img { transform: scale(1.03); }
   .card__tag {
     position: absolute; top: 12px; left: 12px; z-index: 2;
     font-size: 10.5px; color: var(--ink);
   }
-  .card__media:hover .card__tag { color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,.35); }
-  .card__media:not(:has(.card__img--hover)):hover .card__tag { color: var(--ink); text-shadow: none; }
 
   .quick {
     position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 3;
@@ -92,7 +89,7 @@ const cutout = /\/products\/.+-1\.webp$/.test(p.images[0]);
   .quick__size:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
   .quick__size.is-out { color: #b5b5b5; text-decoration: line-through; cursor: not-allowed; }
   .quick__size.is-out:hover { background: transparent; color: #b5b5b5; border-color: var(--line); }
-  .quick__one { width: 100%; height: 36px; font-size: 10.5px; }
+  .quick__one { width: 100%; height: 36px; font-size: 10.5px; display: grid; place-items: center; }
   .quick__one:hover { text-decoration: underline; text-underline-offset: 3px; }
   .quick.is-added::after {
     content: 'Adicionado ✓'; position: absolute; inset: 0;
@@ -105,6 +102,6 @@ const cutout = /\/products\/.+-1\.webp$/.test(p.images[0]);
   .card__meta { margin: 8px 0 0; font-size: 10px; color: var(--ink-soft); }
   .card__stock { margin: 0; font-size: 10px; color: var(--sale); }
   @media (hover: none) {
-    .card__img--hover, .quick { display: none; }
+    .quick { display: none; }
   }
 </style>

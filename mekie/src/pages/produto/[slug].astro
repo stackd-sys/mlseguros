@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Carousel from '../../components/Carousel.astro';
 import Img from '../../components/Img.astro';
-import { products, getCategory, discount, variantsOf, cartInfo, totalStock, isSoldOut, type Product } from '../../data/products';
+import { products, getCategory, discount, variantsOf, cartInfo, totalStock, isSoldOut, yarnColors, type Product } from '../../data/products';
 import { site, formatPrice } from '../../data/site';
 
 export function getStaticPaths() {
@@ -43,6 +43,12 @@ const jsonLd = {
     seller: { '@type': 'Organization', name: site.name },
   },
 };
+const yarnLabel = (c: (typeof yarnColors)[number]) => (c.code ? `${c.code} ${c.name}` : c.name);
+/* Pré-visualização do scrunchie: folhos à volta de um aro */
+const ruffles = Array.from({ length: 14 }, (_, i) => {
+  const a = (i / 14) * Math.PI * 2;
+  return { x: +(100 + Math.cos(a) * 62).toFixed(1), y: +(100 + Math.sin(a) * 62).toFixed(1) };
+});
 const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test(src);
 ---
 <Base title={`${p.name} ${p.color}`} description={`${p.name} (${p.color}) por ${formatPrice(p.price)}. ${p.description} Envio em ${site.deliveryDays} dias úteis, grátis acima de ${site.freeShippingFrom}€.`} image={p.images[1] ?? p.images[0]}>
@@ -73,10 +79,14 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
         {off > 0 && <span class="info__off">-{off}%</span>}
       </p>
       <p class="info__tax">IVA incluído. Portes calculados no checkout.</p>
-      {p.madeToOrderDays ? (
+      {p.customizable ? (
+        <div class="info__order">
+          <p><strong>Feito à mão por encomenda,</strong> com as cores que escolheres. Entrega em {p.madeToOrderDays} dias úteis.</p>
+        </div>
+      ) : p.madeToOrderDays ? (
         <div class="info__order">
           <p><strong>{p.stock === 1 ? '1 unidade pronta a enviar.' : `${p.stock ?? 0} unidades prontas a enviar.`}</strong> Depois disso fazemos por encomenda, com entrega em {p.madeToOrderDays} dias úteis.</p>
-          <a href="/contactos/" class="link-underline">Queres outra cor? Fala connosco</a>
+          <a href="/produto/scrunchie-personalizado/" class="link-underline">Queres outras cores? Personaliza o teu</a>
         </div>
       ) : soldOut ? (
         <p class="info__stock info__stock--out">Esgotado</p>
@@ -84,7 +94,7 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
         <p class="info__stock"><span class="info__dot"></span>{total === 1 ? 'Só resta 1 unidade' : `Só restam ${total} unidades`}</p>
       )}
 
-      <div class="opt">
+      {!p.customizable && <div class="opt">
         <p class="opt__label">Cor: <span>{p.color}</span></p>
         <div class="swatches">
           {variants.map((v) => (
@@ -93,9 +103,31 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
             </a>
           ))}
         </div>
-      </div>
+      </div>}
 
       <form class="buy" data-buy data-product={JSON.stringify(cartData)} novalidate>
+        {p.customizable && (
+          <div class="custom">
+            <svg class="custom__preview" viewBox="0 0 200 200" aria-hidden="true" data-preview>
+              {ruffles.map((c) => <circle cx={c.x} cy={c.y} r="30" />)}
+              <circle class="custom__hole" cx="100" cy="100" r="36" />
+            </svg>
+            {[['main', 'Cor do corpo'], ['edge', 'Cor do rebordo']].map(([name, label]) => (
+              <fieldset class="opt">
+                <legend class="opt__label">{label}: <span data-pick-label={name}>escolhe uma cor</span></legend>
+                <div class="yarns">
+                  {yarnColors.map((c) => (
+                    <label class="yarn" title={yarnLabel(c)}>
+                      <input type="radio" name={name} value={yarnLabel(c)} data-hex={c.hex} />
+                      <span style={`--c:${c.hex}`}><span class="sr-only">{yarnLabel(c)}</span></span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            ))}
+            <p class="custom__note">Fio Rosários 4 Bio Love, 100% algodão orgânico. As cores no ecrã podem variar ligeiramente.</p>
+          </div>
+        )}
         {p.sizes ? (
           <fieldset class="opt">
             <legend class="opt__label">Tamanho: <span data-size-label>escolhe o teu tamanho</span></legend>
@@ -118,7 +150,7 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
           <p class="opt__label">Tamanho: <span>Único</span></p>
         )}
 
-        <p class="buy__error" role="alert" hidden>Escolhe um tamanho para continuar.</p>
+        <p class="buy__error" role="alert" hidden>{p.customizable ? 'Escolhe as duas cores para continuar.' : 'Escolhe um tamanho para continuar.'}</p>
         <button type="submit" class="pill pill--accent pill--block buy__btn" data-buy-btn disabled={soldOut}>
           {soldOut ? 'Esgotado' : 'Adicionar ao carrinho'}
         </button>
@@ -221,6 +253,13 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
 
     form.addEventListener('change', (e) => {
       const t = e.target as HTMLInputElement;
+      if (t.name === 'main' || t.name === 'edge') {
+        error.hidden = true;
+        const label = form.querySelector<HTMLElement>(`[data-pick-label=${t.name}]`);
+        if (label) label.textContent = t.value;
+        const preview = form.querySelector<SVGElement>('[data-preview]');
+        preview?.style.setProperty(t.name === 'main' ? '--main' : '--edge', t.dataset.hex!);
+      }
       if (t.name === 'size') {
         error.hidden = true;
         if (sizeLabel) sizeLabel.textContent = t.value;
@@ -240,14 +279,23 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
     });
 
     const add = () => {
-      const size = (new FormData(form).get('size') as string | null) ?? undefined;
+      const data = new FormData(form);
+      const size = (data.get('size') as string | null) ?? undefined;
+      const main = data.get('main') as string | null;
+      const edge = data.get('edge') as string | null;
+      const isCustom = !!form.querySelector('input[name=main]');
+      if (isCustom && (!main || !edge)) {
+        error.hidden = false;
+        form.querySelector('.custom')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
       if (hasSizes && !size) {
         error.hidden = false;
         form.querySelector('.sizes')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
       const { sizeNotes, ...item } = product;
-      cart.add({ ...item, size }, 1);
+      cart.add({ ...item, size, ...(isCustom ? { custom: `Corpo ${main}, rebordo ${edge}` } : {}) }, 1);
       btn.textContent = 'Adicionado ✓';
       setTimeout(() => (btn.textContent = 'Adicionar ao carrinho'), 1600);
       openCart();
@@ -313,6 +361,16 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
     transition: border-color .2s, background .2s, color .2s;
   }
   .size span:hover { border-color: var(--ink); }
+  .custom { margin-bottom: 8px; }
+  .custom__preview { display: block; width: 132px; height: 132px; margin: 0 0 18px; --main: #e1767e; --edge: #ecd6dc; }
+  .custom__preview circle { fill: var(--main); stroke: var(--edge); stroke-width: 7; transition: fill .25s, stroke .25s; }
+  .custom__preview .custom__hole { fill: var(--bg); stroke: none; }
+  .yarns { display: flex; flex-wrap: wrap; gap: 7px; }
+  .yarn input { position: absolute; opacity: 0; pointer-events: none; }
+  .yarn > span { display: block; width: 28px; height: 28px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); cursor: pointer; transition: box-shadow .2s; }
+  .yarn input:checked + span { box-shadow: inset 0 0 0 1px rgba(0,0,0,.12), 0 0 0 2px var(--bg), 0 0 0 3.5px var(--ink); }
+  .yarn input:focus-visible + span { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .custom__note { margin: -8px 0 20px; font-size: 12px; color: var(--ink-soft); }
   .size.is-out span { color: #b5b5b5; text-decoration: line-through; cursor: not-allowed; background: transparent; }
   .size.is-out span:hover { border-color: var(--line); }
   .size-stock { margin: 12px 0 0 !important; }

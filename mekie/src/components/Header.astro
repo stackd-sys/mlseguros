@@ -74,10 +74,6 @@ const current = nav
                   <a href="/loja/" class="mega__link">Ver tudo</a>
                   <a href="/loja/ultimas-unidades/" class="mega__link">Últimas unidades</a>
                 </div>
-                <a href="/loja/hoodies-crewnecks/" class="mega__card">
-                  <img src="/images/lookbook/mushrooms-hoodie-yellow-sm.webp" alt="" loading="lazy" width="480" height="720" />
-                  <span class="eyebrow">Hoodies</span>
-                </a>
               </div>
             </div>
           )}
@@ -197,7 +193,7 @@ const current = nav
   }
   .has-mega:hover .mega, .has-mega:focus-within .mega { opacity: 1; visibility: visible; transform: none; }
   .mega__inner {
-    display: grid; grid-template-columns: repeat(4, 1fr) 220px;
+    display: grid; grid-template-columns: repeat(4, 1fr);
     gap: 40px; padding-top: 36px; padding-bottom: 40px;
   }
   .mega__col { display: flex; flex-direction: column; gap: 10px; }
@@ -206,8 +202,6 @@ const current = nav
   .mega__link { font-size: 14px; display: flex; gap: 10px; align-items: center; }
   .mega__link:hover { text-decoration: underline; text-underline-offset: 3px; }
   .mega__soon { font-size: 9.5px; color: var(--ink-soft); }
-  .mega__card { display: grid; gap: 10px; }
-  .mega__card img { aspect-ratio: 4/5; object-fit: cover; width: 100%; }
 
   .mnav { position: fixed; inset: 0; z-index: 100; }
   .mnav__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.4); }

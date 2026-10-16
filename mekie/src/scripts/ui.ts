@@ -98,7 +98,7 @@ cart.subscribe((lines) => {
         <a href="${href(`/produto/${esc(l.slug)}/`)}"><img class="line__img" src="${href(esc(l.image))}" alt="" width="84" height="105" /></a>
         <div>
           <p class="line__name"><a href="${href(`/produto/${esc(l.slug)}/`)}">${esc(l.name)}</a></p>
-          <p class="line__meta">${esc(l.color)}${l.size ? ` · Tamanho ${esc(l.size)}` : ''}${l.madeToOrderDays && l.qty > (l.stock ?? 0) ? `<br>${l.qty - (l.stock ?? 0)} por encomenda, entrega em ${l.madeToOrderDays} dias úteis` : ''}</p>
+          <p class="line__meta">${esc(l.custom || l.color)}${l.size ? ` · Tamanho ${esc(l.size)}` : ''}${l.madeToOrderDays && l.qty > (l.stock ?? 0) ? `<br>${l.qty - (l.stock ?? 0)} por encomenda, entrega em ${l.madeToOrderDays} dias úteis` : ''}</p>
           <div class="qty">
             <button type="button" data-qty="-1" aria-label="Diminuir quantidade">−</button>
             <span aria-live="polite">${l.qty}</span>

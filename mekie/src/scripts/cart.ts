@@ -5,6 +5,8 @@ export type CartLine = {
   name: string;
   color: string;
   size?: string;
+  /** Cores escolhidas num produto personalizado */
+  custom?: string;
   price: number;
   image: string;
   stock?: number;
@@ -82,7 +84,7 @@ export const cart = {
   add(item: Omit<CartLine, 'key' | 'qty'> & { sizeStock?: Record<string, number> }, qty = 1) {
     const { sizeStock, ...rest } = item;
     const line = { ...rest, stock: stockOf(item, item.size) };
-    const key = `${line.id}:${line.size ?? ''}`;
+    const key = `${line.id}:${line.size ?? ''}${line.custom ? `:${line.custom}` : ''}`;
     const max = maxQty(line);
     if (max <= 0) return;
     const existing = memory.find((l) => l.key === key);

@@ -116,7 +116,7 @@ import { site } from '../data/site';
     document.querySelector<HTMLElement>('[data-co-total]')!.textContent = money(after) + (free ? '' : ' + portes');
     document.querySelector<HTMLElement>('[data-co-lines]')!.innerHTML = lines
       .map((l) => `<li><img src="${href(esc(l.image))}" alt="" width="64" height="80" /><span class="q">${l.qty}</span>
-        <div><p>${esc(l.name)}</p><small>${esc(l.color)}${l.size ? ` · ${esc(l.size)}` : ''}${made(l) ? `<br>${made(l)} por encomenda, entrega em ${l.madeToOrderDays} dias úteis` : ''}</small></div>
+        <div><p>${esc(l.name)}</p><small>${esc(l.custom || l.color)}${l.size ? ` · ${esc(l.size)}` : ''}${made(l) ? `<br>${made(l)} por encomenda, entrega em ${l.madeToOrderDays} dias úteis` : ''}</small></div>
         <span>${money(l.qty * l.price)}</span></li>`)
       .join('');
   };
@@ -161,7 +161,7 @@ import { site } from '../data/site';
     const body = [
       'Olá Mekie! Quero fazer esta encomenda:',
       '',
-      ...lines.map((l) => `• ${l.qty}x ${l.name}, ${l.color}${l.size ? `, tamanho ${l.size}` : ''}: ${money(l.qty * l.price)}${made(l) ? ` (${made(l)} por encomenda, ${l.madeToOrderDays} dias úteis)` : ''}`),
+      ...lines.map((l) => `• ${l.qty}x ${l.name}, ${l.custom || l.color}${l.size ? `, tamanho ${l.size}` : ''}: ${money(l.qty * l.price)}${made(l) ? ` (${made(l)} por encomenda, ${l.madeToOrderDays} dias úteis)` : ''}`),
       '',
       `Subtotal: ${money(sub)}`,
       disc ? `Desconto ${applied} (10%): -${money(disc)}` : '',

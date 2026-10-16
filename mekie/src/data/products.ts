@@ -37,6 +37,8 @@ export type Product = {
   sizeNotes?: Record<string, string>;
   /** Feito por encomenda quando não há stock: prazo de entrega em dias úteis. */
   madeToOrderDays?: number;
+  /** O cliente escolhe as cores (scrunchie personalizado). */
+  customizable?: boolean;
   images: string[];
   badge?: string;
   description: string;
@@ -161,6 +163,47 @@ const toteDetails: ProductDetails = {
     'Certificação OEKO-TEX Standard 100',
     'Selo vegano aprovado pela PETA',
   ],
+};
+
+/* Fio Rosários 4 Bio Love: as cores que dá para escolher no scrunchie personalizado */
+export const yarnColors = [
+  { code: '01', name: 'Branco', hex: '#ebe8e5' },
+  { code: '02', name: 'Cru', hex: '#e2dcc4' },
+  { code: '03', name: 'Mostarda', hex: '#d9a95c' },
+  { code: '05', name: 'Rosa claro', hex: '#ecd6dc' },
+  { code: '06', name: 'Rosa pó', hex: '#ecd4cd' },
+  { code: '07', name: 'Rosa velho', hex: '#c9a09d' },
+  { code: '09', name: 'Azul gelo', hex: '#c8dadf' },
+  { code: '10', name: 'Azul céu', hex: '#97afbf' },
+  { code: '11', name: 'Azul acinzentado', hex: '#718a95' },
+  { code: '12', name: 'Azul petróleo', hex: '#2c4d5c' },
+  { code: '14', name: 'Verde água claro', hex: '#cbd9d4' },
+  { code: '15', name: 'Verde menta', hex: '#b4d2cb' },
+  { code: '16', name: 'Verde água', hex: '#6e9e9f' },
+  { code: '18', name: 'Bege rosado', hex: '#cbb8b4' },
+  { code: '19', name: 'Malva', hex: '#a88e8d' },
+  { code: '20', name: 'Chocolate', hex: '#5e433d' },
+  { code: '21', name: 'Lilás acinzentado', hex: '#c6c3d1' },
+  { code: '22', name: 'Cinza azulado', hex: '#818596' },
+  { code: '23', name: 'Cinza escuro', hex: '#6e6e7a' },
+  { code: '24', name: 'Preto', hex: '#171518' },
+  { code: '25', name: 'Pêssego', hex: '#efc4a3' },
+  { code: '26', name: 'Laranja', hex: '#d6893f' },
+  { code: '27', name: 'Terracota', hex: '#c25a36' },
+  { code: '29', name: 'Coral', hex: '#e1767e' },
+  { code: '30', name: 'Vermelho', hex: '#c80c36' },
+  { code: '31', name: 'Bordeaux', hex: '#94052b' },
+  { code: '33', name: 'Lilás claro', hex: '#d3b3c5' },
+  { code: '34', name: 'Lilás', hex: '#ab7caf' },
+  { code: '35', name: 'Roxo', hex: '#523d7c' },
+  { code: '', name: 'Amarelo palha', hex: '#d8cb8a' },
+  { code: '', name: 'Lima', hex: '#a69a3c' },
+  { code: '', name: 'Verde', hex: '#5a703e' },
+];
+
+const scrunchieCustom: ProductDetails = {
+  features: ['Feito à mão em crochet, por encomenda', 'Escolhes a cor do corpo e a cor do rebordo'],
+  composition: ['Fio 100% algodão orgânico', 'Fio com certificação GOTS'],
 };
 
 const scrunchie: ProductDetails = {
@@ -395,9 +438,24 @@ export const products: Product[] = [
     price: 15,
     stock: 1,
     madeToOrderDays: 10,
-    images: [img('scrunchie-dourado-1'), img('scrunchie-dourado')],
+    images: [img('scrunchie-dourado-1')],
     details: scrunchie,
     description: TAGLINE,
+  },
+  {
+    id: 9008,
+    slug: 'scrunchie-personalizado',
+    name: 'Scrunchie Personalizado',
+    category: 'scrunchies',
+    color: 'Cores à tua escolha',
+    regularPrice: 15,
+    price: 15,
+    stock: 0,
+    madeToOrderDays: 10,
+    customizable: true,
+    images: [img('scrunchie-rosa-1'), img('scrunchie-dourado-1')],
+    details: scrunchieCustom,
+    description: 'Escolhe as tuas cores e nós fazemos o scrunchie à mão.',
   },
   {
     id: 9004,
@@ -408,7 +466,7 @@ export const products: Product[] = [
     regularPrice: 25,
     price: 25,
     stock: 1,
-    images: [img('tote-planetas-black-1')],
+    images: [img('tote-planetas-black-1'), look('tote-planetas-lake')],
     description: TAGLINE,
     details: toteDetails,
   },
