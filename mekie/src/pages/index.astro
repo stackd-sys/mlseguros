@@ -8,7 +8,7 @@ import { site } from '../data/site';
 const tiles = [
   { image: '/images/lookbook/mushrooms-hoodie-yellow.webp', alt: 'Rafa com o hoodie Cogumelos amarelo pastel, visto de baixo entre as mãos' },
   { image: '/images/lookbook/hoodie-black-cuff.webp', alt: 'Punho de um hoodie preto com MEKIE bordado a vermelho' },
-  { image: '/images/lookbook/stack-leaves.webp', alt: 'Hoodies e t-shirts Mekie com cogumelos bordados e um bucket hat, entre folhas' },
+  { image: '/images/lookbook/hands-duo.webp', alt: 'Duas amigas a tapar a cara com a mão, uma de t-shirt branca e outra de sweatshirt preta Mekie' },
 ];
 const bands = [
   {
@@ -29,7 +29,7 @@ const bands = [
 const editorial = [
   { href: '/sobre/', image: '/images/lookbook/mushrooms-sleeve.webp', title: 'Sobre nós', cta: 'Ler mais' },
   { href: site.instagram, image: '/images/lookbook/stack-leaves.webp', title: 'O nosso mundo', cta: 'Seguir no Instagram', external: true },
-  { href: '/contactos/', image: '/images/products/scrunchie-dourado.webp', title: 'Fala connosco', cta: 'Contactos' },
+  { href: '/contactos/', image: '/images/lookbook/tee-sky.webp', title: 'Fala connosco', cta: 'Contactos' },
 ];
 /* Um produto de cada modelo: um cap, umas meias, um scrunchie, uma t-shirt e um hoodie de cada bordado */
 const family = (p: (typeof products)[number]) => (['caps', 'meias', 'scrunchies'].includes(p.category) ? p.category : p.name);
@@ -66,7 +66,7 @@ const featured = products.filter((p, i) => products.findIndex((o) => family(o) =
           <span class="pill pill--light">Ver coleção</span>
         </div>
       </a>
-      {i === 0 && (
+      {i === bands.length - 1 && (
         <section class="tiles section">
           <a href="/loja/hoodies-crewnecks/" class="tiles__grid" aria-label="Ver hoodies">
             {tiles.map((t) => (

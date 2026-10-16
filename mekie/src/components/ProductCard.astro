@@ -1,13 +1,15 @@
 ---
 import Img from './Img.astro';
-import { type Product, discount, variantsOf } from '../data/products';
+import { type Product, discount, variantsOf, cartInfo, totalStock, isSoldOut } from '../data/products';
 import { formatPrice } from '../data/site';
 interface Props { product: Product; eager?: boolean }
 const { product: p, eager = false } = Astro.props;
 const off = discount(p);
 const colors = variantsOf(p).length;
-const label = p.badge ?? (off > 0 ? `-${off}%` : undefined);
-const cartData = JSON.stringify({ id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0], stock: p.stock, madeToOrderDays: p.madeToOrderDays });
+const label = p.badge ?? (isSoldOut(p) ? 'Esgotado' : off > 0 ? `-${off}%` : undefined);
+const cartData = JSON.stringify(cartInfo(p));
+const total = totalStock(p);
+const soldOut = isSoldOut(p);
 const sizes = '(max-width: 700px) 50vw, 25vw';
 /* recortes de produto (fundo transparente) ficam inteiros; fotos ocupam o cartão */
 const cutout = /\/products\/.+-1\.webp$/.test(p.images[0]);
@@ -20,11 +22,16 @@ const cutout = /\/products\/.+-1\.webp$/.test(p.images[0]);
       {p.images[1] && <Img src={p.images[1]} sizes={sizes} alt="" width="600" height="750" loading="lazy" class="card__img card__img--hover" />}
     </a>
     <div class="quick" aria-label={`Adicionar ${p.name} ao carrinho`}>
-      {p.sizes ? (
+      {soldOut ? (
+        <p class="quick__label eyebrow">Esgotado</p>
+      ) : p.sizes ? (
         <>
           <p class="quick__label eyebrow">Adicionar rápido</p>
           <div class="quick__sizes">
-            {p.sizes.map((s) => <button type="button" class="quick__size" data-quick={s} aria-label={`Adicionar tamanho ${s}`}>{s}</button>)}
+            {p.sizes.map((s) => {
+              const out = !!p.sizeStock && !p.sizeStock[s];
+              return <button type="button" class:list={['quick__size', { 'is-out': out }]} data-quick={s} disabled={out} aria-label={out ? `Tamanho ${s} esgotado` : `Adicionar tamanho ${s}`} title={out ? 'Esgotado' : undefined}>{s}</button>;
+            })}
           </div>
         </>
       ) : (
@@ -39,7 +46,7 @@ const cutout = /\/products\/.+-1\.webp$/.test(p.images[0]);
       {off > 0 ? <ins><span class="sr-only">Preço atual </span>{formatPrice(p.price)}</ins> : <span>{formatPrice(p.price)}</span>}
     </p>
     <p class="card__meta eyebrow">{colors > 1 ? `${colors} cores disponíveis` : p.color}</p>
-    {!p.madeToOrderDays && p.stock !== undefined && p.stock <= 3 && <p class="card__stock eyebrow">{p.stock === 1 ? 'Última unidade' : `Últimas ${p.stock} unidades`}</p>}
+    {!p.madeToOrderDays && total !== undefined && total > 0 && total <= 3 && <p class="card__stock eyebrow">{total === 1 ? 'Última unidade' : `Últimas ${total} unidades`}</p>}
   </div>
 </article>
 
@@ -83,6 +90,8 @@ const cutout = /\/products\/.+-1\.webp$/.test(p.images[0]);
     transition: background .2s, color .2s, border-color .2s;
   }
   .quick__size:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .quick__size.is-out { color: #b5b5b5; text-decoration: line-through; cursor: not-allowed; }
+  .quick__size.is-out:hover { background: transparent; color: #b5b5b5; border-color: var(--line); }
   .quick__one { width: 100%; height: 36px; font-size: 10.5px; }
   .quick__one:hover { text-decoration: underline; text-underline-offset: 3px; }
   .quick.is-added::after {

@@ -37,7 +37,12 @@ function write(lines: CartLine[]) {
 
 /* Catálogo atual (preço, stock, imagem) publicado pelo layout. Um carrinho guardado
    antes de uma mudança de preço ou de stock é corrigido ao abrir o site. */
-type CatalogItem = Pick<CartLine, 'slug' | 'name' | 'color' | 'price' | 'image' | 'stock' | 'madeToOrderDays'>;
+type CatalogItem = Pick<CartLine, 'slug' | 'name' | 'color' | 'price' | 'image' | 'stock' | 'madeToOrderDays'> & {
+  sizeStock?: Record<string, number>;
+};
+/** Stock da linha: o do tamanho escolhido quando o produto tem stock por tamanho. */
+const stockOf = (item: { stock?: number; sizeStock?: Record<string, number> }, size?: string) =>
+  item.sizeStock && size ? item.sizeStock[size] ?? 0 : item.stock;
 function catalog(): Record<string, CatalogItem> | null {
   try {
     const el = document.getElementById('mekie-catalog');
@@ -54,8 +59,8 @@ function sync(lines: CartLine[]): CartLine[] {
   return lines
     .filter((l) => cat[l.id])
     .map((l) => {
-      const c = cat[l.id];
-      const next = { ...l, ...c, stock: c.stock, madeToOrderDays: c.madeToOrderDays };
+      const { sizeStock, ...c } = cat[l.id];
+      const next = { ...l, ...c, stock: stockOf({ stock: c.stock, sizeStock }, l.size), madeToOrderDays: c.madeToOrderDays };
       return { ...next, qty: Math.min(l.qty, maxQty(next)) };
     })
     .filter((l) => l.qty > 0);
@@ -74,9 +79,12 @@ export const cart = {
   get subtotal() {
     return memory.reduce((n, l) => n + l.qty * l.price, 0);
   },
-  add(line: Omit<CartLine, 'key' | 'qty'>, qty = 1) {
+  add(item: Omit<CartLine, 'key' | 'qty'> & { sizeStock?: Record<string, number> }, qty = 1) {
+    const { sizeStock, ...rest } = item;
+    const line = { ...rest, stock: stockOf(item, item.size) };
     const key = `${line.id}:${line.size ?? ''}`;
     const max = maxQty(line);
+    if (max <= 0) return;
     const existing = memory.find((l) => l.key === key);
     const next = existing
       ? memory.map((l) => (l.key === key ? { ...l, qty: Math.min(l.qty + qty, max) } : l))

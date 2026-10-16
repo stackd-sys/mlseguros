@@ -1,7 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import { site, formatPrice } from '../data/site';
-import { products } from '../data/products';
+import { products, cartInfo } from '../data/products';
 const addOns = products.filter((p) => p.category === 'meias');
 ---
 <div class="drawer" data-cart hidden>
@@ -23,7 +23,7 @@ const addOns = products.filter((p) => p.category === 'meias');
       <p class="upsell__title eyebrow">Completa o teu pedido</p>
       <ul class="upsell__list">
         {addOns.map((p) => (
-          <li class="upsell__item" data-upsell-item={p.id} data-product={JSON.stringify({ id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0], stock: p.stock, madeToOrderDays: p.madeToOrderDays })}>
+          <li class="upsell__item" data-upsell-item={p.id} data-product={JSON.stringify(cartInfo(p))}>
             <img src={p.images[0].replace('.webp', '-sm.webp')} alt="" width="56" height="70" loading="lazy" />
             <div>
               <p class="upsell__name">{p.name}</p>

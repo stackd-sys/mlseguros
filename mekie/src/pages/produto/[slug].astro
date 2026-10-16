@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Carousel from '../../components/Carousel.astro';
 import Img from '../../components/Img.astro';
-import { products, getCategory, discount, variantsOf, type Product } from '../../data/products';
+import { products, getCategory, discount, variantsOf, cartInfo, totalStock, isSoldOut, type Product } from '../../data/products';
 import { site, formatPrice } from '../../data/site';
 
 export function getStaticPaths() {
@@ -18,7 +18,9 @@ const related = [
   ...products.filter((o) => o.category === p.category && o.slug !== p.slug && o.collection !== p.collection),
   ...products.filter((o) => o.category !== p.category && o.collection !== p.collection),
 ].slice(0, 8);
-const cartData = { id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0], stock: p.stock, madeToOrderDays: p.madeToOrderDays };
+const cartData = { ...cartInfo(p), sizeNotes: p.sizeNotes };
+const total = totalStock(p);
+const soldOut = isSoldOut(p);
 const payments = ['MB WAY', 'Multibanco', 'Visa', 'Mastercard', 'Apple Pay', 'Google Pay'];
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -35,7 +37,7 @@ const jsonLd = {
     '@type': 'Offer',
     priceCurrency: 'EUR',
     price: p.price.toFixed(2),
-    availability: p.stock !== undefined && p.stock <= 3 ? 'https://schema.org/LimitedAvailability' : 'https://schema.org/InStock',
+    availability: soldOut ? 'https://schema.org/OutOfStock' : total !== undefined && total <= 3 ? 'https://schema.org/LimitedAvailability' : 'https://schema.org/InStock',
     itemCondition: 'https://schema.org/NewCondition',
     url: new URL(`/produto/${p.slug}/`, site.url).href,
     seller: { '@type': 'Organization', name: site.name },
@@ -76,8 +78,10 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
           <p><strong>{p.stock === 1 ? '1 unidade pronta a enviar.' : `${p.stock ?? 0} unidades prontas a enviar.`}</strong> Depois disso fazemos por encomenda, com entrega em {p.madeToOrderDays} dias úteis.</p>
           <a href="/contactos/" class="link-underline">Queres outra cor? Fala connosco</a>
         </div>
-      ) : p.stock !== undefined && p.stock <= 3 && (
-        <p class="info__stock"><span class="info__dot"></span>{p.stock === 1 ? 'Só resta 1 unidade' : `Só restam ${p.stock} unidades`}</p>
+      ) : soldOut ? (
+        <p class="info__stock info__stock--out">Esgotado</p>
+      ) : !p.sizeStock && total !== undefined && total <= 3 && (
+        <p class="info__stock"><span class="info__dot"></span>{total === 1 ? 'Só resta 1 unidade' : `Só restam ${total} unidades`}</p>
       )}
 
       <div class="opt">
@@ -96,13 +100,18 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
           <fieldset class="opt">
             <legend class="opt__label">Tamanho: <span data-size-label>escolhe o teu tamanho</span></legend>
             <div class="sizes">
-              {p.sizes.map((s) => (
-                <label class="size">
-                  <input type="radio" name="size" value={s} />
-                  <span>{s}</span>
-                </label>
-              ))}
+              {p.sizes.map((s) => {
+                const out = !!p.sizeStock && !p.sizeStock[s];
+                return (
+                  <label class:list={['size', { 'is-out': out }]} title={out ? 'Esgotado' : undefined}>
+                    <input type="radio" name="size" value={s} disabled={out} />
+                    <span>{s}{out && <span class="sr-only"> (esgotado)</span>}</span>
+                  </label>
+                );
+              })}
             </div>
+            <p class="info__stock size-stock" data-size-stock hidden><span class="info__dot"></span><span data-size-stock-text></span></p>
+            <p class="size-note" data-size-note hidden></p>
             <a href="/contactos/" class="opt__help link-underline">Dúvidas com o tamanho? Fala connosco</a>
           </fieldset>
         ) : (
@@ -110,8 +119,8 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
         )}
 
         <p class="buy__error" role="alert" hidden>Escolhe um tamanho para continuar.</p>
-        <button type="submit" class="pill pill--accent pill--block buy__btn" data-buy-btn>
-          Adicionar ao carrinho
+        <button type="submit" class="pill pill--accent pill--block buy__btn" data-buy-btn disabled={soldOut}>
+          {soldOut ? 'Esgotado' : 'Adicionar ao carrinho'}
         </button>
       </form>
 
@@ -178,7 +187,7 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
       <p>{p.name}</p>
       <p class="price">{off > 0 && <del>{formatPrice(p.regularPrice)}</del>}{off > 0 ? <ins>{formatPrice(p.price)}</ins> : <span>{formatPrice(p.price)}</span>}</p>
     </div>
-    <button type="button" class="pill pill--accent" data-sticky-btn>Adicionar</button>
+    <button type="button" class="pill pill--accent" data-sticky-btn disabled={soldOut}>{soldOut ? 'Esgotado' : 'Adicionar'}</button>
   </div>
 
   <section class="section related">
@@ -215,6 +224,18 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
       if (t.name === 'size') {
         error.hidden = true;
         if (sizeLabel) sizeLabel.textContent = t.value;
+        const left = product.sizeStock?.[t.value];
+        const stockBox = form.querySelector<HTMLElement>('[data-size-stock]');
+        if (stockBox) {
+          stockBox.hidden = !(left > 0 && left <= 3);
+          stockBox.querySelector('[data-size-stock-text]')!.textContent =
+            left === 1 ? `Só resta 1 unidade em ${t.value}` : `Só restam ${left} unidades em ${t.value}`;
+        }
+        const note = form.querySelector<HTMLElement>('[data-size-note]');
+        if (note) {
+          note.textContent = product.sizeNotes?.[t.value] ?? '';
+          note.hidden = !note.textContent;
+        }
       }
     });
 
@@ -225,7 +246,8 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
         form.querySelector('.sizes')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
-      cart.add({ ...product, size }, 1);
+      const { sizeNotes, ...item } = product;
+      cart.add({ ...item, size }, 1);
       btn.textContent = 'Adicionado ✓';
       setTimeout(() => (btn.textContent = 'Adicionar ao carrinho'), 1600);
       openCart();
@@ -291,6 +313,12 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
     transition: border-color .2s, background .2s, color .2s;
   }
   .size span:hover { border-color: var(--ink); }
+  .size.is-out span { color: #b5b5b5; text-decoration: line-through; cursor: not-allowed; background: transparent; }
+  .size.is-out span:hover { border-color: var(--line); }
+  .size-stock { margin: 12px 0 0 !important; }
+  .size-note { margin: 8px 0 0; font-size: 12.5px; color: var(--ink-soft); }
+  .info__stock--out { color: var(--ink); font-weight: 600; }
+  .buy__btn:disabled { opacity: .45; cursor: not-allowed; }
   .size input:checked + span { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
   .size input:focus-visible + span { outline: 2px solid var(--ink); outline-offset: 2px; }
 

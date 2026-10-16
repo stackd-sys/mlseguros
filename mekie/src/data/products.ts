@@ -29,8 +29,12 @@ export type Product = {
   regularPrice: number;
   price: number;
   sizes?: string[];
-  /** Unidades em stock quando são poucas; sem valor = stock normal. */
+  /** Unidades em stock (produtos sem tamanhos). */
   stock?: number;
+  /** Unidades em stock por tamanho. Tamanhos a 0 aparecem como esgotados. */
+  sizeStock?: Record<string, number>;
+  /** Nota mostrada quando se escolhe um tamanho (ex.: unidade de outro fabricante). */
+  sizeNotes?: Record<string, string>;
   /** Feito por encomenda quando não há stock: prazo de entrega em dias úteis. */
   madeToOrderDays?: number;
   images: string[];
@@ -185,6 +189,7 @@ export const products: Product[] = [
     regularPrice: 70,
     price: 70,
     sizes: SIZES,
+    sizeStock: { XS: 0, S: 0, M: 2, L: 5, XL: 2 },
     images: [img('hoodie-cogumelos-yellow-1'), look('mushrooms-hoodie-yellow'), look('stack-leaves')],
     description: TAGLINE,
     details: hoodie('cogumelos'),
@@ -199,6 +204,8 @@ export const products: Product[] = [
     regularPrice: 70,
     price: 70,
     sizes: SIZES,
+    sizeStock: { XS: 0, S: 1, M: 3, L: 2, XL: 2 },
+    sizeNotes: { S: 'Esta unidade não foi fabricada em Portugal.' },
     images: [img('hoodie-cogumelos-black-1'), look('hoodie-black-cuff')],
     description: TAGLINE,
     details: hoodie('cogumelos'),
@@ -213,6 +220,7 @@ export const products: Product[] = [
     regularPrice: 70,
     price: 70,
     sizes: SIZES,
+    sizeStock: { XS: 0, S: 0, M: 6, L: 7, XL: 2 },
     images: [img('hoodie-esqueleto-yellow-1'), look('esqueleto-duo')],
     description: TAGLINE,
     details: hoodie('esqueleto'),
@@ -227,6 +235,8 @@ export const products: Product[] = [
     regularPrice: 70,
     price: 70,
     sizes: SIZES,
+    sizeStock: { XS: 0, S: 1, M: 3, L: 4, XL: 0 },
+    sizeNotes: { S: 'Esta unidade não foi fabricada em Portugal.' },
     images: [img('hoodie-skeleton-1'), look('esqueleto-black-hood'), look('hoodie-black-cuff')],
     description: TAGLINE,
     details: hoodie('esqueleto'),
@@ -237,10 +247,11 @@ export const products: Product[] = [
     name: 'T-shirt Cogumelos',
     category: 't-shirts',
     collection: 'cogumelos',
-    color: 'Khaki',
+    color: 'Bege',
     regularPrice: 50,
     price: 50,
     sizes: SIZES,
+    sizeStock: { XS: 0, S: 0, M: 6, L: 0, XL: 0 },
     images: [
       img('tshirt-khaki-mushrooms-1'),
       look('mushrooms-duo'),
@@ -255,10 +266,11 @@ export const products: Product[] = [
     name: 'T-shirt Cogumelos',
     category: 't-shirts',
     collection: 'cogumelos',
-    color: 'Preto',
+    color: 'Cinza',
     regularPrice: 50,
     price: 50,
     sizes: SIZES,
+    sizeStock: { XS: 0, S: 1, M: 8, L: 0, XL: 0 },
     images: [
       img('tshirt-black-mushrooms-1'),
       look('mushrooms-black'),
@@ -356,7 +368,7 @@ export const products: Product[] = [
     price: 15,
     stock: 1,
     madeToOrderDays: 10,
-    images: [img('scrunchie-rosa-1'), img('scrunchie-rosa')],
+    images: [img('scrunchie-rosa-1'), look('scrunchie-couple')],
     details: scrunchie,
     description: TAGLINE,
   },
@@ -386,7 +398,17 @@ export const productsIn = (slug: string) => {
   return products.filter((p) => slugs.includes(p.category));
 };
 export const productsInCollection = (slug: string) => products.filter((p) => p.collection === slug);
-export const lowStock = () => products.filter((p) => p.stock !== undefined && p.stock <= 3 && !p.madeToOrderDays);
+/** Total em stock (soma dos tamanhos), ou undefined quando não é controlado. */
+export const totalStock = (p: Product) =>
+  p.sizeStock ? Object.values(p.sizeStock).reduce((n, v) => n + v, 0) : p.stock;
+export const isSoldOut = (p: Product) => !p.madeToOrderDays && totalStock(p) === 0;
+export const lowStock = () =>
+  products.filter((p) => { const t = totalStock(p); return t !== undefined && t > 0 && t <= 3 && !p.madeToOrderDays; });
+/** Dados que o carrinho precisa de cada produto. */
+export const cartInfo = (p: Product) => ({
+  id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0],
+  stock: p.stock, sizeStock: p.sizeStock, madeToOrderDays: p.madeToOrderDays,
+});
 export const variantsOf = (p: Product) => products.filter((o) => o.name === p.name);
 export const discount = (p: Product) =>
   p.regularPrice > p.price ? Math.round((1 - p.price / p.regularPrice) * 100) : 0;

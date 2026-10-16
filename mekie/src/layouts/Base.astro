@@ -8,7 +8,7 @@ import Footer from '../components/Footer.astro';
 import CartDrawer from '../components/CartDrawer.astro';
 import Popup from '../components/Popup.astro';
 import { site } from '../data/site';
-import { products } from '../data/products';
+import { products, cartInfo } from '../data/products';
 
 interface Props {
   title?: string;
@@ -19,7 +19,7 @@ interface Props {
   noindex?: boolean;
 }
 /* Preço e stock atuais, para o carrinho guardado no browser se manter certo */
-const catalog = Object.fromEntries(products.map((p) => [p.id, { slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0], stock: p.stock, madeToOrderDays: p.madeToOrderDays }]));
+const catalog = Object.fromEntries(products.map((p) => [p.id, cartInfo(p)]));
 const {
   title,
   description = 'Mekie Planet, marca de roupa da Ericeira. T-shirts, hoodies, caps e meias com os bordados Mekie. Envio em 7 dias úteis, grátis acima de 65€.',
