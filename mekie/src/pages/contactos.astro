@@ -7,7 +7,7 @@ import { site } from '../data/site';
   <section class="container ct">
     <div>
       <h1 class="display ct__title">Contactos</h1>
-      <p class="ct__lead">Dúvidas sobre tamanhos, encomendas ou devoluções? Escreve-nos — respondemos o mais rápido possível.</p>
+      <p class="ct__lead">Tens dúvidas sobre tamanhos, encomendas ou devoluções? Manda-nos uma mensagem.</p>
       <dl class="ct__list">
         <div><dt class="eyebrow">Email</dt><dd><a class="link-underline" href={`mailto:${site.email}`}>{site.email}</a></dd></div>
         <div><dt class="eyebrow">Instagram</dt><dd><a class="link-underline" href={site.instagram} target="_blank" rel="noopener"><Icon name="instagram" size={16} /> @mekie_planet</a></dd></div>
@@ -40,8 +40,8 @@ import { site } from '../data/site';
   document.querySelector<HTMLFormElement>('[data-contact]')?.addEventListener('submit', (e) => {
     e.preventDefault();
     const f = new FormData(e.currentTarget as HTMLFormElement);
-    const body = `${f.get('mensagem')}\n\n— ${f.get('nome')} (${f.get('email')})`;
-    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(`${f.get('assunto')} — site Mekie`)}&body=${encodeURIComponent(body)}`;
+    const body = `${f.get('mensagem')}\n\n${f.get('nome')} (${f.get('email')})`;
+    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(`${f.get('assunto')}, site Mekie`)}&body=${encodeURIComponent(body)}`;
   });
 </script>
 

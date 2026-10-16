@@ -7,12 +7,12 @@ const { product: p, eager = false } = Astro.props;
 const off = discount(p);
 const colors = variantsOf(p).length;
 const label = p.badge ?? (off > 0 ? `-${off}%` : undefined);
-const cartData = JSON.stringify({ id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0] });
+const cartData = JSON.stringify({ id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0], stock: p.stock });
 const sizes = '(max-width: 700px) 50vw, 25vw';
 ---
 <article class="card" data-card data-product={cartData}>
   <div class="card__media">
-    <a href={`/produto/${p.slug}/`} class="card__link" aria-label={`${p.name} — ${p.color}`}>
+    <a href={`/produto/${p.slug}/`} class="card__link" aria-label={`${p.name}, ${p.color}`}>
       {label && <span class="card__tag eyebrow">{label}</span>}
       <Img src={p.images[0]} sizes={sizes} alt={`${p.name} ${p.color}`} width="600" height="750" loading={eager ? 'eager' : 'lazy'} class="card__img" />
       {p.images[1] && <Img src={p.images[1]} sizes={sizes} alt="" width="600" height="750" loading="lazy" class="card__img card__img--hover" />}
@@ -37,6 +37,7 @@ const sizes = '(max-width: 700px) 50vw, 25vw';
       {off > 0 ? <ins><span class="sr-only">Preço atual </span>{formatPrice(p.price)}</ins> : <span>{formatPrice(p.price)}</span>}
     </p>
     <p class="card__meta eyebrow">{colors > 1 ? `${colors} cores disponíveis` : p.color}</p>
+    {p.stock !== undefined && p.stock <= 3 && <p class="card__stock eyebrow">{p.stock === 1 ? 'Última unidade' : `Últimas ${p.stock} unidades`}</p>}
   </div>
 </article>
 
@@ -90,6 +91,7 @@ const sizes = '(max-width: 700px) 50vw, 25vw';
   .card__body { padding-top: 16px; display: grid; gap: 4px; justify-items: center; }
   .card__title { margin: 0; font-size: 13.5px; font-weight: 500; }
   .card__meta { margin: 8px 0 0; font-size: 10px; color: var(--ink-soft); }
+  .card__stock { margin: 0; font-size: 10px; color: var(--sale); }
   @media (hover: none) {
     .card__img--hover, .quick { display: none; }
   }

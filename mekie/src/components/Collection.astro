@@ -1,14 +1,14 @@
 ---
 import ProductCard from './ProductCard.astro';
 import Img from './Img.astro';
-import { categories, collections, productsIn, type Product } from '../data/products';
+import { categories, collections, productsIn, lowStock, type Product } from '../data/products';
 interface Props { title: string; intro?: string; products: Product[]; current: string; image?: string }
 const { title, intro, products, current, image } = Astro.props;
 const chips = [
   { href: '/loja/', label: 'Tudo', key: '' },
   { href: '/loja/novidades/', label: 'Novidades', key: 'novidades' },
-  { href: '/loja/ultimas-unidades/', label: 'Últimas unidades', key: 'ultimas-unidades' },
-  ...categories.map((c) => ({ href: `/loja/${c.slug}/`, label: c.plural, key: c.slug, soon: productsIn(c.slug).length === 0 })),
+  ...(lowStock().length ? [{ href: '/loja/ultimas-unidades/', label: 'Últimas unidades', key: 'ultimas-unidades' }] : []),
+  ...categories.map((c) => ({ href: `/loja/${c.slug}/`, label: c.name, key: c.slug, soon: productsIn(c.slug).length === 0 })),
   ...collections.map((c) => ({ href: `/colecoes/${c.slug}/`, label: c.name, key: `col-${c.slug}` })),
 ];
 ---
@@ -45,7 +45,7 @@ const chips = [
         <option value="featured">Destaques</option>
         <option value="price-asc">Preço: menor</option>
         <option value="price-desc">Preço: maior</option>
-        <option value="name">Nome A–Z</option>
+        <option value="name">Nome de A a Z</option>
       </select>
     </label>
   </div>

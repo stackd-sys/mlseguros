@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { categories, collections, productsIn } from '../data/products';
+import { topCategories, childCategories, collections, productsIn } from '../data/products';
 import { site } from '../data/site';
 interface Props { overlay?: boolean }
 const { overlay = false } = Astro.props;
@@ -34,7 +34,7 @@ const current = nav
       </a>
     </div>
 
-    <a href="/" class="header__logo" aria-label="Mekie Planet — página inicial">
+    <a href="/" class="header__logo" aria-label="Mekie Planet, página inicial">
       <img src="/images/site/logo.png" alt="Mekie" width="800" height="267" />
     </a>
 
@@ -71,28 +71,31 @@ const current = nav
           {item.mega === 'shop' && (
             <div class="mega">
               <div class="mega__inner container">
-                <div class="mega__col">
-                  <p class="mega__heading eyebrow">Categorias</p>
-                  <a href="/loja/" class="mega__link">Ver tudo</a>
-                  {categories.map((c) => (
-                    <a href={`/loja/${c.slug}/`} class="mega__link">
-                      {c.plural}
-                      {productsIn(c.slug).length === 0 && <span class="mega__soon eyebrow">Em breve</span>}
-                    </a>
-                  ))}
-                </div>
+                {topCategories.map((c) => (
+                  <div class="mega__col">
+                    <a href={`/loja/${c.slug}/`} class="mega__heading eyebrow">{c.name}</a>
+                    {childCategories(c.slug).length > 0 ? (
+                      childCategories(c.slug).map((sub) => (
+                        <a href={`/loja/${sub.slug}/`} class="mega__link">
+                          {sub.name}
+                          {productsIn(sub.slug).length === 0 && <span class="mega__soon eyebrow">Em breve</span>}
+                        </a>
+                      ))
+                    ) : (
+                      productsIn(c.slug)
+                        .filter((p, i, all) => all.findIndex((o) => o.name === p.name) === i)
+                        .map((p) => <a href={`/produto/${p.slug}/`} class="mega__link">{p.name}</a>)
+                    )}
+                  </div>
+                ))}
                 <div class="mega__col">
                   <p class="mega__heading eyebrow">Destaques</p>
+                  <a href="/loja/" class="mega__link">Ver tudo</a>
                   <a href="/loja/novidades/" class="mega__link">Novidades</a>
-                  <a href="/loja/ultimas-unidades/" class="mega__link">Últimas unidades -25%</a>
-                  <a href="/#novo-drop" class="mega__link">Novo drop a caminho</a>
+                  <a href="/loja/ultimas-unidades/" class="mega__link">Últimas unidades</a>
                 </div>
-                <a href="/loja/t-shirts/" class="mega__card">
-                  <img src="/images/lookbook/mushrooms-black-sm.webp" alt="" loading="lazy" width="480" height="600" />
-                  <span class="eyebrow">T-Shirts</span>
-                </a>
-                <a href="/loja/hoodie/" class="mega__card">
-                  <img src="/images/site/banner-94-sm.webp" alt="" loading="lazy" width="480" height="600" />
+                <a href="/loja/hoodies-crewnecks/" class="mega__card">
+                  <img src="/images/lookbook/mushrooms-hoodie-yellow-sm.webp" alt="" loading="lazy" width="480" height="720" />
                   <span class="eyebrow">Hoodies</span>
                 </a>
               </div>
@@ -113,8 +116,13 @@ const current = nav
     </div>
     <ul class="mnav__list">
       <li><a href="/loja/novidades/">Novidades</a></li>
-      <li><a href="/loja/">Loja — ver tudo</a></li>
-      {categories.map((c) => <li class="mnav__sub"><a href={`/loja/${c.slug}/`}>{c.plural}</a></li>)}
+      <li><a href="/loja/">Loja</a></li>
+      {topCategories.map((c) => (
+        <>
+          <li class="mnav__sub"><a href={`/loja/${c.slug}/`}>{c.name}</a></li>
+          {childCategories(c.slug).map((sub) => <li class="mnav__sub mnav__sub--2"><a href={`/loja/${sub.slug}/`}>{sub.name}</a></li>)}
+        </>
+      ))}
       <li><a href="/colecoes/">Coleções</a></li>
       {collections.map((c) => <li class="mnav__sub"><a href={`/colecoes/${c.slug}/`}>{c.name}</a></li>)}
       <li><a href="/loja/ultimas-unidades/">Últimas unidades</a></li>
@@ -212,12 +220,13 @@ const current = nav
   }
   .has-mega:hover .mega, .has-mega:focus-within .mega { opacity: 1; visibility: visible; transform: none; }
   .mega__inner {
-    display: grid; grid-template-columns: 1fr 1fr 220px 220px;
+    display: grid; grid-template-columns: repeat(4, 1fr) 220px;
     gap: 40px; padding-top: 36px; padding-bottom: 40px;
   }
   .mega__inner--cols { grid-template-columns: 1fr 260px 260px; justify-content: start; }
   .mega__col { display: flex; flex-direction: column; gap: 10px; }
   .mega__heading { margin: 0 0 6px; color: var(--ink-soft); font-size: 10.5px; }
+  a.mega__heading:hover { color: var(--ink); }
   .mega__link { font-size: 14px; display: flex; gap: 10px; align-items: center; }
   .mega__link:hover { text-decoration: underline; text-underline-offset: 3px; }
   .mega__soon { font-size: 9.5px; color: var(--ink-soft); }
@@ -244,6 +253,7 @@ const current = nav
     font-size: 13px; letter-spacing: .12em; text-transform: uppercase;
   }
   .mnav__sub a { padding-left: 16px; font-size: 12px; color: var(--ink-soft); }
+  .mnav__sub--2 a { padding-left: 32px; font-size: 11px; }
   .mnav__ig { margin-top: auto; padding-top: 28px; display: inline-flex; gap: 10px; align-items: center; }
   @keyframes slideIn { from { transform: translateX(-100%); } }
 

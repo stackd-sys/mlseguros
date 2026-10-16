@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { categories } from '../data/products';
+import { topCategories, childCategories } from '../data/products';
 import { legalPages } from '../data/legal';
 import { site } from '../data/site';
 const year = new Date().getFullYear();
@@ -16,21 +16,34 @@ const payments = ['MB WAY', 'Multibanco', 'Visa', 'Mastercard', 'Apple Pay', 'Go
 
 <footer class="footer">
   <div class="footer__grid container">
-    <div class="footer__col footer__news">
+    <div class="footer__col footer__news" data-newsletter-box>
       <p class="footer__title eyebrow">Mekie Newsletter</p>
-      <p class="footer__text eyebrow">Recebe as novidades em primeira mão e sabe antes de todos quando sai o <strong>próximo drop</strong>.</p>
-      <form class="newsletter-form" data-newsletter>
-        <label class="sr-only" for="footer-email">E-mail</label>
-        <input class="field" id="footer-email" type="email" name="email" placeholder="E-mail" required autocomplete="email" />
+      <p class="footer__text eyebrow" data-before>Recebe as novidades primeiro e ganha <strong>{site.welcomeDiscount}% de desconto</strong> na primeira compra.</p>
+      <form class="newsletter-form" data-newsletter="footer" novalidate>
+        <label class="sr-only" for="footer-email">Email</label>
+        <input class="field" id="footer-email" type="email" name="email" placeholder="Email" required autocomplete="email" />
+        <label class="newsletter-form__consent">
+          <input type="checkbox" name="consent" value="yes" required />
+          <span>Aceito receber emails da Mekie.</span>
+        </label>
         <button class="pill" type="submit">Subscrever</button>
-        <p class="newsletter-form__msg" role="status" hidden>Obrigado! Já estás na lista.</p>
+        <p class="newsletter-form__msg" role="alert" data-msg hidden></p>
       </form>
+      <div class="footer__done" data-success hidden>
+        <p class="footer__text eyebrow">Já estás na lista. O teu código de {site.welcomeDiscount}%:</p>
+        <p class="footer__code"><code>{site.welcomeCode}</code></p>
+      </div>
     </div>
     <div class="footer__col">
       <p class="footer__title eyebrow">Loja</p>
       <ul>
         <li><a href="/loja/">Ver tudo</a></li>
-        {categories.map((c) => <li><a href={`/loja/${c.slug}/`}>{c.plural}</a></li>)}
+        {topCategories.map((c) => (
+          <>
+            <li><a href={`/loja/${c.slug}/`}>{c.name}</a></li>
+            {childCategories(c.slug).map((s) => <li class="footer__sub"><a href={`/loja/${s.slug}/`}>{s.name}</a></li>)}
+          </>
+        ))}
       </ul>
     </div>
     <div class="footer__col">
@@ -55,7 +68,7 @@ const payments = ['MB WAY', 'Multibanco', 'Visa', 'Mastercard', 'Apple Pay', 'Go
   <div class="footer__bottom container">
     <div class="footer__brand">
       <a href={site.instagram} target="_blank" rel="noopener" aria-label="Instagram"><Icon name="instagram" size={18} /></a>
-      <p class="eyebrow">© {year} — {site.name}</p>
+      <p class="eyebrow">© {year} {site.name}</p>
     </div>
     <ul class="footer__pay" aria-label="Métodos de pagamento">
       {payments.map((p) => <li>{p}</li>)}
@@ -84,11 +97,15 @@ const payments = ['MB WAY', 'Multibanco', 'Visa', 'Mastercard', 'Apple Pay', 'Go
     text-decoration: underline; text-underline-offset: 3px;
   }
   .footer__col ul a:hover { color: var(--ink); }
+  .footer__sub { padding-left: 12px; }
   .footer__plain { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
   .newsletter-form { display: grid; gap: 14px; max-width: 280px; justify-items: start; }
   .newsletter-form .pill { background: var(--accent); }
   .newsletter-form .pill:hover { background: #1f3f27; }
-  .newsletter-form__msg { margin: 0; font-size: 13px; color: var(--accent); }
+  .newsletter-form__msg { margin: 0; font-size: 12.5px; color: var(--sale); }
+  .newsletter-form__consent { display: flex; gap: 8px; font-size: 11.5px; color: var(--ink-soft); }
+  .newsletter-form__consent input { accent-color: var(--accent); }
+  .footer__code code { font-family: var(--font-body); font-size: 18px; font-weight: 600; letter-spacing: .12em; border: 1px dashed var(--ink); padding: 8px 14px; display: inline-block; user-select: all; }
 
   .footer__bottom {
     display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap;

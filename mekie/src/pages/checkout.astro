@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import { site } from '../data/site';
 ---
-<Base title="Finalizar compra" noindex>
+<Base title="Finalizar compra" noindex popup={false}>
   <div class="container co">
     <h1 class="display co__title">Finalizar compra</h1>
 
@@ -38,6 +38,14 @@ import { site } from '../data/site';
           <input class="field" name="nif" placeholder="NIF (opcional)" inputmode="numeric" />
           <textarea class="field" name="notas" placeholder="Notas da encomenda (opcional)"></textarea>
         </fieldset>
+        <fieldset>
+          <legend class="eyebrow">Código de desconto</legend>
+          <div class="co__code">
+            <input class="field" name="codigo" id="co-code" placeholder="Ex.: MEKIE10" autocomplete="off" autocapitalize="characters" data-code-input />
+            <button type="button" class="pill pill--outline" data-code-apply>Aplicar</button>
+          </div>
+          <p class="co__code-msg" data-code-msg hidden></p>
+        </fieldset>
         <label class="co__terms">
           <input type="checkbox" required />
           <span>Li e aceito os <a class="link-underline" href="/termos-e-condicoes-de-servico/" target="_blank">Termos e Condições</a> e a <a class="link-underline" href="/politica-de-privacidade/" target="_blank">Política de Privacidade</a>.</span>
@@ -50,6 +58,7 @@ import { site } from '../data/site';
         <p class="eyebrow">Resumo</p>
         <ul class="co__lines" data-co-lines></ul>
         <div class="co__row"><span>Subtotal</span><span data-cart-subtotal></span></div>
+        <div class="co__row" data-co-discount-row hidden><span data-co-discount-label></span><span data-co-discount></span></div>
         <div class="co__row"><span>Envio</span><span data-co-ship></span></div>
         <div class="co__row co__total"><span>Total</span><strong data-co-total></strong></div>
       </aside>
@@ -60,34 +69,69 @@ import { site } from '../data/site';
 <script>
   import { cart, money, href } from '../scripts/cart';
   const FREE = Number(document.documentElement.dataset.freeShipping || 60);
+  const CODE = (document.documentElement.dataset.welcomeCode || '').toUpperCase();
+  const RATE = 0.1;
+  let applied = '';
+  try { applied = localStorage.getItem('mekie-code-applied') || ''; } catch {}
   const EMAIL = document.documentElement.dataset.email || '';
   const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
-  cart.subscribe((lines) => {
-    const sub = lines.reduce((n, l) => n + l.qty * l.price, 0);
-    const free = sub >= FREE;
+  const codeInput = document.querySelector<HTMLInputElement>('[data-code-input]')!;
+  const codeMsg = document.querySelector<HTMLElement>('[data-code-msg]')!;
+  if (applied) codeInput.value = applied;
+  const totals = () => {
+    const sub = cart.subtotal;
+    const disc = applied === CODE && CODE ? Math.round(sub * RATE * 100) / 100 : 0;
+    return { sub, disc, after: sub - disc };
+  };
+  document.querySelector('[data-code-apply]')?.addEventListener('click', () => {
+    const value = codeInput.value.trim().toUpperCase();
+    codeMsg.hidden = false;
+    if (value && value === CODE) {
+      applied = value;
+      codeMsg.textContent = 'Código aplicado: 10% de desconto. Não acumulável com outras promoções.';
+      codeMsg.classList.remove('is-error');
+    } else {
+      applied = '';
+      codeMsg.textContent = 'Este código não é válido.';
+      codeMsg.classList.add('is-error');
+    }
+    try { localStorage.setItem('mekie-code-applied', applied); } catch {}
+    render(cart.lines);
+  });
+
+  const render = (lines: typeof cart.lines) => {
+    const { sub, disc, after } = totals();
+    const free = after >= FREE;
+    const discRow = document.querySelector<HTMLElement>('[data-co-discount-row]')!;
+    discRow.hidden = disc === 0;
+    document.querySelector<HTMLElement>('[data-co-discount-label]')!.textContent = `Desconto ${applied}`;
+    document.querySelector<HTMLElement>('[data-co-discount]')!.textContent = `-${money(disc)}`;
     document.querySelector<HTMLElement>('[data-co-empty]')!.hidden = lines.length > 0;
     document.querySelector<HTMLElement>('[data-co-grid]')!.hidden = lines.length === 0;
     document.querySelector<HTMLElement>('[data-co-ship]')!.textContent = free ? 'Grátis' : 'A confirmar';
-    document.querySelector<HTMLElement>('[data-co-total]')!.textContent = money(sub) + (free ? '' : ' + portes');
+    document.querySelector<HTMLElement>('[data-co-total]')!.textContent = money(after) + (free ? '' : ' + portes');
     document.querySelector<HTMLElement>('[data-co-lines]')!.innerHTML = lines
       .map((l) => `<li><img src="${href(esc(l.image))}" alt="" width="64" height="80" /><span class="q">${l.qty}</span>
         <div><p>${esc(l.name)}</p><small>${esc(l.color)}${l.size ? ` · ${esc(l.size)}` : ''}</small></div>
         <span>${money(l.qty * l.price)}</span></li>`)
       .join('');
-  });
+  };
+  cart.subscribe(render);
 
   document.querySelector<HTMLFormElement>('[data-co-form]')?.addEventListener('submit', (e) => {
     e.preventDefault();
     const f = new FormData(e.currentTarget as HTMLFormElement);
     const lines = cart.lines;
-    const sub = cart.subtotal;
+    const { sub, disc, after } = totals();
     const body = [
       'Olá Mekie! Quero fazer esta encomenda:',
       '',
-      ...lines.map((l) => `• ${l.qty}x ${l.name} — ${l.color}${l.size ? ` — Tamanho ${l.size}` : ''} — ${money(l.qty * l.price)}`),
+      ...lines.map((l) => `• ${l.qty}x ${l.name}, ${l.color}${l.size ? `, tamanho ${l.size}` : ''}: ${money(l.qty * l.price)}`),
       '',
-      `Subtotal: ${money(sub)}${sub >= FREE ? ' (envio grátis)' : ' + portes'}`,
+      `Subtotal: ${money(sub)}`,
+      disc ? `Desconto ${applied} (10%): -${money(disc)}` : '',
+      `Total: ${money(after)}${after >= FREE ? ' (envio grátis)' : ' + portes'}`,
       '',
       `Nome: ${f.get('nome')} ${f.get('apelido')}`,
       `Email: ${f.get('email')}`,
@@ -96,7 +140,7 @@ import { site } from '../data/site';
       f.get('nif') ? `NIF: ${f.get('nif')}` : '',
       f.get('notas') ? `Notas: ${f.get('notas')}` : '',
     ].filter((x, i, a) => x !== '' || a[i - 1] !== '').join('\n');
-    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent('Nova encomenda — site Mekie')}&body=${encodeURIComponent(body)}`;
+    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent('Nova encomenda no site Mekie')}&body=${encodeURIComponent(body)}`;
   });
 </script>
 
@@ -113,6 +157,10 @@ import { site } from '../data/site';
   .co__terms { display: flex; gap: 10px; font-size: 13px; align-items: flex-start; }
   .co__terms input { margin-top: 3px; }
   .co__submit { min-height: 52px; }
+  .co__code { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+  .co__code .pill { min-height: 46px; }
+  .co__code-msg { margin: 0; font-size: 12.5px; color: var(--accent); }
+  .co__code-msg.is-error { color: var(--sale); }
   .co__note { margin: -8px 0 0; font-size: 12.5px; color: var(--ink-soft); }
   .co__summary { background: var(--surface); padding: 28px; position: sticky; top: 130px; }
   .co__summary > .eyebrow { margin: 0 0 18px; font-size: 11px; }

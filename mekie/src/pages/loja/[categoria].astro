@@ -1,38 +1,36 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Collection from '../../components/Collection.astro';
-import { categories, products, productsIn, discount, type Product } from '../../data/products';
+import { categories, products, productsIn, lowStock, type Product } from '../../data/products';
 
 export function getStaticPaths() {
   const special = [
     {
       slug: 'novidades',
       title: 'Novidades',
-      intro: 'As peças mais recentes da Mekie.',
-      image: undefined,
-      items: [...products].sort((a, b) => b.id - a.id).slice(0, 4),
+      intro: 'As peças que chegaram agora à loja.',
+      items: products.filter((p) => p.badge === 'Novo'),
     },
     {
       slug: 'ultimas-unidades',
       title: 'Últimas unidades',
-      intro: '25% de desconto enquanto houver stock.',
-      image: undefined,
-      items: products.filter((p) => discount(p) > 0),
+      intro: 'Peças com poucas unidades em stock.',
+      items: lowStock(),
     },
   ];
   return [
-    ...special.map((s) => ({ params: { categoria: s.slug }, props: { title: s.title, intro: s.intro, image: s.image, items: s.items } })),
+    ...special.map((s) => ({ params: { categoria: s.slug }, props: { title: s.title, intro: s.intro, items: s.items } })),
     ...categories.map((c) => ({
       params: { categoria: c.slug },
-      props: { title: c.plural, intro: undefined, image: undefined, items: productsIn(c.slug) },
+      props: { title: c.name, intro: undefined, items: productsIn(c.slug) },
     })),
   ];
 }
 
-interface Props { title: string; intro?: string; image?: string; items: Product[] }
-const { title, intro, image, items } = Astro.props;
+interface Props { title: string; intro?: string; items: Product[] }
+const { title, intro, items } = Astro.props;
 const { categoria } = Astro.params;
 ---
-<Base title={title} description={`${title} Mekie — streetwear português com envio em 5 dias úteis.`}>
-  <Collection title={title} intro={intro} image={image} products={items} current={categoria!} />
+<Base title={title} description={`${title} da Mekie Planet. Envio em 5 dias úteis, grátis acima de 60€.`}>
+  <Collection title={title} intro={intro} products={items} current={categoria!} />
 </Base>

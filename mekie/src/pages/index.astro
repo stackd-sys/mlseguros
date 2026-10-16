@@ -2,53 +2,56 @@
 import Base from '../layouts/Base.astro';
 import Carousel from '../components/Carousel.astro';
 import Img from '../components/Img.astro';
-import { products, categories, discount } from '../data/products';
+import { products } from '../data/products';
 import { site } from '../data/site';
 
 const tiles = [
-  { href: '/loja/t-shirts/', image: '/images/site/img-3.webp', label: 'Ver T-Shirts' },
-  { href: '/loja/hoodie/', image: '/images/site/banner-94.webp', label: 'Ver Hoodies' },
-  { href: '/loja/meias/', image: '/images/site/banner-95.webp', label: 'Ver Meias' },
+  { href: '/loja/t-shirts/', image: '/images/products/tshirt-khaki-mushrooms-2.webp', label: 'Ver T-Shirts', alt: 'Rapaz com a t-shirt Cogumelos khaki numa rua com graffiti' },
+  { href: '/loja/hoodies-crewnecks/', image: '/images/lookbook/mushrooms-hoodie-yellow.webp', label: 'Ver Hoodies', alt: 'Rapaz com o hoodie Cogumelos amarelo pastel, visto de baixo entre as mãos' },
+  { href: '/loja/acessorios/', image: '/images/site/banner-95.webp', label: 'Ver Acessórios', alt: 'Meias Mekie brancas com ténis pretos numa calçada' },
 ];
 const bands = [
   {
-    href: '/colecoes/mushrooms/',
+    href: '/colecoes/cogumelos/',
     kicker: 'Coleção',
-    title: 'Mushrooms',
+    title: 'Cogumelos',
     images: ['/images/lookbook/mushrooms-duo.webp', '/images/lookbook/mushrooms-black.webp'],
-    alts: ['Duas raparigas com as t-shirts Mushrooms preta e khaki', 'T-shirt Mushrooms preta com três cogumelos bordados'],
+    alts: ['Duas raparigas com as t-shirts Cogumelos preta e khaki', 'Rapariga com a t-shirt Cogumelos preta junto a um lago'],
   },
   {
-    href: '/colecoes/skeleton/',
+    href: '/colecoes/esqueleto/',
     kicker: 'Coleção',
-    title: 'Skeleton',
-    images: ['/images/products/hoodie-skeleton-2.webp', '/images/products/tshirt-khaki-skeleton-2.webp'],
-    alts: ['Hoodie Skeleton preto num skate park à beira-mar', 'T-shirt Skeleton khaki numa rua com graffiti'],
+    title: 'Esqueleto',
+    images: ['/images/products/hoodie-skeleton-2.webp', '/images/site/banner-94.webp'],
+    alts: ['Rapaz com o hoodie Esqueleto preto num skate park junto ao mar', 'Rapaz com o hoodie Esqueleto claro numa falésia'],
   },
 ];
 const editorial = [
   { href: '/sobre/', image: '/images/lookbook/mushrooms-sleeve.webp', title: 'Sobre nós', cta: 'Ler mais' },
-  { href: site.instagram, image: '/images/lookbook/mushrooms-hoodie-yellow.webp', title: 'O nosso mundo', cta: 'Seguir no Instagram', external: true },
+  { href: site.instagram, image: '/images/site/img-3.webp', title: 'O nosso mundo', cta: 'Seguir no Instagram', external: true },
   { href: '/contactos/', image: '/images/site/banner-93.webp', title: 'Fala connosco', cta: 'Contactos' },
 ];
-const maxOff = Math.max(...products.map(discount));
-void categories;
+/* Um de cada modelo primeiro (novidades à frente), depois as outras cores */
+const byNew = [...products].sort((a, b) => Number(b.badge === 'Novo') - Number(a.badge === 'Novo'));
+const firsts = byNew.filter((p, i) => byNew.findIndex((o) => o.name === p.name) === i);
+const featured = [...firsts, ...byNew.filter((p) => !firsts.includes(p))];
+
 ---
 <Base overlayHeader popup>
   <section class="hero">
     <Img class="hero__img" src="/images/site/hero.webp" largeW={1600} sizes="100vw" alt="A comunidade Mekie vestida com a coleção, numa floresta" width="1600" height="1067" fetchpriority="high" />
     <div class="hero__shade"></div>
     <div class="hero__content">
-      <h1 class="hero__title">The basics, bro, never fail.</h1>
-      <p class="hero__sub">Últimas unidades com {maxOff}% de desconto.</p>
-      <a href="/loja/ultimas-unidades/" class="pill pill--light hero__cta">Comprar agora</a>
+      <h1 class="hero__title">Bro, o básico nunca falha.</h1>
+      <p class="hero__sub">Caps, bucket hat e hoodies novos já na loja.</p>
+      <a href="/loja/novidades/" class="pill pill--light hero__cta">Comprar agora</a>
     </div>
   </section>
 
   <section class="section browse">
     <div class="container">
-      <p class="section-title eyebrow">Browse Mekie</p>
-      <Carousel products={products} label="Produtos em destaque" />
+      <p class="section-title eyebrow">Novidades</p>
+      <Carousel products={featured} label="Novidades" />
       <div class="center"><a href="/loja/" class="pill">Ver tudo</a></div>
     </div>
   </section>
@@ -70,7 +73,7 @@ void categories;
           <div class="container tiles__grid">
             {tiles.map((t) => (
               <a href={t.href} class="tile">
-                <div class="tile__media"><Img src={t.image} sizes="(max-width: 800px) 78vw, 33vw" alt="" width="540" height="675" loading="lazy" /></div>
+                <div class="tile__media"><Img src={t.image} sizes="(max-width: 800px) 78vw, 33vw" alt={t.alt} width="540" height="675" loading="lazy" /></div>
                 <span class="pill">{t.label}</span>
               </a>
             ))}

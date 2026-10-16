@@ -7,6 +7,7 @@ export type CartLine = {
   size?: string;
   price: number;
   image: string;
+  stock?: number;
   qty: number;
 };
 
@@ -47,14 +48,15 @@ export const cart = {
   },
   add(line: Omit<CartLine, 'key' | 'qty'>, qty = 1) {
     const key = `${line.id}:${line.size ?? ''}`;
+    const max = line.stock ?? 10;
     const existing = memory.find((l) => l.key === key);
     const next = existing
-      ? memory.map((l) => (l.key === key ? { ...l, qty: Math.min(l.qty + qty, 10) } : l))
-      : [...memory, { ...line, key, qty }];
+      ? memory.map((l) => (l.key === key ? { ...l, qty: Math.min(l.qty + qty, max) } : l))
+      : [...memory, { ...line, key, qty: Math.min(qty, max) }];
     write(next);
   },
   setQty(key: string, qty: number) {
-    write(qty <= 0 ? memory.filter((l) => l.key !== key) : memory.map((l) => (l.key === key ? { ...l, qty: Math.min(qty, 10) } : l)));
+    write(qty <= 0 ? memory.filter((l) => l.key !== key) : memory.map((l) => (l.key === key ? { ...l, qty: Math.min(qty, l.stock ?? 10) } : l)));
   },
   remove(key: string) {
     write(memory.filter((l) => l.key !== key));

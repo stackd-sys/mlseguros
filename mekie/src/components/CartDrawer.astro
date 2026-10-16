@@ -2,7 +2,7 @@
 import Icon from './Icon.astro';
 import { site, formatPrice } from '../data/site';
 import { products } from '../data/products';
-const addOns = products.filter((p) => !p.sizes);
+const addOns = products.filter((p) => p.category === 'meias');
 ---
 <div class="drawer" data-cart hidden>
   <div class="drawer__backdrop" data-cart-close></div>
@@ -23,7 +23,7 @@ const addOns = products.filter((p) => !p.sizes);
       <p class="upsell__title eyebrow">Completa o teu pedido</p>
       <ul class="upsell__list">
         {addOns.map((p) => (
-          <li class="upsell__item" data-upsell-item={p.id} data-product={JSON.stringify({ id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0] })}>
+          <li class="upsell__item" data-upsell-item={p.id} data-product={JSON.stringify({ id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0], stock: p.stock })}>
             <img src={p.images[0].replace('.webp', '-sm.webp')} alt="" width="56" height="70" loading="lazy" />
             <div>
               <p class="upsell__name">{p.name}</p>
@@ -42,7 +42,7 @@ const addOns = products.filter((p) => !p.sizes);
 
     <footer class="drawer__foot" data-cart-foot>
       <div class="drawer__row"><span class="eyebrow">Subtotal</span><strong data-cart-subtotal>0,00€</strong></div>
-      <p class="drawer__note">IVA incluído. Portes calculados no checkout — grátis acima de {site.freeShippingFrom}€.</p>
+      <p class="drawer__note">IVA incluído. Portes calculados no checkout, grátis acima de {site.freeShippingFrom}€.</p>
       <a href="/checkout/" class="pill pill--accent pill--block">Finalizar compra</a>
       <ul class="drawer__pay" aria-label="Métodos de pagamento">
         {['MB WAY', 'Multibanco', 'Visa', 'Mastercard', 'Apple Pay', 'Google Pay'].map((m) => <li>{m}</li>)}
@@ -78,7 +78,7 @@ const addOns = products.filter((p) => !p.sizes);
   .upsell__item { position: relative; display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center; }
   .upsell__item img { width: 56px; height: 70px; object-fit: contain; background: var(--surface); }
   .upsell__name { margin: 0; font-size: 13px; }
-  .upsell__price { margin: 2px 0 0; font-size: 12.5px; color: var(--sale); }
+  .upsell__price { margin: 2px 0 0; font-size: 12.5px; color: var(--ink-soft); }
   .upsell__add { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px; }
   .upsell__item.is-added .upsell__add { visibility: hidden; }
   .drawer__pay { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
@@ -100,6 +100,7 @@ const addOns = products.filter((p) => !p.sizes);
   :global(.line__meta) { margin: 2px 0 10px; font-size: 12px; color: var(--ink-soft); }
   :global(.qty) { display: inline-flex; align-items: center; border: 1px solid var(--line); height: 34px; }
   :global(.qty button) { width: 32px; height: 100%; display: grid; place-items: center; }
+  :global(.qty button:disabled) { opacity: .3; cursor: not-allowed; }
   :global(.qty span) { min-width: 26px; text-align: center; font-size: 13px; }
   :global(.line__right) { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; }
   :global(.line__price) { font-size: 13px; }

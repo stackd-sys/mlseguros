@@ -19,13 +19,13 @@ interface Props {
 }
 const {
   title,
-  description = 'Mekie Planet — streetwear português. T-shirts, hoodies, meias e acessórios com bordados Mekie. Envio em 5 dias úteis e grátis acima de 60€.',
+  description = 'Mekie Planet, marca de roupa da Ericeira. T-shirts, hoodies, caps e meias com os bordados Mekie. Envio em 5 dias úteis, grátis acima de 60€.',
   image = '/images/site/hero.webp',
   overlayHeader = false,
-  popup = false,
+  popup = true,
   noindex = false,
 } = Astro.props;
-const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — Loja Online Oficial`;
+const fullTitle = title ? `${title} | ${site.name}` : `${site.name} | Loja online`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image, Astro.site);
 ---
@@ -33,7 +33,8 @@ const ogImage = new URL(image, Astro.site);
 <html
   lang="pt-PT"
   data-free-shipping={site.freeShippingFrom}
-  data-newsletter-endpoint={site.newsletterEndpoint}
+  data-newsletter-endpoint={site.newsletterWebhook}
+  data-welcome-code={site.welcomeCode}
   data-email={site.email}
 >
   <head>

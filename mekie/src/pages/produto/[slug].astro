@@ -19,7 +19,7 @@ const related = [
   ...products.filter((o) => o.category === p.category && o.slug !== p.slug && o.collection !== p.collection),
   ...products.filter((o) => o.category !== p.category && o.collection !== p.collection),
 ].slice(0, 8);
-const cartData = { id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0] };
+const cartData = { id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0], stock: p.stock };
 const payments = ['MB WAY', 'Multibanco', 'Visa', 'Mastercard', 'Apple Pay', 'Google Pay'];
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -30,12 +30,13 @@ const jsonLd = {
   description: p.description,
   color: p.color,
   category: cat.name,
+  ...(p.details ? { material: p.details.composition.join(', ') } : {}),
   brand: { '@type': 'Brand', name: site.name },
   offers: {
     '@type': 'Offer',
     priceCurrency: 'EUR',
     price: p.price.toFixed(2),
-    availability: 'https://schema.org/InStock',
+    availability: p.stock !== undefined && p.stock <= 3 ? 'https://schema.org/LimitedAvailability' : 'https://schema.org/InStock',
     itemCondition: 'https://schema.org/NewCondition',
     url: new URL(`/produto/${p.slug}/`, site.url).href,
     seller: { '@type': 'Organization', name: site.name },
@@ -51,7 +52,7 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
       <div class="gallery__track" data-track>
         {p.images.map((src, i) => (
           <figure class:list={['gallery__item', { 'gallery__item--lead': i === 0, 'gallery__item--cover': !isCutout(src) }]} data-slide={i}>
-            <Img src={src} sizes={i === 0 ? '(max-width: 900px) 100vw, 58vw' : '(max-width: 900px) 100vw, 29vw'} alt={`${p.name} ${p.color} — imagem ${i + 1} de ${p.images.length}`} width="1000" height="1250" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} />
+            <Img src={src} sizes={i === 0 ? '(max-width: 900px) 100vw, 58vw' : '(max-width: 900px) 100vw, 29vw'} alt={`${p.name} ${p.color}, imagem ${i + 1} de ${p.images.length}`} width="1000" height="1250" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} />
           </figure>
         ))}
       </div>
@@ -72,6 +73,9 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
         {off > 0 && <span class="info__off">-{off}%</span>}
       </p>
       <p class="info__tax">IVA incluído. Portes calculados no checkout.</p>
+      {p.stock !== undefined && p.stock <= 3 && (
+        <p class="info__stock"><span class="info__dot"></span>{p.stock === 1 ? 'Só resta 1 unidade' : `Só restam ${p.stock} unidades`}</p>
+      )}
 
       <div class="opt">
         <p class="opt__label">Cor: <span>{p.color}</span></p>
@@ -125,14 +129,31 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
           <summary class="eyebrow">Descrição</summary>
           <div class="acc__body">
             <p>{p.description}</p>
+            {p.details && (
+              <ul>{p.details.features.map((f) => <li>{f}</li>)}</ul>
+            )}
             <ul>
               <li>Cor: {p.color}</li>
-              <li>Categoria: {cat.plural}</li>
               {col && <li>Coleção: {col.name}</li>}
               <li>Tamanhos: {p.sizes ? p.sizes.join(', ') : 'tamanho único'}</li>
             </ul>
           </div>
         </details>
+        {p.details && (
+          <details>
+            <summary class="eyebrow">Composição e cuidados</summary>
+            <div class="acc__body">
+              <p class="acc__label">Composição</p>
+              <ul>{p.details.composition.map((c) => <li>{c}</li>)}</ul>
+              {p.details.care && (
+                <>
+                  <p class="acc__label">Cuidados</p>
+                  <ul>{p.details.care.map((c) => <li>{c}</li>)}</ul>
+                </>
+              )}
+            </div>
+          </details>
+        )}
         <details>
           <summary class="eyebrow">Envios e devoluções</summary>
           <div class="acc__body">
@@ -149,7 +170,7 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
     <img src={p.images[0].replace('.webp', '-sm.webp')} alt="" width="44" height="55" />
     <div class="sticky-buy__txt">
       <p>{p.name}</p>
-      <p class="price">{off > 0 && <del>{formatPrice(p.regularPrice)}</del>}<ins>{formatPrice(p.price)}</ins></p>
+      <p class="price">{off > 0 && <del>{formatPrice(p.regularPrice)}</del>}{off > 0 ? <ins>{formatPrice(p.price)}</ins> : <span>{formatPrice(p.price)}</span>}</p>
     </div>
     <button type="button" class="pill pill--accent" data-sticky-btn>Adicionar</button>
   </div>
@@ -287,7 +308,12 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
   .acc details[open] summary::after { content: '−'; }
   .acc__body { padding-bottom: 18px; font-size: 13.5px; color: var(--ink-soft); }
   .acc__body p { margin: 0 0 10px; }
-  .acc__body ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+  .acc__body ul { margin: 0 0 12px; padding-left: 18px; display: grid; gap: 4px; }
+  .acc__label { color: var(--ink); font-size: 12.5px; margin: 4px 0 6px !important; }
+  .info__stock { display: flex; align-items: center; gap: 8px; margin: -14px 0 24px; font-size: 12.5px; color: var(--sale); }
+  .info__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sale); animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) { .info__dot { animation: none; } }
 
   .related { margin-top: clamp(40px, 6vw, 80px); }
   .related__title { font-weight: 400; font-size: 20px; letter-spacing: .08em; text-transform: uppercase; }

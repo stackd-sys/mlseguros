@@ -2,7 +2,6 @@ import { cart, money, href } from './cart';
 
 const FREE_FROM = Number(document.documentElement.dataset.freeShipping || 60);
 const NEWSLETTER = document.documentElement.dataset.newsletterEndpoint || '';
-const EMAIL = document.documentElement.dataset.email || '';
 
 const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
@@ -28,12 +27,13 @@ if (header?.classList.contains('header--overlay')) {
 
 /* ---------- Painéis (menu e carrinho) ---------- */
 let lastFocus: Element | null = null;
-function openPanel(el: HTMLElement | null) {
+function openPanel(el: HTMLElement | null, focus = true) {
   if (!el) return;
   lastFocus = document.activeElement;
   el.hidden = false;
   document.body.classList.add('no-scroll');
-  el.querySelector<HTMLElement>('button, a')?.focus();
+  /* preventScroll evita que o browser (ou a página que embebe o site) salte ao focar */
+  if (focus) el.querySelector<HTMLElement>('[data-autofocus], button, a')?.focus({ preventScroll: true });
 }
 function closePanel(el: HTMLElement | null) {
   if (!el || el.hidden) return;
@@ -41,7 +41,7 @@ function closePanel(el: HTMLElement | null) {
   if (!document.querySelector('[data-cart]:not([hidden]), [data-mnav]:not([hidden]), [data-popup]:not([hidden])')) {
     document.body.classList.remove('no-scroll');
   }
-  (lastFocus as HTMLElement | null)?.focus?.();
+  (lastFocus as HTMLElement | null)?.focus?.({ preventScroll: true });
 }
 
 const mnav = document.querySelector<HTMLElement>('[data-mnav]');
@@ -54,7 +54,6 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closePanel(drawer);
     closePanel(mnav);
-    closePanel(document.querySelector('[data-popup]'));
   }
 });
 export const openCart = () => openPanel(drawer);
@@ -103,7 +102,7 @@ cart.subscribe((lines) => {
           <div class="qty">
             <button type="button" data-qty="-1" aria-label="Diminuir quantidade">−</button>
             <span aria-live="polite">${l.qty}</span>
-            <button type="button" data-qty="1" aria-label="Aumentar quantidade">+</button>
+            <button type="button" data-qty="1" aria-label="Aumentar quantidade"${l.qty >= (l.stock ?? 10) ? ' disabled title="Sem mais unidades em stock"' : ''}>+</button>
           </div>
         </div>
         <div class="line__right">
@@ -128,47 +127,129 @@ list?.addEventListener('click', (e) => {
   if (target.closest('[data-remove]')) cart.remove(key);
 });
 
-/* ---------- Newsletter ---------- */
+/* ---------- Newsletter com 10% de boas-vindas ---------- */
+const CODE = document.documentElement.dataset.welcomeCode || '';
+const store = {
+  get: (k: string) => { try { return localStorage.getItem(k); } catch { return null; } },
+  set: (k: string, v: string) => { try { localStorage.setItem(k, v); } catch {} },
+};
+const subscribed = () => store.get('mekie-newsletter') === 'subscribed';
+
+async function sendToWebhook(email: string, source: string) {
+  const body = new URLSearchParams({
+    email,
+    consent: 'true',
+    source,
+    page: location.pathname,
+    code: CODE,
+    created_at: new Date().toISOString(),
+  });
+  if (!NEWSLETTER) {
+    console.warn('[Mekie] Sem webhook configurado em site.newsletterWebhook: o email não foi guardado.');
+    return;
+  }
+  /* pedido simples (sem preflight) para funcionar com qualquer webhook */
+  await fetch(NEWSLETTER, { method: 'POST', mode: 'no-cors', body });
+}
+
+function showSuccess(form: HTMLFormElement) {
+  const box = form.closest<HTMLElement>('[data-newsletter-box]') ?? form;
+  box.querySelectorAll<HTMLElement>('[data-success]').forEach((el) => (el.hidden = false));
+  box.querySelectorAll<HTMLElement>('[data-before]').forEach((el) => (el.hidden = true));
+  form.hidden = true;
+}
+
 document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach((form) => {
+  if (subscribed()) showSuccess(form);
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = (new FormData(form).get('email') as string).trim();
-    const msg = form.querySelector<HTMLElement>('.newsletter-form__msg, [role=status]');
-    if (NEWSLETTER) {
-      try {
-        const res = await fetch(NEWSLETTER, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ email }),
-        });
-        if (!res.ok) throw new Error(String(res.status));
-        if (msg) { msg.textContent = 'Obrigado! Já estás na lista.'; msg.hidden = false; }
-        form.reset();
-        localStorage.setItem('mekie-popup', 'done');
-      } catch {
-        if (msg) { msg.textContent = 'Não foi possível subscrever. Tenta novamente.'; msg.hidden = false; }
-      }
-    } else {
-      window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent('Newsletter Mekie')}&body=${encodeURIComponent(`Quero receber as novidades da Mekie no email: ${email}`)}`;
+    const data = new FormData(form);
+    const email = String(data.get('email') || '').trim();
+    const msg = form.querySelector<HTMLElement>('[data-msg]');
+    const btn = form.querySelector<HTMLButtonElement>('button[type=submit]');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      if (msg) { msg.textContent = 'Escreve um email válido.'; msg.hidden = false; }
+      return;
+    }
+    if (form.querySelector('[name=consent]') && !data.get('consent')) {
+      if (msg) { msg.textContent = 'Para continuar, aceita receber os nossos emails.'; msg.hidden = false; }
+      return;
+    }
+    if (btn) btn.disabled = true;
+    try {
+      await sendToWebhook(email, form.dataset.newsletter || 'site');
+      store.set('mekie-newsletter', 'subscribed');
+      document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach(showSuccess);
+      document.querySelector<HTMLElement>('[data-popup-tab]')?.setAttribute('hidden', '');
+    } catch {
+      if (msg) { msg.textContent = 'Não conseguimos guardar o teu email. Tenta outra vez daqui a pouco.'; msg.hidden = false; }
+    } finally {
+      if (btn) btn.disabled = false;
     }
   });
 });
 
-/* ---------- Popup "Novo drop" (uma vez por visitante) ---------- */
+document.querySelectorAll<HTMLButtonElement>('[data-copy-code]').forEach((btn) =>
+  btn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(CODE);
+      btn.textContent = 'Copiado';
+    } catch {
+      const code = btn.parentElement?.querySelector('code');
+      if (code) getSelection()?.selectAllChildren(code);
+      btn.textContent = 'Seleciona e copia';
+    }
+    setTimeout(() => (btn.textContent = 'Copiar'), 2000);
+  }),
+);
+
+/* ---------- Popup de 10% ---------- */
 const popup = document.querySelector<HTMLElement>('[data-popup]');
+const tab = document.querySelector<HTMLElement>('[data-popup-tab]');
 if (popup) {
-  let seen = false;
-  try { seen = !!localStorage.getItem('mekie-popup'); } catch { seen = true; }
-  if (!seen) {
-    setTimeout(() => {
-      if (document.body.classList.contains('no-scroll')) return;
-      openPanel(popup);
-      try { localStorage.setItem('mekie-popup', 'seen'); } catch {}
-    }, 6000);
+  const DAY = 864e5;
+  const closedAt = Number(store.get('mekie-popup-closed') || 0);
+  const snoozed = Date.now() - closedAt < 7 * DAY;
+  let shown = false;
+
+  const show = (auto: boolean) => {
+    if (shown && auto) return;
+    if (auto && document.body.classList.contains('no-scroll')) return;
+    shown = true;
+    if (tab) tab.hidden = true;
+    /* aberto sozinho: sem foco automático, para a página não saltar */
+    openPanel(popup, !auto);
+  };
+  const close = () => {
+    closePanel(popup);
+    store.set('mekie-popup-closed', String(Date.now()));
+    if (tab && !subscribed()) tab.hidden = false;
+  };
+
+  if (!subscribed()) {
+    if (!snoozed) {
+      setTimeout(() => show(true), 8000);
+      /* intenção de saída no computador */
+      document.addEventListener('mouseout', (e) => {
+        if (!e.relatedTarget && e.clientY <= 0) show(true);
+      });
+    } else if (tab) {
+      tab.hidden = false;
+    }
   }
-  document.querySelectorAll('[data-popup-open]').forEach((b) => b.addEventListener('click', () => openPanel(popup)));
-  popup.querySelectorAll('[data-popup-close]').forEach((b) => b.addEventListener('click', () => closePanel(popup)));
+  document.querySelectorAll('[data-popup-open]').forEach((b) => b.addEventListener('click', () => show(false)));
+  popup.querySelectorAll('[data-popup-close]').forEach((b) => b.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !popup.hidden) close(); });
+  tab?.querySelector('[data-tab-dismiss]')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    tab.hidden = true;
+    store.set('mekie-popup-closed', String(Date.now() + 23 * DAY));
+  });
 }
+
+/* Ao entrar numa página por um link começa no topo; ao voltar atrás o browser repõe a posição */
+const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+if (!location.hash && nav?.type === 'navigate') window.scrollTo(0, 0);
 
 /* ---------- Animações de entrada ---------- */
 const io = 'IntersectionObserver' in window
