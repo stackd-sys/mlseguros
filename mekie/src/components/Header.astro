@@ -1,17 +1,21 @@
 ---
 import Icon from './Icon.astro';
-import { categories, productsIn } from '../data/products';
+import { categories, collections, productsIn } from '../data/products';
 import { site } from '../data/site';
 interface Props { overlay?: boolean }
 const { overlay = false } = Astro.props;
 const path = Astro.url.pathname;
 const nav = [
   { href: '/loja/novidades/', label: 'Novidades' },
-  { href: '/loja/', label: 'Loja', mega: true },
+  { href: '/loja/', label: 'Loja', mega: 'shop' },
+  { href: '/colecoes/', label: 'Coleções', mega: 'collections' },
   { href: '/loja/ultimas-unidades/', label: 'Últimas unidades' },
   { href: '/sobre/', label: 'Sobre nós' },
   { href: '/contactos/', label: 'Contactos' },
 ];
+const current = nav
+  .filter((n) => path.startsWith(n.href) || (n.href === '/loja/' && path.startsWith('/produto/')))
+  .sort((a, b) => b.href.length - a.href.length)[0]?.href;
 ---
 <div class="announce" role="region" aria-label="Avisos">
   <div class="announce__track">
@@ -45,9 +49,26 @@ const nav = [
   <nav class="header__nav" aria-label="Principal">
     <ul>
       {nav.map((item) => (
-        <li class:list={{ 'has-mega': item.mega }}>
-          <a href={item.href} class:list={['eyebrow', { 'is-current': path === item.href }]}>{item.label}</a>
-          {item.mega && (
+        <li class:list={{ 'has-mega': !!item.mega }}>
+          <a href={item.href} class:list={['eyebrow', { 'is-current': current === item.href }]} aria-current={current === item.href ? 'page' : undefined}>{item.label}</a>
+          {item.mega === 'collections' && (
+            <div class="mega">
+              <div class="mega__inner mega__inner--cols container">
+                <div class="mega__col">
+                  <p class="mega__heading eyebrow">Coleções</p>
+                  {collections.map((c) => <a href={`/colecoes/${c.slug}/`} class="mega__link">{c.name}</a>)}
+                  <a href="/colecoes/" class="mega__link">Ver todas</a>
+                </div>
+                {collections.map((c) => (
+                  <a href={`/colecoes/${c.slug}/`} class="mega__card">
+                    <img src={c.image.replace('.webp', '-sm.webp')} alt="" loading="lazy" width="480" height="600" />
+                    <span class="eyebrow">{c.name}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+          {item.mega === 'shop' && (
             <div class="mega">
               <div class="mega__inner container">
                 <div class="mega__col">
@@ -67,11 +88,11 @@ const nav = [
                   <a href="/#novo-drop" class="mega__link">Novo drop a caminho</a>
                 </div>
                 <a href="/loja/t-shirts/" class="mega__card">
-                  <img src="/images/site/img-3.webp" alt="" loading="lazy" width="480" height="600" />
+                  <img src="/images/lookbook/mushrooms-black-sm.webp" alt="" loading="lazy" width="480" height="600" />
                   <span class="eyebrow">T-Shirts</span>
                 </a>
                 <a href="/loja/hoodie/" class="mega__card">
-                  <img src="/images/site/banner-94.webp" alt="" loading="lazy" width="480" height="600" />
+                  <img src="/images/site/banner-94-sm.webp" alt="" loading="lazy" width="480" height="600" />
                   <span class="eyebrow">Hoodies</span>
                 </a>
               </div>
@@ -94,6 +115,8 @@ const nav = [
       <li><a href="/loja/novidades/">Novidades</a></li>
       <li><a href="/loja/">Loja — ver tudo</a></li>
       {categories.map((c) => <li class="mnav__sub"><a href={`/loja/${c.slug}/`}>{c.plural}</a></li>)}
+      <li><a href="/colecoes/">Coleções</a></li>
+      {collections.map((c) => <li class="mnav__sub"><a href={`/colecoes/${c.slug}/`}>{c.name}</a></li>)}
       <li><a href="/loja/ultimas-unidades/">Últimas unidades</a></li>
       <li><a href="/sobre/">Sobre nós</a></li>
       <li><a href="/contactos/">Contactos</a></li>
@@ -192,6 +215,7 @@ const nav = [
     display: grid; grid-template-columns: 1fr 1fr 220px 220px;
     gap: 40px; padding-top: 36px; padding-bottom: 40px;
   }
+  .mega__inner--cols { grid-template-columns: 1fr 260px 260px; justify-content: start; }
   .mega__col { display: flex; flex-direction: column; gap: 10px; }
   .mega__heading { margin: 0 0 6px; color: var(--ink-soft); font-size: 10.5px; }
   .mega__link { font-size: 14px; display: flex; gap: 10px; align-items: center; }

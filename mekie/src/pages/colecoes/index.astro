@@ -1,0 +1,35 @@
+---
+import Base from '../../layouts/Base.astro';
+import Img from '../../components/Img.astro';
+import { collections, productsInCollection } from '../../data/products';
+---
+<Base title="Coleções" description="As coleções Mekie: Mushrooms e Skeleton.">
+  <header class="head container">
+    <h1>Coleções</h1>
+  </header>
+  <div class="container cols">
+    {collections.map((c) => (
+      <a href={`/colecoes/${c.slug}/`} class="col">
+        <div class="col__media"><Img src={c.image} sizes="(max-width: 800px) 100vw, 50vw" alt="" width="900" height="1125" loading="lazy" /></div>
+        <div class="col__txt">
+          <h2 class="display">{c.name}</h2>
+          <p>{c.intro}</p>
+          <span class="eyebrow link-underline">Ver {productsInCollection(c.slug).length} produtos</span>
+        </div>
+      </a>
+    ))}
+  </div>
+</Base>
+<style>
+  .head { text-align: center; padding-top: clamp(32px, 5vw, 64px); padding-bottom: clamp(24px, 3vw, 40px); }
+  .head h1 { margin: 0; font-weight: 400; font-size: clamp(20px, 2vw, 24px); letter-spacing: .1em; text-transform: uppercase; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding-bottom: clamp(56px, 8vw, 110px); }
+  .col { display: grid; gap: 18px; }
+  .col__media { aspect-ratio: 4 / 5; overflow: hidden; }
+  .col__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
+  .col:hover .col__media img { transform: scale(1.03); }
+  .col__txt h2 { margin: 0; font-size: clamp(28px, 3vw, 40px); text-transform: uppercase; }
+  .col__txt p { margin: 8px 0 12px; color: var(--ink-soft); font-size: 14px; }
+  .col__txt .eyebrow { font-size: 10.5px; }
+  @media (max-width: 800px) { .cols { grid-template-columns: 1fr; } }
+</style>

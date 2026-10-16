@@ -1,7 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Carousel from '../../components/Carousel.astro';
-import { products, getCategory, discount, type Product } from '../../data/products';
+import Img from '../../components/Img.astro';
+import { products, getCategory, getCollection, discount, variantsOf, type Product } from '../../data/products';
 import { site, formatPrice } from '../../data/site';
 
 export function getStaticPaths() {
@@ -10,126 +11,152 @@ export function getStaticPaths() {
 interface Props { product: Product }
 const { product: p } = Astro.props;
 const cat = getCategory(p.category)!;
+const col = p.collection ? getCollection(p.collection) : undefined;
 const off = discount(p);
-const variants = products.filter((o) => o.name === p.name);
+const variants = variantsOf(p);
 const related = [
-  ...products.filter((o) => o.category === p.category && o.slug !== p.slug),
-  ...products.filter((o) => o.category !== p.category),
+  ...products.filter((o) => o.collection && o.collection === p.collection && o.slug !== p.slug),
+  ...products.filter((o) => o.category === p.category && o.slug !== p.slug && o.collection !== p.collection),
+  ...products.filter((o) => o.category !== p.category && o.collection !== p.collection),
 ].slice(0, 8);
 const cartData = { id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0] };
+const payments = ['MB WAY', 'Multibanco', 'Visa', 'Mastercard', 'Apple Pay', 'Google Pay'];
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Product',
   name: `${p.name} ${p.color}`,
+  sku: String(p.id),
   image: p.images.map((i) => new URL(i, site.url).href),
   description: p.description,
+  color: p.color,
+  category: cat.name,
   brand: { '@type': 'Brand', name: site.name },
   offers: {
     '@type': 'Offer',
     priceCurrency: 'EUR',
     price: p.price.toFixed(2),
     availability: 'https://schema.org/InStock',
+    itemCondition: 'https://schema.org/NewCondition',
     url: new URL(`/produto/${p.slug}/`, site.url).href,
+    seller: { '@type': 'Organization', name: site.name },
   },
 };
+const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test(src);
 ---
-<Base title={`${p.name} ${p.color}`} description={`${p.name} (${p.color}) — ${p.description} ${formatPrice(p.price)}. Envio em ${site.deliveryDays} dias úteis.`} image={p.images[0]}>
+<Base title={`${p.name} ${p.color}`} description={`${p.name} (${p.color}) por ${formatPrice(p.price)}. ${p.description} Envio em ${site.deliveryDays} dias úteis, grátis acima de ${site.freeShippingFrom}€.`} image={p.images[1] ?? p.images[0]}>
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
 
-  <div class="container pdp">
+  <div class="pdp">
     <div class="gallery" data-gallery>
-      <div class="gallery__main">
+      <div class="gallery__track" data-track>
         {p.images.map((src, i) => (
-          <img src={src} alt={`${p.name} ${p.color} — imagem ${i + 1}`} width="1000" height="1250" loading={i === 0 ? 'eager' : 'lazy'} class:list={['gallery__img', { 'is-cover': i > 0 }]} data-slide={i} />
+          <figure class:list={['gallery__item', { 'gallery__item--lead': i === 0, 'gallery__item--cover': !isCutout(src) }]} data-slide={i}>
+            <Img src={src} sizes={i === 0 ? '(max-width: 900px) 100vw, 58vw' : '(max-width: 900px) 100vw, 29vw'} alt={`${p.name} ${p.color} — imagem ${i + 1} de ${p.images.length}`} width="1000" height="1250" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} />
+          </figure>
         ))}
       </div>
       {p.images.length > 1 && (
-        <div class="gallery__thumbs">
-          {p.images.map((src, i) => (
-            <button type="button" class:list={['gallery__thumb', { 'is-active': i === 0 }]} data-thumb={i} aria-label={`Ver imagem ${i + 1}`}>
-              <img src={src} alt="" width="120" height="150" loading="lazy" />
-            </button>
-          ))}
+        <div class="gallery__dots" aria-hidden="true">
+          {p.images.map((_, i) => <span class:list={{ 'is-active': i === 0 }} data-dot={i}></span>)}
         </div>
       )}
+      <p class="gallery__ref eyebrow">Ref. {p.id}</p>
     </div>
 
     <div class="info">
-      <nav class="crumbs eyebrow" aria-label="Navegação estrutural">
-        <a href="/loja/">Loja</a> / <a href={`/loja/${cat.slug}/`}>{cat.plural}</a>
-      </nav>
+      {col && <a href={`/colecoes/${col.slug}/`} class="info__col eyebrow">Coleção {col.name}</a>}
       <h1 class="info__title">{p.name}</h1>
       <p class="price info__price">
-        {off > 0 && <del>{formatPrice(p.regularPrice)}</del>}
-        {off > 0 ? <ins>{formatPrice(p.price)}</ins> : <span>{formatPrice(p.price)}</span>}
-        {off > 0 && <span class="info__off eyebrow">-{off}%</span>}
+        {off > 0 && <del><span class="sr-only">Preço original </span>{formatPrice(p.regularPrice)}</del>}
+        {off > 0 ? <ins><span class="sr-only">Preço atual </span>{formatPrice(p.price)}</ins> : <span>{formatPrice(p.price)}</span>}
+        {off > 0 && <span class="info__off">-{off}%</span>}
       </p>
-      <p class="info__tax">IVA incluído. Envio grátis acima de {site.freeShippingFrom}€.</p>
+      <p class="info__tax">IVA incluído. Portes calculados no checkout.</p>
 
       <div class="opt">
-        <p class="opt__label eyebrow">Cor: <span>{p.color}</span></p>
-        {variants.length > 1 && (
-          <div class="swatches">
-            {variants.map((v) => (
-              <a href={`/produto/${v.slug}/`} class:list={['swatch', { 'is-active': v.slug === p.slug }]} aria-label={v.color} aria-current={v.slug === p.slug ? 'page' : undefined}>
-                <img src={v.images[0]} alt="" width="64" height="64" loading="lazy" />
-              </a>
-            ))}
-          </div>
-        )}
+        <p class="opt__label">Cor: <span>{p.color}</span></p>
+        <div class="swatches">
+          {variants.map((v) => (
+            <a href={`/produto/${v.slug}/`} class:list={['swatch', { 'is-active': v.slug === p.slug }]} aria-label={`Cor ${v.color}`} aria-current={v.slug === p.slug ? 'page' : undefined} title={v.color}>
+              <img src={v.images[0].replace('.webp', '-sm.webp')} alt="" width="64" height="64" loading="lazy" />
+            </a>
+          ))}
+        </div>
       </div>
 
-      <form class="buy" data-buy data-product={JSON.stringify(cartData)}>
+      <form class="buy" data-buy data-product={JSON.stringify(cartData)} novalidate>
         {p.sizes ? (
           <fieldset class="opt">
-            <legend class="opt__label eyebrow">Tamanho: <span data-size-label>escolhe</span></legend>
+            <legend class="opt__label">Tamanho: <span data-size-label>escolhe o teu tamanho</span></legend>
             <div class="sizes">
               {p.sizes.map((s) => (
                 <label class="size">
-                  <input type="radio" name="size" value={s} required />
+                  <input type="radio" name="size" value={s} />
                   <span>{s}</span>
                 </label>
               ))}
             </div>
+            <a href="/contactos/" class="opt__help link-underline">Dúvidas com o tamanho? Fala connosco</a>
           </fieldset>
         ) : (
-          <p class="opt__label eyebrow">Tamanho: <span>Único</span></p>
+          <p class="opt__label">Tamanho: <span>Único</span></p>
         )}
 
-        <div class="buy__row">
-          <div class="qty qty--lg">
-            <button type="button" data-step="-1" aria-label="Diminuir quantidade">−</button>
-            <input type="number" name="qty" value="1" min="1" max="10" aria-label="Quantidade" />
-            <button type="button" data-step="1" aria-label="Aumentar quantidade">+</button>
-          </div>
-          <button type="submit" class="pill buy__btn">Adicionar ao carrinho</button>
-        </div>
-        <p class="buy__error" role="alert" hidden>Escolhe um tamanho.</p>
+        <p class="buy__error" role="alert" hidden>Escolhe um tamanho para continuar.</p>
+        <button type="submit" class="pill pill--accent pill--block buy__btn" data-buy-btn>
+          Adicionar ao carrinho
+        </button>
       </form>
+
+      <ul class="pay" aria-label="Métodos de pagamento">
+        {payments.map((m) => <li>{m}</li>)}
+      </ul>
+      <p class="pay__note">Pagamento seguro · MB WAY, Multibanco, cartão, Apple Pay e Google Pay</p>
+
+      <ul class="perks eyebrow">
+        <li>Envio grátis acima de {site.freeShippingFrom}€</li>
+        <li>Devoluções em 14 dias</li>
+        <li>Envio em {site.deliveryDays} dias úteis via CTT</li>
+        <li>Portugal, ilhas e Europa</li>
+      </ul>
 
       <div class="acc">
         <details open>
           <summary class="eyebrow">Descrição</summary>
-          <p>{p.description}</p>
-          <p>Cor: {p.color}.{p.sizes ? ` Disponível nos tamanhos ${p.sizes.join(', ')}.` : ''}</p>
+          <div class="acc__body">
+            <p>{p.description}</p>
+            <ul>
+              <li>Cor: {p.color}</li>
+              <li>Categoria: {cat.plural}</li>
+              {col && <li>Coleção: {col.name}</li>}
+              <li>Tamanhos: {p.sizes ? p.sizes.join(', ') : 'tamanho único'}</li>
+            </ul>
+          </div>
         </details>
         <details>
-          <summary class="eyebrow">Envios</summary>
-          <p>Enviamos para Portugal Continental, Madeira, Açores e Europa através dos CTT. Entrega estimada em {site.deliveryDays} dias úteis após confirmação do pagamento. Envio gratuito em encomendas acima de {site.freeShippingFrom}€.</p>
-          <a class="link-underline" href="/politica-de-envios-e-entregas/">Política de envios</a>
-        </details>
-        <details>
-          <summary class="eyebrow">Devoluções</summary>
-          <p>Tens 14 dias após a receção para devolver, sem indicar o motivo. O artigo deve estar nas condições originais e com as etiquetas intactas.</p>
-          <a class="link-underline" href="/politica-de-devolucoes-e-reembolsos/">Política de devoluções</a>
+          <summary class="eyebrow">Envios e devoluções</summary>
+          <div class="acc__body">
+            <p>Enviamos para Portugal Continental, Madeira, Açores e Europa através dos CTT. Entrega estimada em {site.deliveryDays} dias úteis após a confirmação do pagamento. Envio gratuito em encomendas acima de {site.freeShippingFrom}€.</p>
+            <p>Tens 14 dias após a receção para devolver, sem indicar o motivo. O artigo deve estar nas condições originais, sem sinais de uso e com as etiquetas intactas.</p>
+            <p><a class="link-underline" href="/politica-de-envios-e-entregas/">Política de envios</a> · <a class="link-underline" href="/politica-de-devolucoes-e-reembolsos/">Política de devoluções</a></p>
+          </div>
         </details>
       </div>
     </div>
   </div>
 
+  <div class="sticky-buy" data-sticky hidden>
+    <img src={p.images[0].replace('.webp', '-sm.webp')} alt="" width="44" height="55" />
+    <div class="sticky-buy__txt">
+      <p>{p.name}</p>
+      <p class="price">{off > 0 && <del>{formatPrice(p.regularPrice)}</del>}<ins>{formatPrice(p.price)}</ins></p>
+    </div>
+    <button type="button" class="pill pill--accent" data-sticky-btn>Adicionar</button>
+  </div>
+
   <section class="section related">
     <div class="container">
-      <p class="section-title eyebrow">Também vais gostar</p>
+      <h2 class="section-title related__title">Continua a explorar</h2>
       <Carousel products={related} label="Produtos relacionados" />
     </div>
   </section>
@@ -139,28 +166,23 @@ const jsonLd = {
   import { cart } from '../../scripts/cart';
   import { openCart } from '../../scripts/ui';
 
-  const gallery = document.querySelector<HTMLElement>('[data-gallery]');
-  gallery?.querySelectorAll<HTMLButtonElement>('[data-thumb]').forEach((btn) =>
-    btn.addEventListener('click', () => {
-      const i = btn.dataset.thumb;
-      gallery.querySelectorAll('[data-thumb]').forEach((b) => b.classList.toggle('is-active', b === btn));
-      const slide = gallery.querySelector<HTMLElement>(`[data-slide="${i}"]`);
-      const mobile = matchMedia('(max-width: 900px)').matches;
-      slide?.scrollIntoView({ behavior: 'smooth', block: mobile ? 'nearest' : 'center', inline: 'start' });
-    }),
-  );
+  /* Galeria: pontos no telemóvel */
+  const track = document.querySelector<HTMLElement>('[data-track]');
+  const dots = document.querySelectorAll<HTMLElement>('[data-dot]');
+  track?.addEventListener('scroll', () => {
+    const i = Math.round(track.scrollLeft / track.clientWidth);
+    dots.forEach((d, n) => d.classList.toggle('is-active', n === i));
+  }, { passive: true });
 
+  /* Compra */
   const form = document.querySelector<HTMLFormElement>('[data-buy]');
   if (form) {
     const product = JSON.parse(form.dataset.product!);
-    const qty = form.querySelector<HTMLInputElement>('input[name=qty]')!;
     const error = form.querySelector<HTMLElement>('.buy__error')!;
     const sizeLabel = form.querySelector<HTMLElement>('[data-size-label]');
-    form.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((b) =>
-      b.addEventListener('click', () => {
-        qty.value = String(Math.min(10, Math.max(1, Number(qty.value) + Number(b.dataset.step))));
-      }),
-    );
+    const btn = form.querySelector<HTMLButtonElement>('[data-buy-btn]')!;
+    const hasSizes = !!form.querySelector('input[name=size]');
+
     form.addEventListener('change', (e) => {
       const t = e.target as HTMLInputElement;
       if (t.name === 'size') {
@@ -168,98 +190,134 @@ const jsonLd = {
         if (sizeLabel) sizeLabel.textContent = t.value;
       }
     });
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const data = new FormData(form);
-      const hasSizes = !!form.querySelector('input[name=size]');
-      const size = data.get('size') as string | null;
+
+    const add = () => {
+      const size = (new FormData(form).get('size') as string | null) ?? undefined;
       if (hasSizes && !size) {
         error.hidden = false;
+        form.querySelector('.sizes')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
-      cart.add({ ...product, size: size ?? undefined }, Math.min(10, Math.max(1, Number(qty.value) || 1)));
+      cart.add({ ...product, size }, 1);
+      btn.textContent = 'Adicionado ✓';
+      setTimeout(() => (btn.textContent = 'Adicionar ao carrinho'), 1600);
       openCart();
-    });
-    form.querySelectorAll<HTMLInputElement>('input[name=size]').forEach((r) =>
-      r.addEventListener('invalid', (e) => { e.preventDefault(); error.hidden = false; }),
-    );
+    };
+    form.addEventListener('submit', (e) => { e.preventDefault(); add(); });
+    document.querySelector('[data-sticky-btn]')?.addEventListener('click', add);
+
+    /* Barra fixa no telemóvel quando o botão principal sai do ecrã */
+    const sticky = document.querySelector<HTMLElement>('[data-sticky]');
+    if (sticky && 'IntersectionObserver' in window) {
+      new IntersectionObserver(([entry]) => {
+        sticky.hidden = entry.isIntersecting || entry.boundingClientRect.top > 0;
+      }).observe(btn);
+    }
   }
 </script>
 
 <style>
   .pdp {
-    display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-    gap: clamp(28px, 5vw, 80px);
-    padding-top: clamp(24px, 4vw, 48px);
+    display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    gap: clamp(28px, 4vw, 72px);
+    max-width: 1440px; margin: 0 auto;
+    padding: clamp(16px, 3vw, 40px) var(--gutter) 0;
   }
-  .gallery { display: grid; grid-template-columns: 76px 1fr; gap: 16px; align-items: start; }
-  .gallery__main { grid-column: 2; grid-row: 1; display: grid; gap: 16px; }
-  .gallery__img { width: 100%; aspect-ratio: 4 / 5; object-fit: contain; background: var(--surface); padding: 6%; }
-  .gallery__img.is-cover { object-fit: cover; padding: 0; }
-  .gallery__thumbs { grid-column: 1; grid-row: 1; position: sticky; top: 130px; display: grid; gap: 10px; }
-  .gallery__thumb { border: 1px solid transparent; background: var(--surface); }
-  .gallery__thumb.is-active { border-color: var(--ink); }
-  .gallery__thumb img { aspect-ratio: 4/5; object-fit: cover; }
 
-  .info { position: sticky; top: 130px; align-self: start; padding-bottom: 24px; }
-  .crumbs { font-size: 10.5px; color: var(--ink-soft); }
-  .crumbs a:hover { color: var(--ink); }
-  .info__title { font-family: var(--font-display); font-weight: 600; font-size: clamp(28px, 3vw, 38px); line-height: 1.1; margin: 14px 0 12px; }
-  .info__price { font-size: 17px; }
-  .info__off { background: var(--ink); color: #fff; padding: 3px 8px; border-radius: 999px; font-size: 10px; }
-  .info__tax { margin: 6px 0 28px; font-size: 12.5px; color: var(--ink-soft); }
+  .gallery__track { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .gallery__item { margin: 0; aspect-ratio: 4 / 5; overflow: hidden; }
+  .gallery__item--lead { grid-column: 1 / -1; aspect-ratio: 1 / 1; }
+  .gallery__item img { width: 100%; height: 100%; object-fit: contain; }
+  .gallery__item--lead img { padding: 4% 12%; }
+  .gallery__item--cover img { object-fit: cover; padding: 0; }
+  .gallery__item:not(.gallery__item--cover):not(.gallery__item--lead) img { padding: 8%; }
+  .gallery__dots { display: none; }
+  .gallery__ref { margin: 20px 0 0; font-size: 10px; color: var(--ink-soft); }
 
-  .opt { border: 0; margin: 0 0 22px; padding: 0; }
-  .opt__label { margin: 0 0 12px; padding: 0; font-size: 11px; }
+  .info { position: sticky; top: 130px; align-self: start; padding: clamp(8px, 2vw, 32px) 0 24px; max-width: 440px; }
+  .info__col { display: inline-block; font-size: 10.5px; color: var(--ink-soft); margin-bottom: 10px; }
+  .info__col:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+  .info__title {
+    margin: 0 0 12px;
+    font-family: var(--font-body); font-weight: 400;
+    font-size: clamp(19px, 1.6vw, 22px); letter-spacing: .06em; text-transform: uppercase;
+  }
+  .info__price { font-size: 16px; gap: 10px; align-items: center; }
+  .info__off { font-size: 10px; letter-spacing: .1em; background: var(--sale); color: #fff; padding: 3px 7px; border-radius: 999px; }
+  .info__tax { margin: 8px 0 26px; font-size: 12px; color: var(--ink-soft); }
+
+  .opt { border: 0; margin: 0 0 24px; padding: 0; }
+  .opt__label { margin: 0 0 10px; padding: 0; font-size: 12.5px; }
   .opt__label span { color: var(--ink-soft); }
-  .swatches { display: flex; gap: 10px; }
-  .swatch { width: 60px; height: 60px; border: 1px solid var(--line); background: var(--surface); }
-  .swatch img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+  .opt__help { display: inline-block; margin-top: 12px; font-size: 12px; }
+  .swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+  .swatch { width: 58px; height: 58px; border: 1px solid var(--line); transition: border-color .2s; }
+  .swatch:hover { border-color: var(--ink-soft); }
+  .swatch img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
   .swatch.is-active { border-color: var(--ink); }
 
   .sizes { display: flex; flex-wrap: wrap; gap: 8px; }
   .size input { position: absolute; opacity: 0; pointer-events: none; }
   .size span {
-    display: grid; place-items: center; min-width: 52px; height: 42px; padding: 0 12px;
-    border: 1px solid var(--line); border-radius: 999px; font-size: 12.5px; cursor: pointer;
+    display: grid; place-items: center; min-width: 46px; height: 42px; padding: 0 10px;
+    border: 1px solid var(--line); font-size: 12px; cursor: pointer;
     transition: border-color .2s, background .2s, color .2s;
   }
   .size span:hover { border-color: var(--ink); }
-  .size input:checked + span { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .size input:checked + span { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
   .size input:focus-visible + span { outline: 2px solid var(--ink); outline-offset: 2px; }
 
-  .buy__row { display: flex; gap: 12px; }
-  .buy__btn { flex: 1; min-height: 50px; }
-  .qty--lg { height: 50px; border-radius: 999px; padding: 0 6px; display: inline-flex; align-items: center; border: 1px solid var(--line); }
-  .qty--lg button { width: 34px; height: 100%; font-size: 18px; }
-  .qty--lg input { width: 34px; border: 0; background: transparent; text-align: center; -moz-appearance: textfield; }
-  .qty--lg input::-webkit-inner-spin-button { -webkit-appearance: none; }
-  .buy__error { margin: 10px 0 0; color: var(--sale); font-size: 13px; }
+  .buy__btn { min-height: 48px; }
+  .buy__error { margin: -8px 0 14px; color: var(--sale); font-size: 13px; }
 
-  .acc { margin-top: 34px; border-top: 1px solid var(--line); }
+  .pay { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
+  .pay li { font-size: 10px; font-weight: 600; border: 1px solid var(--line); background: var(--surface); border-radius: 4px; padding: 5px 8px; }
+  .pay__note { margin: 10px 0 0; font-size: 11.5px; text-align: center; color: var(--ink-soft); }
+
+  .perks { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 6px; font-size: 10.5px; }
+
+  .acc { margin-top: 28px; border-top: 1px solid var(--line); }
   .acc details { border-bottom: 1px solid var(--line); }
   .acc summary {
-    list-style: none; cursor: pointer; padding: 18px 0; font-size: 11px;
-    display: flex; justify-content: space-between;
+    list-style: none; cursor: pointer; padding: 17px 0; font-size: 10.5px;
+    display: flex; justify-content: space-between; align-items: center;
   }
   .acc summary::-webkit-details-marker { display: none; }
-  .acc summary::after { content: '+'; font-size: 16px; line-height: 1; }
+  .acc summary::after { content: '+'; font-size: 16px; line-height: 1; font-weight: 300; }
   .acc details[open] summary::after { content: '−'; }
-  .acc p { margin: 0 0 12px; font-size: 14px; color: var(--ink-soft); }
-  .acc a { display: inline-block; margin-bottom: 18px; font-size: 13px; }
+  .acc__body { padding-bottom: 18px; font-size: 13.5px; color: var(--ink-soft); }
+  .acc__body p { margin: 0 0 10px; }
+  .acc__body ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
 
-  .related { border-top: 1px solid var(--line); margin-top: clamp(40px, 6vw, 80px); }
+  .related { margin-top: clamp(40px, 6vw, 80px); }
+  .related__title { font-weight: 400; font-size: 20px; letter-spacing: .08em; text-transform: uppercase; }
+
+  .sticky-buy {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    display: none; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: var(--bg); border-top: 1px solid var(--line);
+    box-shadow: 0 -8px 24px rgba(0,0,0,.06);
+  }
+  .sticky-buy img { width: 44px; height: 55px; object-fit: contain; }
+  .sticky-buy__txt p { margin: 0; font-size: 12.5px; }
+  .sticky-buy .pill { min-height: 40px; padding: 0 20px; }
 
   @media (max-width: 900px) {
-    .pdp { grid-template-columns: 1fr; }
-    .info { position: static; }
-    .gallery { grid-template-columns: 1fr; }
-    .gallery__main {
-      grid-column: 1; display: grid; grid-auto-flow: column; grid-auto-columns: 100%;
-      overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; gap: 0;
+    .pdp { grid-template-columns: 1fr; padding: 0; gap: 0; }
+    .gallery { position: relative; }
+    .gallery__track {
+      display: grid; grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 100%;
+      gap: 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
     }
-    .gallery__main::-webkit-scrollbar { display: none; }
-    .gallery__img { scroll-snap-align: start; }
-    .gallery__thumbs { grid-column: 1; grid-row: 2; position: static; grid-auto-flow: column; justify-content: start; grid-auto-columns: 60px; }
+    .gallery__track::-webkit-scrollbar { display: none; }
+    .gallery__item, .gallery__item--lead { grid-column: auto; aspect-ratio: 4 / 5; scroll-snap-align: start; }
+    .gallery__item--lead img { padding: 8%; }
+    .gallery__dots { display: flex; justify-content: center; gap: 8px; padding: 14px 0 0; }
+    .gallery__dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--line); transition: background .2s; }
+    .gallery__dots span.is-active { background: var(--ink); }
+    .gallery__ref { display: none; }
+    .info { position: static; max-width: none; padding: 24px var(--gutter) 8px; }
+    .sticky-buy:not([hidden]) { display: grid; }
   }
 </style>

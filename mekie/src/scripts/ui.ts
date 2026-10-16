@@ -85,6 +85,12 @@ cart.subscribe((lines) => {
   if (foot) foot.hidden = count === 0;
   if (ship) ship.hidden = count === 0;
 
+  document.querySelectorAll<HTMLElement>('[data-upsell-item]').forEach((el) => {
+    el.hidden = lines.some((l) => String(l.id) === el.dataset.upsellItem);
+  });
+  const upsell = document.querySelector<HTMLElement>('[data-upsell]');
+  if (upsell) upsell.hidden = count === 0 || !upsell.querySelector('[data-upsell-item]:not([hidden])');
+
   if (list) {
     list.innerHTML = lines
       .map(
@@ -171,3 +177,18 @@ const io = 'IntersectionObserver' in window
     }), { rootMargin: '0px 0px -8% 0px' })
   : null;
 document.querySelectorAll('.reveal').forEach((el) => (io ? io.observe(el) : el.classList.add('is-in')));
+
+/* ---------- Adicionar rápido (cartões de produto) ---------- */
+document.addEventListener('click', (e) => {
+  const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-quick]');
+  if (!btn) return;
+  const holder = btn.closest<HTMLElement>('[data-product]');
+  if (!holder) return;
+  const product = JSON.parse(holder.dataset.product!);
+  const size = btn.dataset.quick || undefined;
+  cart.add({ ...product, size }, 1);
+  const box = btn.closest<HTMLElement>('.quick, .upsell__item');
+  box?.classList.add('is-added');
+  setTimeout(() => box?.classList.remove('is-added'), 1400);
+  if (!btn.closest('[data-cart]')) openCart();
+});

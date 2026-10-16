@@ -1,48 +1,64 @@
 ---
 import ProductCard from './ProductCard.astro';
-import { categories, productsIn, type Product } from '../data/products';
+import Img from './Img.astro';
+import { categories, collections, productsIn, type Product } from '../data/products';
 interface Props { title: string; intro?: string; products: Product[]; current: string; image?: string }
 const { title, intro, products, current, image } = Astro.props;
 const chips = [
-  { slug: '', label: 'Tudo' },
-  { slug: 'novidades', label: 'Novidades' },
-  { slug: 'ultimas-unidades', label: 'Últimas unidades' },
-  ...categories.map((c) => ({ slug: c.slug, label: c.plural, soon: productsIn(c.slug).length === 0 })),
+  { href: '/loja/', label: 'Tudo', key: '' },
+  { href: '/loja/novidades/', label: 'Novidades', key: 'novidades' },
+  { href: '/loja/ultimas-unidades/', label: 'Últimas unidades', key: 'ultimas-unidades' },
+  ...categories.map((c) => ({ href: `/loja/${c.slug}/`, label: c.plural, key: c.slug, soon: productsIn(c.slug).length === 0 })),
+  ...collections.map((c) => ({ href: `/colecoes/${c.slug}/`, label: c.name, key: `col-${c.slug}` })),
 ];
 ---
-<section class="col-head" class:list={{ 'col-head--image': image }}>
-  {image && <img class="col-head__img" src={image} alt="" width="1200" height="800" />}
-  <div class="container col-head__inner">
-    <h1 class="display col-head__title">{title}</h1>
-    {intro && <p class="col-head__intro">{intro}</p>}
+{image ? (
+  <section class="banner">
+    <Img src={image} sizes="100vw" alt="" width="1200" height="800" class="banner__img" />
+    <div class="banner__shade"></div>
+    <div class="banner__inner container">
+      <h1 class="banner__title display">{title}</h1>
+      {intro && <p class="banner__intro">{intro}</p>}
+    </div>
+  </section>
+) : (
+  <header class="head container">
+    <h1 class="head__title">{title}</h1>
+    {intro && <p class="head__intro">{intro}</p>}
+  </header>
+)}
+
+<div class="toolbar-wrap">
+  <div class="toolbar container">
+    <div class="view" role="group" aria-label="Vista da grelha">
+      <button type="button" class="view__btn" data-cols="2" aria-label="Vista grande" aria-pressed="false">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="0" y="0" width="7" height="7" /><rect x="9" y="0" width="7" height="7" /><rect x="0" y="9" width="7" height="7" /><rect x="9" y="9" width="7" height="7" /></svg>
+      </button>
+      <button type="button" class="view__btn is-active" data-cols="4" aria-label="Vista compacta" aria-pressed="true">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">{[0, 6, 12].flatMap((y) => [0, 6, 12].map((x) => <rect x={x} y={y} width="4" height="4" />))}</svg>
+      </button>
+    </div>
+    <p class="toolbar__count eyebrow">{products.length} {products.length === 1 ? 'produto' : 'produtos'}</p>
+    <label class="sort eyebrow">
+      <span>Ordenar</span>
+      <select data-sort aria-label="Ordenar produtos" disabled={products.length < 2}>
+        <option value="featured">Destaques</option>
+        <option value="price-asc">Preço: menor</option>
+        <option value="price-desc">Preço: maior</option>
+        <option value="name">Nome A–Z</option>
+      </select>
+    </label>
   </div>
-</section>
+  <nav class="chips container" aria-label="Filtrar por categoria">
+    {chips.map((c) => (
+      <a href={c.href} class:list={['chip eyebrow', { 'is-active': c.key === current }]} aria-current={c.key === current ? 'page' : undefined}>
+        {c.label}{c.soon && <small> · em breve</small>}
+      </a>
+    ))}
+  </nav>
+</div>
 
 <div class="container">
-  <div class="toolbar">
-    <nav class="chips" aria-label="Categorias">
-      {chips.map((c) => (
-        <a href={c.slug ? `/loja/${c.slug}/` : '/loja/'} class:list={['chip eyebrow', { 'is-active': c.slug === current }]} aria-current={c.slug === current ? 'page' : undefined}>
-          {c.label}{c.soon && <small> · em breve</small>}
-        </a>
-      ))}
-    </nav>
-    <div class="toolbar__right">
-      <span class="eyebrow toolbar__count">{products.length} {products.length === 1 ? 'produto' : 'produtos'}</span>
-      {products.length > 1 && (
-        <label class="sort eyebrow">
-          <span class="sr-only">Ordenar</span>
-          <select data-sort>
-            <option value="featured">Destaques</option>
-            <option value="price-asc">Preço: menor</option>
-            <option value="price-desc">Preço: maior</option>
-            <option value="name">Nome A–Z</option>
-          </select>
-        </label>
-      )}
-    </div>
-  </div>
-
   {products.length > 0 ? (
     <ul class="grid" data-grid>
       {products.map((p, i) => (
@@ -62,66 +78,91 @@ const chips = [
 </div>
 
 <script>
-  const select = document.querySelector<HTMLSelectElement>('[data-sort]');
   const grid = document.querySelector<HTMLElement>('[data-grid]');
+  const select = document.querySelector<HTMLSelectElement>('[data-sort]');
   select?.addEventListener('change', () => {
     if (!grid) return;
     const items = [...grid.children] as HTMLElement[];
     const by: Record<string, (a: HTMLElement, b: HTMLElement) => number> = {
       featured: (a, b) => +a.dataset.index! - +b.dataset.index!,
-      'price-asc': (a, b) => +a.dataset.price! - +b.dataset.price!,
-      'price-desc': (a, b) => +b.dataset.price! - +a.dataset.price!,
+      'price-asc': (a, b) => +a.dataset.price! - +b.dataset.price! || +a.dataset.index! - +b.dataset.index!,
+      'price-desc': (a, b) => +b.dataset.price! - +a.dataset.price! || +a.dataset.index! - +b.dataset.index!,
       name: (a, b) => a.dataset.name!.localeCompare(b.dataset.name!, 'pt'),
     };
     items.sort(by[select.value]).forEach((el) => grid.appendChild(el));
   });
+
+  const KEY = 'mekie-grid';
+  const setCols = (cols: string) => {
+    grid?.setAttribute('data-cols', cols);
+    document.querySelectorAll<HTMLButtonElement>('[data-cols]').forEach((b) => {
+      const on = b.dataset.cols === cols;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+  };
+  try { const saved = localStorage.getItem(KEY); if (saved) setCols(saved); } catch {}
+  document.querySelectorAll<HTMLButtonElement>('button[data-cols]').forEach((b) =>
+    b.addEventListener('click', () => {
+      setCols(b.dataset.cols!);
+      try { localStorage.setItem(KEY, b.dataset.cols!); } catch {}
+    }),
+  );
 </script>
 
 <style>
-  .col-head { padding: clamp(40px, 6vw, 80px) 0 clamp(24px, 3vw, 40px); text-align: center; }
-  .col-head--image {
-    position: relative; color: #fff;
-    min-height: clamp(260px, 38vw, 420px);
-    display: grid; align-items: end;
-    padding-bottom: clamp(28px, 4vw, 48px);
-    margin-bottom: 24px;
-    background: #222; overflow: hidden;
-  }
-  .col-head--image::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 30%, rgba(0,0,0,.55)); }
-  .col-head__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
-  .col-head__inner { position: relative; z-index: 1; }
-  .col-head__title { margin: 0; font-size: clamp(38px, 6vw, 72px); text-transform: uppercase; }
-  .col-head__intro { margin: 14px auto 0; max-width: 520px; font-size: 14px; opacity: .85; }
+  .head { text-align: center; padding-top: clamp(32px, 5vw, 64px); padding-bottom: clamp(20px, 3vw, 32px); }
+  .head__title { margin: 0; font-weight: 400; font-size: clamp(20px, 2vw, 24px); letter-spacing: .1em; text-transform: uppercase; }
+  .head__intro { margin: 10px auto 0; max-width: 520px; font-size: 13.5px; color: var(--ink-soft); }
 
-  .toolbar {
-    display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
-    padding: 14px 0; margin-bottom: 32px;
-    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  .banner {
+    position: relative; color: #fff; background: #222; overflow: hidden;
+    min-height: clamp(320px, 42vw, 520px); display: grid; align-items: end;
   }
-  .chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+  .banner__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+  .banner__shade { position: absolute; inset: 0; background: linear-gradient(transparent 35%, rgba(0,0,0,.55)); }
+  .banner__inner { position: relative; padding-bottom: clamp(28px, 4vw, 48px); text-align: center; }
+  .banner__title { margin: 0; font-size: clamp(40px, 7vw, 88px); text-transform: uppercase; }
+  .banner__intro { margin: 12px auto 0; max-width: 520px; font-size: 14.5px; opacity: .9; }
+
+  .toolbar-wrap { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-bottom: 36px; }
+  .toolbar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 52px; }
+  .view { display: flex; gap: 6px; }
+  .view__btn { width: 30px; height: 30px; display: grid; place-items: center; color: var(--line); }
+  .view__btn svg { fill: currentColor; }
+  .view__btn.is-active, .view__btn:hover { color: var(--ink); }
+  .toolbar__count { margin: 0; font-size: 10.5px; color: var(--ink-soft); }
+  .sort { justify-self: end; display: flex; align-items: center; gap: 4px; font-size: 10.5px; color: var(--ink-soft); }
+  .sort select {
+    border: 0; background: transparent; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase;
+    padding: 6px 2px; cursor: pointer; color: var(--ink);
+  }
+  .chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-top: 12px; padding-bottom: 12px; border-top: 1px solid var(--line); }
   .chips::-webkit-scrollbar { display: none; }
   .chip {
-    font-size: 10.5px; white-space: nowrap;
-    padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line);
+    font-size: 10px; white-space: nowrap;
+    padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line);
     transition: border-color .2s, background .2s;
   }
   .chip small { font-size: inherit; color: var(--ink-soft); text-transform: none; letter-spacing: 0; }
   .chip:hover { border-color: var(--ink); }
   .chip.is-active { background: var(--ink); color: #fff; border-color: var(--ink); }
   .chip.is-active small { color: #ccc; }
-  .toolbar__right { display: flex; align-items: center; gap: 18px; margin-left: auto; }
-  .toolbar__count { font-size: 10.5px; color: var(--ink-soft); }
-  .sort select {
-    border: 0; background: transparent; font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
-    padding: 6px 4px; cursor: pointer;
-  }
 
   .grid {
     list-style: none; margin: 0; padding: 0 0 clamp(56px, 8vw, 110px);
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px 24px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 48px 24px;
   }
+  .grid[data-cols="2"] { grid-template-columns: repeat(2, 1fr); gap: 56px 32px; }
   @media (max-width: 1000px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 700px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 28px 12px; } }
+  @media (max-width: 700px) {
+    .sort > span { display: none; }
+    .toolbar__count { font-size: 10px; }
+    .grid, .grid[data-cols="2"] { grid-template-columns: repeat(2, 1fr); gap: 32px 12px; }
+    .grid[data-cols="2"] { grid-template-columns: 1fr; }
+    .view__btn[data-cols="2"] svg rect:nth-child(n+2) { display: none; }
+    .view__btn[data-cols="2"] svg rect:first-child { width: 16px; height: 16px; }
+  }
 
   .soon { text-align: center; padding: 40px 0 120px; display: grid; justify-items: center; gap: 6px; }
   .soon__title { font-size: 40px; margin: 0 0 8px; }

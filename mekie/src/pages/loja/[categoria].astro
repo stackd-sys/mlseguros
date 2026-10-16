@@ -9,14 +9,14 @@ export function getStaticPaths() {
       slug: 'novidades',
       title: 'Novidades',
       intro: 'As peças mais recentes da Mekie.',
-      image: '/images/site/banner-94.webp',
-      items: [...products].sort((a, b) => b.id - a.id).slice(0, 8),
+      image: undefined,
+      items: [...products].sort((a, b) => b.id - a.id).slice(0, 4),
     },
     {
       slug: 'ultimas-unidades',
       title: 'Últimas unidades',
       intro: '25% de desconto enquanto houver stock.',
-      image: '/images/site/hero.webp',
+      image: undefined,
       items: products.filter((p) => discount(p) > 0),
     },
   ];
@@ -24,7 +24,7 @@ export function getStaticPaths() {
     ...special.map((s) => ({ params: { categoria: s.slug }, props: { title: s.title, intro: s.intro, image: s.image, items: s.items } })),
     ...categories.map((c) => ({
       params: { categoria: c.slug },
-      props: { title: c.plural, intro: undefined, image: c.image, items: productsIn(c.slug) },
+      props: { title: c.plural, intro: undefined, image: undefined, items: productsIn(c.slug) },
     })),
   ];
 }
