@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Carousel from '../../components/Carousel.astro';
 import Img from '../../components/Img.astro';
-import { products, getCategory, getCollection, discount, variantsOf, type Product } from '../../data/products';
+import { products, getCategory, discount, variantsOf, type Product } from '../../data/products';
 import { site, formatPrice } from '../../data/site';
 
 export function getStaticPaths() {
@@ -11,7 +11,6 @@ export function getStaticPaths() {
 interface Props { product: Product }
 const { product: p } = Astro.props;
 const cat = getCategory(p.category)!;
-const col = p.collection ? getCollection(p.collection) : undefined;
 const off = discount(p);
 const variants = variantsOf(p);
 const related = [
@@ -65,7 +64,6 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
     </div>
 
     <div class="info">
-      {col && <a href={`/colecoes/${col.slug}/`} class="info__col eyebrow">Coleção {col.name}</a>}
       <h1 class="info__title">{p.name}</h1>
       <p class="price info__price">
         {off > 0 && <del><span class="sr-only">Preço original </span>{formatPrice(p.regularPrice)}</del>}
@@ -134,7 +132,6 @@ const isCutout = (src: string) => src.includes('/products/') && /-1\.webp$/.test
             )}
             <ul>
               <li>Cor: {p.color}</li>
-              {col && <li>Coleção: {col.name}</li>}
               <li>Tamanhos: {p.sizes ? p.sizes.join(', ') : 'tamanho único'}</li>
             </ul>
           </div>

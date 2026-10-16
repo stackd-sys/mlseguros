@@ -9,12 +9,14 @@ const colors = variantsOf(p).length;
 const label = p.badge ?? (off > 0 ? `-${off}%` : undefined);
 const cartData = JSON.stringify({ id: p.id, slug: p.slug, name: p.name, color: p.color, price: p.price, image: p.images[0], stock: p.stock });
 const sizes = '(max-width: 700px) 50vw, 25vw';
+/* recortes de produto (fundo transparente) ficam inteiros; fotos ocupam o cartão */
+const cutout = /\/products\/.+-1\.webp$/.test(p.images[0]);
 ---
 <article class="card" data-card data-product={cartData}>
   <div class="card__media">
     <a href={`/produto/${p.slug}/`} class="card__link" aria-label={`${p.name}, ${p.color}`}>
       {label && <span class="card__tag eyebrow">{label}</span>}
-      <Img src={p.images[0]} sizes={sizes} alt={`${p.name} ${p.color}`} width="600" height="750" loading={eager ? 'eager' : 'lazy'} class="card__img" />
+      <Img src={p.images[0]} sizes={sizes} alt={`${p.name} ${p.color}`} width="600" height="750" loading={eager ? 'eager' : 'lazy'} class:list={['card__img', { 'card__img--photo': !cutout }]} />
       {p.images[1] && <Img src={p.images[1]} sizes={sizes} alt="" width="600" height="750" loading="lazy" class="card__img card__img--hover" />}
     </a>
     <div class="quick" aria-label={`Adicionar ${p.name} ao carrinho`}>
@@ -53,6 +55,7 @@ const sizes = '(max-width: 700px) 50vw, 25vw';
     transition: opacity .5s var(--ease), transform .8s var(--ease);
   }
   .card__img--hover { object-fit: cover; padding: 0; opacity: 0; }
+  .card__img--photo { object-fit: cover; padding: 0; }
   .card__media:hover .card__img--hover { opacity: 1; }
   .card__media:hover .card__img:not(.card__img--hover) { transform: scale(1.03); }
   .card__tag {

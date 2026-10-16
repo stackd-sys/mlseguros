@@ -228,11 +228,7 @@ if (popup) {
 
   if (!subscribed()) {
     if (!snoozed) {
-      setTimeout(() => show(true), 8000);
-      /* intenção de saída no computador */
-      document.addEventListener('mouseout', (e) => {
-        if (!e.relatedTarget && e.clientY <= 0) show(true);
-      });
+      setTimeout(() => show(true), 10000);
     } else if (tab) {
       tab.hidden = false;
     }
@@ -249,7 +245,11 @@ if (popup) {
 
 /* Ao entrar numa página por um link começa no topo; ao voltar atrás o browser repõe a posição */
 const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
-if (!location.hash && nav?.type === 'navigate') window.scrollTo(0, 0);
+if (!location.hash && nav?.type !== 'back_forward') {
+  window.scrollTo(0, 0);
+  /* Quando o site corre dentro de outra página (ex.: pré-visualização), leva também essa página ao topo */
+  if (window.top !== window) document.body.scrollIntoView({ block: 'start' });
+}
 
 /* ---------- Animações de entrada ---------- */
 const io = 'IntersectionObserver' in window

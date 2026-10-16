@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { topCategories, childCategories, collections, productsIn } from '../data/products';
+import { topCategories, childCategories, productsIn } from '../data/products';
 import { site } from '../data/site';
 interface Props { overlay?: boolean }
 const { overlay = false } = Astro.props;
@@ -8,7 +8,6 @@ const path = Astro.url.pathname;
 const nav = [
   { href: '/loja/novidades/', label: 'Novidades' },
   { href: '/loja/', label: 'Loja', mega: 'shop' },
-  { href: '/colecoes/', label: 'Coleções', mega: 'collections' },
   { href: '/loja/ultimas-unidades/', label: 'Últimas unidades' },
   { href: '/sobre/', label: 'Sobre nós' },
   { href: '/contactos/', label: 'Contactos' },
@@ -51,23 +50,6 @@ const current = nav
       {nav.map((item) => (
         <li class:list={{ 'has-mega': !!item.mega }}>
           <a href={item.href} class:list={['eyebrow', { 'is-current': current === item.href }]} aria-current={current === item.href ? 'page' : undefined}>{item.label}</a>
-          {item.mega === 'collections' && (
-            <div class="mega">
-              <div class="mega__inner mega__inner--cols container">
-                <div class="mega__col">
-                  <p class="mega__heading eyebrow">Coleções</p>
-                  {collections.map((c) => <a href={`/colecoes/${c.slug}/`} class="mega__link">{c.name}</a>)}
-                  <a href="/colecoes/" class="mega__link">Ver todas</a>
-                </div>
-                {collections.map((c) => (
-                  <a href={`/colecoes/${c.slug}/`} class="mega__card">
-                    <img src={c.image.replace('.webp', '-sm.webp')} alt="" loading="lazy" width="480" height="600" />
-                    <span class="eyebrow">{c.name}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
           {item.mega === 'shop' && (
             <div class="mega">
               <div class="mega__inner container">
@@ -123,8 +105,6 @@ const current = nav
           {childCategories(c.slug).map((sub) => <li class="mnav__sub mnav__sub--2"><a href={`/loja/${sub.slug}/`}>{sub.name}</a></li>)}
         </>
       ))}
-      <li><a href="/colecoes/">Coleções</a></li>
-      {collections.map((c) => <li class="mnav__sub"><a href={`/colecoes/${c.slug}/`}>{c.name}</a></li>)}
       <li><a href="/loja/ultimas-unidades/">Últimas unidades</a></li>
       <li><a href="/sobre/">Sobre nós</a></li>
       <li><a href="/contactos/">Contactos</a></li>
@@ -223,7 +203,6 @@ const current = nav
     display: grid; grid-template-columns: repeat(4, 1fr) 220px;
     gap: 40px; padding-top: 36px; padding-bottom: 40px;
   }
-  .mega__inner--cols { grid-template-columns: 1fr 260px 260px; justify-content: start; }
   .mega__col { display: flex; flex-direction: column; gap: 10px; }
   .mega__heading { margin: 0 0 6px; color: var(--ink-soft); font-size: 10.5px; }
   a.mega__heading:hover { color: var(--ink); }
