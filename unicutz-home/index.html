@@ -104,19 +104,13 @@ img, video { display: block; max-width: 100%; }
 .copy { display: grid; justify-items: center; gap: 18px; text-align: center; max-width: 440px; }
 .kicker { font-size: 12px; font-weight: 500; letter-spacing: .32em; text-transform: uppercase; opacity: .8; }
 .half h2 { margin: 0; font-weight: 400; line-height: 1; text-wrap: balance; }
-.half--barber h2 {
-  font-family: var(--font-body);
-  font-size: clamp(38px, 4.6vw, 64px);
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  margin-right: -.14em;
-}
-.half--well h2 {
+.half h2 {
   font-family: var(--font-display);
   font-size: clamp(44px, 5.4vw, 76px);
   font-style: italic;
-  color: var(--bronze-deep);
 }
+.half--barber h2 { color: var(--chalk); }
+.half--well h2 { color: var(--bronze-deep); }
 .tagline { margin: 0; font-size: 18px; line-height: 1.5; text-wrap: balance; }
 .half--well .tagline { color: var(--ink-soft); }
 .services { font-size: 12px; letter-spacing: .26em; text-transform: uppercase; opacity: .75; }
