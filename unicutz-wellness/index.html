@@ -5,15 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>UniCutz Wellness</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<!-- Página em pré-visualização: não indexar até ser publicada oficialmente -->
-<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://unicutz.com/wellness/">
+<link rel="alternate" hreflang="pt" href="https://unicutz.com/wellness/">
+<link rel="alternate" hreflang="en" href="https://unicutz.com/wellness/en/">
+<link rel="alternate" hreflang="x-default" href="https://unicutz.com/wellness/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="UniCutz Wellness">
+<meta property="og:locale" content="pt_PT">
+<meta property="og:url" content="https://unicutz.com/wellness/">
+<meta property="og:title" content="UniCutz Wellness">
+<meta property="og:description" content="Da massagem à estética, um espaço dedicado ao seu bem-estar. Depilação a laser, peeling de carbono, remoção de tatuagens e muito mais na UniCutz Wellness.">
+<meta property="og:image" content="https://unicutz.com/wp-content/uploads/2026/10/WhatsApp-Image-2026-10-06-at-14.52.19.jpeg">
+<link rel="icon" href="https://unicutz.com/wp-content/uploads/2026/02/cropped-Logo-EM0767-UniCutz-180x180-1-32x32.png" sizes="32x32">
+<link rel="icon" href="https://unicutz.com/wp-content/uploads/2026/02/cropped-Logo-EM0767-UniCutz-180x180-1-192x192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="https://unicutz.com/wp-content/uploads/2026/02/cropped-Logo-EM0767-UniCutz-180x180-1-180x180.png">
 <meta name="description" content="Da massagem à estética, um espaço dedicado ao seu bem-estar. Depilação a laser, peeling de carbono, remoção de tatuagens e muito mais na UniCutz Wellness.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap">
 <style>
-/* Layout: a mesma sequência da home UniCutz (hero com vídeo, serviços com carrossel, sobre nós, CTA,
-   testemunhos, reserva Amélia), em papel claro com madeira e verde, como o próprio espaço Wellness. */
+/* UniCutz Wellness: a mesma sequência da home da barbearia (hero com vídeo, serviços com carrossel,
+   sobre nós, CTA, testemunhos, reserva Amélia), em papel claro com madeira e verde, como o espaço. */
 :root {
   --paper: #F7F2EB;       /* fundo principal */
   --linen: #EFE7DB;       /* secções alternadas */
@@ -29,19 +41,8 @@
   --line: rgba(160, 123, 76, .32);
   --shadow: rgba(66, 48, 30, .12);
 
-  /* cores do widget Amélia (iguais às da barbearia) */
-  --amelia-side: #000000;
-  --amelia-step: #1C1C1C;
-  --amelia-muted: #8D8D8D;
-  --amelia-border: #E2E6EC;
-  --amelia-green: #2E7D3A;
-  --amelia-white: #FFFFFF;
-  --amelia-text: #1A2C37;
-  --amelia-red: #D64545;
-
   --font-display: "Cormorant Garamond", "Cormorant", Garamond, "Times New Roman", serif;
   --font-body: "Jost", "Futura", "Century Gothic", "Avenir Next", system-ui, sans-serif;
-  --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   --wrap: 1140px;
   --gutter-l: max(16px, env(safe-area-inset-left, 0px));
@@ -138,7 +139,7 @@ p { margin: 0; }
   padding: 3px;
   background: rgba(252, 250, 246, .7);
 }
-.lang button {
+.lang a {
   border: 0;
   background: transparent;
   color: var(--ink-soft);
@@ -146,9 +147,9 @@ p { margin: 0; }
   letter-spacing: .16em;
   padding: 7px 10px;
   border-radius: 999px;
-  cursor: pointer;
+  text-decoration: none;
 }
-.lang button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.lang a[aria-current="page"] { background: var(--ink); color: var(--paper); }
 .brand { grid-column: 2; display: flex; flex-direction: column; align-items: flex-end; text-decoration: none; }
 .brand img { width: clamp(100px, 12vw, 150px); height: auto; }
 .brand span {
@@ -388,126 +389,58 @@ p { margin: 0; }
 /* ---------- testemunhos ---------- */
 .reviews { background: var(--paper); padding-block: 110px 90px; }
 .reviews .section-title { padding-bottom: 18px; border-bottom: 1px solid var(--sand); margin-bottom: 40px; }
-.reviews-placeholder {
-  border: 1px dashed var(--bronze);
+.reviews-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 32px; padding-bottom: 18px; border-bottom: 1px solid var(--sand); margin-bottom: 40px; }
+.reviews-head .section-title { padding: 0; border: 0; margin: 0; }
+.reviews-head .eyebrow { display: flex; align-items: center; gap: 10px; }
+.reviews-head .eyebrow b { color: var(--bronze); letter-spacing: .12em; font-size: 15px; }
+.review-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start; }
+.review {
+  background: var(--sheet);
+  border: 1px solid var(--line);
   border-radius: 10px;
-  padding: 44px 24px;
+  padding: 26px 26px 22px;
   display: grid;
-  justify-items: center;
-  gap: 10px;
-  text-align: center;
-  color: var(--ink-soft);
+  gap: 16px;
 }
-.reviews-placeholder .stars { letter-spacing: .3em; color: var(--bronze); font-size: 18px; }
-.reviews-placeholder strong { font-weight: 400; color: var(--ink); font-size: 18px; }
+.review-stars { color: var(--bronze); letter-spacing: .2em; font-size: 15px; }
+.review-text { white-space: pre-line; color: var(--ink); font-size: 16px; line-height: 1.65; }
+.review-author { display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
+.review-author strong { display: block; font-weight: 500; font-size: 15px; text-transform: capitalize; }
+.review-author small { display: block; color: var(--ink-soft); font-size: 13px; }
+.review-avatar {
+  flex: none; width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--sage); color: var(--ink);
+  font-size: 13px; font-weight: 500; letter-spacing: .04em;
+}
+.reviews-note { margin-top: 22px; font-size: 14px; color: var(--ink-soft); }
+@media (max-width: 960px) {
+  .review-grid {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: min(82%, 340px);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 12px;
+  }
+  .review { scroll-snap-align: start; }
+}
 
 /* ---------- reserva (réplica visual do widget Amélia da barbearia) ---------- */
 .booking { background: linear-gradient(180deg, var(--paper) 0%, var(--linen) 100%); padding-block: 90px 110px; }
 .booking .section-title { margin-bottom: 40px; }
-.amelia {
-  display: flex;
-  max-width: 760px;
-  min-height: 560px;
+/* widget Amélia, servido por uma página WordPress dentro de um iframe */
+.booking-frame {
+  max-width: 820px;
   margin-inline: auto;
   border-radius: 8px;
   overflow: hidden;
-  background: var(--amelia-white);
+  background: var(--sheet);
   box-shadow: 0 30px 60px -30px rgba(26, 44, 55, .35);
-  font-family: var(--font-ui);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--amelia-text);
 }
-.amelia-side {
-  flex: 0 0 240px;
-  background: var(--amelia-side);
-  color: var(--amelia-white);
-  padding: 16px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.amelia-step {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 6px;
-  color: var(--amelia-white);
-  font-weight: 500;
-  font-size: 13px;
-}
-.amelia-step.is-active { background: var(--amelia-step); }
-.amelia-step:not(.is-active) { opacity: .75; }
-.amelia-step svg { width: 16px; height: 16px; flex: none; }
-.amelia-step .dot {
-  margin-left: auto;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid #3A3A3A;
-  background: var(--amelia-step);
-}
-.amelia-step.is-active .dot { border-color: var(--amelia-muted); background: transparent; }
-.amelia-contact {
-  margin-top: auto;
-  border-top: 1px solid #2B2B2B;
-  border-bottom: 1px solid #2B2B2B;
-  padding: 12px 0;
-  text-align: center;
-  display: grid;
-  gap: 4px;
-  font-size: 13px;
-}
-.amelia-contact span:first-child { color: var(--amelia-muted); }
-.amelia-collapse { display: flex; justify-content: space-between; align-items: center; padding: 10px 8px 2px; font-weight: 500; font-size: 13px; }
-.amelia-collapse i {
-  width: 16px; height: 16px; border-radius: 50%; background: var(--amelia-white); position: relative;
-}
-.amelia-collapse i::after {
-  content: ""; position: absolute; inset: 4px 5px 4px 3px;
-  background: var(--amelia-side);
-  clip-path: polygon(0 40%, 50% 40%, 50% 0, 100% 50%, 50% 100%, 50% 60%, 0 60%);
-}
-.amelia-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.amelia-main header { padding: 16px 24px; border-bottom: 1px solid var(--amelia-border); font-size: 16px; font-weight: 500; }
-.amelia-form { flex: 1; padding: 24px; display: grid; align-content: start; gap: 22px; }
-.amelia-field { display: grid; gap: 8px; }
-.amelia-field label { font-weight: 500; font-size: 14px; }
-.amelia-field label b { color: var(--amelia-red); font-weight: 500; }
-.amelia-field select {
-  appearance: none;
-  width: 100%;
-  font: inherit;
-  color: var(--amelia-text);
-  background:
-    linear-gradient(45deg, transparent 50%, var(--amelia-text) 50%) right 18px center / 5px 5px no-repeat,
-    linear-gradient(-45deg, transparent 50%, var(--amelia-text) 50%) right 13px center / 5px 5px no-repeat,
-    var(--amelia-white);
-  border: 1px solid var(--amelia-border);
-  border-radius: 6px;
-  padding: 10px 36px 10px 12px;
-  box-shadow: 0 1px 2px rgba(26, 44, 55, .06);
-}
-.amelia-note { font-size: 13px; color: var(--amelia-muted); }
-.amelia-main footer { border-top: 1px solid var(--amelia-border); padding: 12px 24px; display: flex; justify-content: flex-end; }
-.amelia-main footer button {
-  font: 500 14px/1 var(--font-ui);
-  background: var(--amelia-green);
-  color: var(--amelia-white);
-  border: 0;
-  border-radius: 6px;
-  padding: 11px 22px;
-  cursor: pointer;
-}
-@media (max-width: 680px) {
-  .amelia { flex-direction: column; min-height: 0; }
-  .amelia-side { flex: none; flex-direction: row; flex-wrap: wrap; padding: 10px; }
-  .amelia-step { flex: 1 1 auto; justify-content: center; padding: 8px; }
-  .amelia-step .dot, .amelia-contact, .amelia-collapse { display: none; }
-  .amelia-form { min-height: 260px; }
-}
+.booking-frame iframe { display: block; width: 100%; height: 660px; border: 0; }
+@media (max-width: 680px) { .booking-frame iframe { height: 980px; } }
+.booking-fallback { text-align: center; margin-top: 18px; font-size: 14px; color: var(--ink-soft); }
 
 /* ---------- rodapé ---------- */
 .site-footer {
@@ -519,7 +452,6 @@ p { margin: 0; }
 .site-footer .wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 24px; }
 .site-footer a { text-decoration: none; color: var(--linen); opacity: .85; }
 .site-footer a:hover { opacity: 1; text-decoration: underline; }
-.site-footer .preview { color: var(--sand); opacity: .7; letter-spacing: .14em; text-transform: uppercase; font-size: 11px; align-self: center; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -539,24 +471,21 @@ p { margin: 0; }
     </g>
   </symbol>
   <symbol id="i-angle" viewBox="0 0 8 12"><path d="M1.5 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
-  <symbol id="i-bag" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2.5" y="4.5" width="11" height="9.5" rx="1.5"/><path d="M5.5 4.5V3.5a2.5 2.5 0 0 1 5 0v1M5.5 8h5"/></g></symbol>
-  <symbol id="i-cal" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M2 6.5h12M5 1.5v3M11 1.5v3M6 10h4"/></g></symbol>
-  <symbol id="i-user" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5" r="3"/><path d="M2.5 14.5c.7-3 2.9-4.5 5.5-4.5s4.8 1.5 5.5 4.5"/></g></symbol>
 </svg>
 
 <!-- ============ CABEÇALHO ============ -->
 <header class="site-header">
   <div class="wrap">
-    <div class="lang" role="group" aria-label="Idioma / Language">
-      <button type="button" data-lang="pt" aria-pressed="true">PT</button>
-      <button type="button" data-lang="en" aria-pressed="false">EN</button>
-    </div>
+    <nav class="lang" aria-label="Idioma / Language">
+      <a href="./" hreflang="pt" aria-current="page">PT</a>
+      <a href="en/" hreflang="en">EN</a>
+    </nav>
     <a class="brand" href="#topo" aria-label="UniCutz Wellness">
       <img src="assets/logo-unicutz.png" alt="UniCutz" width="480" height="281">
       <span>WELLNESS</span>
     </a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-flyout">
-      <span class="label" data-i18n="menu">Menu</span><i aria-hidden="true"></i>
+      <span class="label">Menu</span><i aria-hidden="true"></i>
     </button>
   </div>
 </header>
@@ -566,13 +495,13 @@ p { margin: 0; }
   <button class="flyout-close" type="button" aria-label="Fechar menu" data-close-menu></button>
   <nav>
     <ul>
-      <li><a href="#servicos" data-close-menu data-i18n="nav.services">Serviços</a></li>
-      <li><a href="#sobre-nos" data-close-menu data-i18n="nav.about">Sobre Nós</a></li>
-      <li><a href="#testemunhos" data-close-menu data-i18n="nav.reviews">Testemunhos</a></li>
-      <li><a href="https://unicutz.com/login-cliente" data-i18n="nav.login">Login</a></li>
+      <li><a href="#servicos" data-close-menu>Serviços</a></li>
+      <li><a href="#sobre-nos" data-close-menu>Sobre Nós</a></li>
+      <li><a href="#testemunhos" data-close-menu>Testemunhos</a></li>
+      <li><a href="https://unicutz.com/login-cliente">Login</a></li>
     </ul>
   </nav>
-  <a class="btn" href="#marcacao" data-close-menu data-i18n="cta.book">Marcar agora</a>
+  <a class="btn" href="#marcacao" data-close-menu>Marcar agora</a>
   <svg class="lotus" aria-hidden="true"><use href="#i-lotus"/></svg>
 </aside>
 
@@ -585,15 +514,15 @@ p { margin: 0; }
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <svg class="lotus" aria-hidden="true"><use href="#i-lotus"/></svg>
-        <h1 data-i18n="hero.title">Cuidar de si é também uma forma de <em>viver melhor</em>.</h1>
-        <p class="hero-services" data-i18n="hero.services">Massagem<b>·</b>Estética<b>·</b>Laser</p>
-        <a class="btn" href="#marcacao" data-i18n="cta.book">Marcar agora</a>
+        <h1>Cuidar de si é também uma forma de <em>viver melhor</em>.</h1>
+        <p class="hero-services">Massagem<b>·</b>Estética<b>·</b>Laser</p>
+        <a class="btn" href="#marcacao">Marcar agora</a>
       </div>
       <div class="hero-video">
         <video autoplay muted loop playsinline preload="metadata"
                poster="https://unicutz.com/wp-content/uploads/2026/10/WhatsApp-Image-2026-10-06-at-14.52.19.jpeg"
                aria-label="Vídeo de apresentação do espaço UniCutz Wellness">
-          <source src="https://unicutz.com/wp-content/uploads/2026/10/UNICUTZ-WELNESS-intro.mp4" type="video/mp4">
+          <source src="assets/unicutz-wellness-intro-web.mp4" type="video/mp4">
         </video>
       </div>
     </div>
@@ -603,32 +532,32 @@ p { margin: 0; }
   <section class="services" id="servicos">
     <div class="wrap">
       <div class="section-head">
-        <span class="eyebrow" data-i18n="nav.services">Serviços</span>
-        <h2 class="section-title" data-i18n="services.title">Cuidado e rigor em cada tratamento, pensados para o seu bem-estar.</h2>
+        <span class="eyebrow">Serviços</span>
+        <h2 class="section-title">Cuidado e rigor em cada tratamento, pensados para o seu bem-estar.</h2>
       </div>
 
       <div class="services-grid">
         <div class="service-list">
           <article class="service">
-            <h3 data-i18n="s1.title">Depilação a Laser</h3>
-            <p data-i18n="s1.text">Pele suave por mais tempo, com tecnologia laser. Tratamentos para mulher e homem, por zona ou em pack, ajustados ao seu tipo de pele e de pelo.</p>
-            <div class="actions"><a class="btn btn--sage" href="#marcacao"><svg aria-hidden="true"><use href="#i-angle"/></svg><span data-i18n="cta.book">Marcar agora</span></a></div>
+            <h3>Depilação a Laser</h3>
+            <p>Pele suave por mais tempo, com tecnologia laser. Tratamentos para mulher e homem, por zona ou em pack, ajustados ao seu tipo de pele e de pelo.</p>
+            <div class="actions"><a class="btn btn--sage" href="#marcacao"><svg aria-hidden="true"><use href="#i-angle"/></svg><span>Marcar agora</span></a></div>
           </article>
           <article class="service">
-            <h3 data-i18n="s2.title">Peeling de Carbono</h3>
-            <p data-i18n="s2.text">Uma limpeza profunda que renova a pele, ajuda a controlar a oleosidade e uniformiza o tom. Indicado para o rosto e para as costas.</p>
-            <div class="actions"><a class="btn btn--sage" href="#marcacao"><svg aria-hidden="true"><use href="#i-angle"/></svg><span data-i18n="cta.book">Marcar agora</span></a></div>
+            <h3>Peeling de Carbono</h3>
+            <p>Uma limpeza profunda que renova a pele, ajuda a controlar a oleosidade e uniformiza o tom. Indicado para o rosto e para as costas.</p>
+            <div class="actions"><a class="btn btn--sage" href="#marcacao"><svg aria-hidden="true"><use href="#i-angle"/></svg><span>Marcar agora</span></a></div>
           </article>
           <article class="service">
-            <h3 data-i18n="s3.title">Remoção de Tatuagens</h3>
-            <p data-i18n="s3.text">Remoção progressiva com laser, em sessões adaptadas à tinta, ao tamanho e à sua pele. Cada caso é avaliado numa consulta inicial.</p>
-            <div class="actions"><a class="btn btn--sage" href="#marcacao"><svg aria-hidden="true"><use href="#i-angle"/></svg><span data-i18n="cta.consult">Marcar consulta</span></a></div>
+            <h3>Remoção de Tatuagens</h3>
+            <p>Remoção progressiva com laser, em sessões adaptadas à tinta, ao tamanho e à sua pele. Cada caso é avaliado numa consulta inicial.</p>
+            <div class="actions"><a class="btn btn--sage" href="#marcacao"><svg aria-hidden="true"><use href="#i-angle"/></svg><span>Marcar consulta</span></a></div>
           </article>
           <!-- Texto provisório: a lista completa de massagens e tratamentos de estética está a ser preparada pela equipa -->
           <article class="service">
-            <h3 data-i18n="s4.title">Massagem &amp; Estética</h3>
-            <p data-i18n="s4.text">Da massagem de relaxamento aos cuidados de rosto e corpo, momentos pensados para abrandar e cuidar de si. A lista completa de tratamentos chega em breve.</p>
-            <div class="actions"><a class="btn btn--sage" href="#marcacao"><svg aria-hidden="true"><use href="#i-angle"/></svg><span data-i18n="cta.book">Marcar agora</span></a></div>
+            <h3>Massagem &amp; Estética</h3>
+            <p>Da massagem de relaxamento aos cuidados de rosto e corpo, momentos pensados para abrandar e cuidar de si. A lista completa de tratamentos chega em breve.</p>
+            <div class="actions"><a class="btn btn--sage" href="#marcacao"><svg aria-hidden="true"><use href="#i-angle"/></svg><span>Marcar agora</span></a></div>
           </article>
         </div>
 
@@ -653,25 +582,24 @@ p { margin: 0; }
   <section class="about" id="sobre-nos">
     <div class="wrap">
       <div class="about-grid">
-        <span class="eyebrow" data-i18n="nav.about">Sobre Nós</span>
-        <h2 class="section-title" data-i18n="about.title">Da massagem à estética, um espaço dedicado ao seu bem-estar.</h2>
-        <p data-i18n="about.text">A UniCutz Wellness nasceu para elevar a experiência de cuidado pessoal, através de serviços de qualidade, atendimento personalizado e um ambiente onde o bem-estar é prioridade.</p>
+        <span class="eyebrow">Sobre Nós</span>
+        <h2 class="section-title">Da massagem à estética, um espaço dedicado ao seu bem-estar.</h2>
+        <p>A UniCutz Wellness nasceu para elevar a experiência de cuidado pessoal, através de serviços de qualidade, atendimento personalizado e um ambiente onde o bem-estar é prioridade.</p>
       </div>
 
-      <!-- Na barbearia esta zona mostra a equipa. Por agora mostra o espaço
-           (imagens retiradas do vídeo de apresentação; carregar no WordPress e trocar os caminhos). -->
+      <!-- Na barbearia esta zona mostra a equipa; aqui mostra o espaço (imagens do vídeo de apresentação). -->
       <div class="space-grid">
         <figure>
           <img src="assets/espaco-sala.jpg" alt="Sala de massagem com luz quente" width="900" height="1600" loading="lazy">
-          <figcaption data-i18n="space.1">Os tratamentos</figcaption>
+          <figcaption>Os tratamentos</figcaption>
         </figure>
         <figure>
           <img src="assets/espaco-jardim.jpg" alt="Parede de plantas verdes ao lado de ripas de madeira" width="900" height="1600" loading="lazy">
-          <figcaption data-i18n="space.2">O espaço</figcaption>
+          <figcaption>O espaço</figcaption>
         </figure>
         <figure>
           <img src="assets/espaco-velas.jpg" alt="Velas verdes num balcão de madeira" width="900" height="1600" loading="lazy">
-          <figcaption data-i18n="space.3">Os detalhes</figcaption>
+          <figcaption>Os detalhes</figcaption>
         </figure>
       </div>
     </div>
@@ -680,68 +608,86 @@ p { margin: 0; }
   <!-- ============ FAIXA CTA ============ -->
   <section class="cta">
     <div class="wrap">
-      <h3 data-i18n="band.title">Pronto para dedicar um momento a si?</h3>
-      <a class="btn btn--light" href="#marcacao" data-i18n="band.btn">Reservar agora</a>
+      <h3>Pronto para dedicar um momento a si?</h3>
+      <a class="btn btn--light" href="#marcacao">Reservar agora</a>
     </div>
   </section>
 
   <!-- ============ TESTEMUNHOS ============
-       Na barbearia: widget de avaliações Google (Trustindex). Ligar aqui o widget da UniCutz Wellness. -->
+       Avaliações Google da barbearia UniCutz (copiadas do widget Trustindex de unicutz.com). -->
   <section class="reviews" id="testemunhos">
     <div class="wrap">
-      <h2 class="section-title" data-i18n="reviews.title">Mais do que um tratamento</h2>
-      <div class="reviews-placeholder">
-        <span class="stars" aria-hidden="true">★★★★★</span>
-        <strong data-i18n="reviews.ph1">As avaliações Google da UniCutz Wellness vão aparecer aqui.</strong>
-        <span data-i18n="reviews.ph2">Espaço reservado para o widget de avaliações, como na página da barbearia.</span>
+      <div class="reviews-head">
+        <h2 class="section-title">Mais do que um tratamento</h2>
+        <span class="eyebrow"><b aria-hidden="true">★★★★★</b><span>Avaliações Google · UniCutz</span></span>
+      </div>
+      <div class="review-grid">
+        <article class="review">
+          <div class="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
+          <p class="review-text" lang="pt-PT">Mais uma.vez, experiência muito boa, do início ao fim! Marcação super fácil pela NET, pontualidade, limpeza brilhante e extrema atenção e simpatia.
+O corte ficou exactamente como queríamos.
+Não podia recomendar mais o Unicutz, continuaremos a voltar ☺️</p>
+          <footer class="review-author">
+            <span class="review-avatar" aria-hidden="true">CB</span>
+            <span><strong>catarina batista</strong><small>Google · junho 2026</small></span>
+          </footer>
+        </article>
+        <article class="review">
+          <div class="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
+          <p class="review-text" lang="pt-PT">“Excelente experiência. Atendimento muito simpático e acolhedor desde o início. Gostei especialmente do cuidado e da qualidade do corte à tesoura — percebe-se a atenção ao detalhe e o profissionalismo. Sem dúvida um sítio a repetir.”</p>
+          <footer class="review-author">
+            <span class="review-avatar" aria-hidden="true">MP</span>
+            <span><strong>Marcenaria Paulo Gomes</strong><small>Google · maio 2026</small></span>
+          </footer>
+        </article>
+        <article class="review">
+          <div class="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
+          <p class="review-text" lang="pt-PT">De ha três anos para cá que é o barbeiro de eleição.  Tanto meu como do meu filho.  Muita paciência e dedicação para ele para que ele confiasse e pudessemos ter um barbeiro para os dois.
+Atendimento 5 estrelas tanto da parte do Frederico como dos restantes elementos que fazem da casa, uma casa de referência para muitas pessoas.
+Continua assim. Trabalho nunca te vai faltar.</p>
+          <footer class="review-author">
+            <span class="review-avatar" aria-hidden="true">P</span>
+            <span><strong>Pombinho666</strong><small>Google · junho 2026</small></span>
+          </footer>
+        </article>
+        <article class="review">
+          <div class="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
+          <p class="review-text" lang="pt-PT">Experiência espetacular e única, planejo voltar mais vezes</p>
+          <footer class="review-author">
+            <span class="review-avatar" aria-hidden="true">JV</span>
+            <span><strong>João Victor Tedesco</strong><small>Google · junho 2026</small></span>
+          </footer>
+        </article>
+        <article class="review">
+          <div class="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
+          <p class="review-text" lang="pt-PT">A melhor barbearia do concelho de Mafra e arredores!!! Equipa impecavel venham que não se vao arrepender!!!</p>
+          <footer class="review-author">
+            <span class="review-avatar" aria-hidden="true">JB</span>
+            <span><strong>Joao Barros</strong><small>Google · junho 2026</small></span>
+          </footer>
+        </article>
+        <article class="review">
+          <div class="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
+          <p class="review-text" lang="en">Gabriel is a legend</p>
+          <footer class="review-author">
+            <span class="review-avatar" aria-hidden="true">A</span>
+            <span><strong>Alex</strong><small>Google · junho 2026</small></span>
+          </footer>
+        </article>
       </div>
     </div>
   </section>
 
   <!-- ============ RESERVA ============
-       Réplica visual do widget Amélia da barbearia, só para mostrar ao cliente.
-       No WordPress substituir por: [ameliastepbooking] (configurado com os serviços Wellness). -->
+       O widget Amélia só corre dentro do WordPress: vem de uma página WordPress (modelo Elementor Canvas)
+       que tem apenas o shortcode de marcação, mostrada aqui num iframe. -->
   <section class="booking" id="marcacao">
     <div class="wrap">
-      <h2 class="section-title" data-i18n="booking.title">Faça a sua reserva</h2>
-      <div class="amelia">
-        <aside class="amelia-side">
-          <div class="amelia-step is-active"><svg aria-hidden="true"><use href="#i-bag"/></svg><span data-i18n="am.services">Serviços</span><span class="dot"></span></div>
-          <div class="amelia-step"><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-i18n="am.date">Data e Hora</span><span class="dot"></span></div>
-          <div class="amelia-step"><svg aria-hidden="true"><use href="#i-user"/></svg><span data-i18n="am.info">Informações</span><span class="dot"></span></div>
-          <div class="amelia-contact">
-            <span data-i18n="am.contact">Entre em contacto</span>
-            <span>+351925073914</span>
-            <span>geral@unicutz.com</span>
-          </div>
-          <div class="amelia-collapse"><span data-i18n="am.collapse">Recolher menu</span><i aria-hidden="true"></i></div>
-        </aside>
-        <form class="amelia-main" id="amelia-form">
-          <header data-i18n="am.services">Serviços</header>
-          <div class="amelia-form">
-            <div class="amelia-field">
-              <label for="am-service"><b>*</b> <span data-i18n="am.service">Serviço:</span></label>
-              <select id="am-service">
-                <option value="" data-i18n="am.selService">Selecione o serviço</option>
-                <option>Corte de Cabelo</option>
-                <option>Barba</option>
-                <option>Saúde Capilar</option>
-              </select>
-            </div>
-            <div class="amelia-field">
-              <label for="am-employee" data-i18n="am.employee">Funcionário:</label>
-              <select id="am-employee">
-                <option value="" data-i18n="am.selEmployee">Selecione o funcionário</option>
-                <option>Frederico</option>
-                <option>Gabriel</option>
-                <option>Caike</option>
-              </select>
-            </div>
-            <p class="amelia-note" id="am-note" hidden data-i18n="am.note">Pré-visualização: as marcações ficam ativas quando a Amélia estiver configurada com os serviços Wellness.</p>
-          </div>
-          <footer><button type="submit" data-i18n="am.continue">Continuar</button></footer>
-        </form>
+      <h2 class="section-title">Faça a sua reserva</h2>
+      <div class="booking-frame">
+        <iframe src="https://unicutz.com/marcacoes-wellness/" title="Marcação online UniCutz Wellness" loading="lazy"></iframe>
       </div>
+      <p class="booking-fallback">Se o formulário não aparecer, <a href="https://unicutz.com/marcacoes-wellness/" target="_blank" rel="noopener">abra a página de marcação</a>.</p>
     </div>
   </section>
 
@@ -749,84 +695,13 @@ p { margin: 0; }
 
 <footer class="site-footer">
   <div class="wrap">
-    <span data-i18n="footer.copy">Copyright © 2026 UniCutz Wellness</span>
-    <a href="https://unicutz.com/politica-de-cookies/" data-i18n="footer.cookies">Política de Cookies</a>
-    <a href="https://unicutz.com/politica-de-privacidade/" data-i18n="footer.privacy">Política de Privacidade</a>
-    <span class="preview" data-i18n="footer.preview">Pré-visualização</span>
+    <span>Copyright © 2026 UniCutz Wellness</span>
+    <a href="https://unicutz.com/politica-de-cookies/">Política de Cookies</a>
+    <a href="https://unicutz.com/politica-de-privacidade/">Política de Privacidade</a>
   </div>
 </footer>
 
 <script>
-/* ---------- textos em inglês (o português está no próprio HTML) ---------- */
-var EN = {
-  "menu": "Menu",
-  "nav.services": "Services",
-  "nav.about": "About Us",
-  "nav.reviews": "Reviews",
-  "nav.login": "Login",
-  "cta.book": "Book now",
-  "cta.consult": "Book a consultation",
-  "hero.title": "Taking care of yourself is also a way of <em>living better</em>.",
-  "hero.services": "Massage<b>·</b>Aesthetics<b>·</b>Laser",
-  "services.title": "Care and precision in every treatment, designed for your well-being.",
-  "s1.title": "Laser Hair Removal",
-  "s1.text": "Smoother skin for longer, with laser technology. Treatments for women and men, by area or in packs, tailored to your skin and hair type.",
-  "s2.title": "Carbon Peel",
-  "s2.text": "A deep cleanse that renews the skin, helps control oiliness and evens out skin tone. Suitable for the face and back.",
-  "s3.title": "Tattoo Removal",
-  "s3.text": "Gradual laser removal, in sessions adapted to the ink, the size and your skin. Every case is assessed in an initial consultation.",
-  "s4.title": "Massage &amp; Aesthetics",
-  "s4.text": "From relaxing massages to face and body care, moments designed to slow down and look after yourself. The full list of treatments is coming soon.",
-  "about.title": "From massage to aesthetics, a space dedicated to your well-being.",
-  "about.text": "UniCutz Wellness was created to elevate the personal care experience, through quality services, personalised attention and an environment where well-being comes first.",
-  "space.1": "The treatments",
-  "space.2": "The space",
-  "space.3": "The details",
-  "band.title": "Ready to take a moment for yourself?",
-  "band.btn": "Book now",
-  "reviews.title": "More than a treatment",
-  "reviews.ph1": "UniCutz Wellness Google reviews will appear here.",
-  "reviews.ph2": "Reserved for the reviews widget, as on the barbershop page.",
-  "booking.title": "Make your booking",
-  "am.services": "Services",
-  "am.date": "Date &amp; Time",
-  "am.info": "Your Information",
-  "am.contact": "Get in touch",
-  "am.collapse": "Collapse menu",
-  "am.service": "Service:",
-  "am.selService": "Select service",
-  "am.employee": "Employee:",
-  "am.selEmployee": "Select employee",
-  "am.note": "Preview: bookings go live once Amelia is set up with the Wellness services.",
-  "am.continue": "Continue",
-  "footer.copy": "Copyright © 2026 UniCutz Wellness",
-  "footer.cookies": "Cookie Policy",
-  "footer.privacy": "Privacy Policy",
-  "footer.preview": "Preview"
-};
-
-(function () {
-  var nodes = document.querySelectorAll("[data-i18n]");
-  nodes.forEach(function (n) { n.setAttribute("data-pt", n.innerHTML); });
-  var buttons = document.querySelectorAll("[data-lang]");
-
-  function setLang(lang) {
-    nodes.forEach(function (n) {
-      var key = n.getAttribute("data-i18n");
-      n.innerHTML = lang === "en" && EN[key] ? EN[key] : n.getAttribute("data-pt");
-    });
-    document.documentElement.lang = lang === "en" ? "en" : "pt-PT";
-    buttons.forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-lang") === lang); });
-    try { localStorage.setItem("ucw-lang", lang); } catch (e) {}
-  }
-  buttons.forEach(function (b) {
-    b.addEventListener("click", function () { setLang(b.getAttribute("data-lang")); });
-  });
-  var saved = null;
-  try { saved = localStorage.getItem("ucw-lang"); } catch (e) {}
-  if (location.hash === "#en" || saved === "en") setLang("en");
-})();
-
 /* ---------- folhas (desenhadas por código, sem imagens) ---------- */
 (function () {
   var NS = "http://www.w3.org/2000/svg";
@@ -941,11 +816,6 @@ document.querySelectorAll("[data-carousel]").forEach(function (root) {
   play();
 });
 
-/* ---------- Amélia (só demonstração) ---------- */
-document.getElementById("amelia-form").addEventListener("submit", function (e) {
-  e.preventDefault();
-  document.getElementById("am-note").hidden = false;
-});
 </script>
 </body>
 </html>
