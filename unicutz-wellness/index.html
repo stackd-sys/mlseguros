@@ -393,8 +393,27 @@ p { margin: 0; }
 .reviews-head .section-title { padding: 0; border: 0; margin: 0; }
 .reviews-head .eyebrow { display: flex; align-items: center; gap: 10px; }
 .reviews-head .eyebrow b { color: var(--bronze); letter-spacing: .12em; font-size: 15px; }
-.review-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start; }
+/* carrossel de avaliações: 3 por vez no computador, 2 no tablet, 1 no telemóvel */
+.review-viewport { overflow: hidden; }
+.review-track { display: flex; gap: 24px; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.review-track .review { flex: 0 0 calc((100% - 48px) / 3); min-width: 0; }
+@media (max-width: 960px) { .review-track .review { flex-basis: calc((100% - 24px) / 2); } }
+@media (max-width: 640px) { .review-track .review { flex-basis: 100%; } }
+.review-nav { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 30px; }
+.review-nav button.arrow {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--sheet); color: var(--ink);
+  display: grid; place-items: center; cursor: pointer;
+  transition: border-color .2s ease, background .2s ease;
+}
+.review-nav button.arrow:hover { border-color: var(--bronze); background: var(--paper); }
+.review-nav button.arrow svg { width: 10px; height: 16px; }
+.review-dots { display: flex; gap: 8px; }
+.review-dots button { width: 8px; height: 8px; padding: 0; border-radius: 50%; border: 1px solid var(--bronze); background: transparent; cursor: pointer; }
+.review-dots button[aria-current="true"] { background: var(--bronze); }
 .review {
+  display: flex !important;
+  flex-direction: column;
   background: var(--sheet);
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -404,7 +423,7 @@ p { margin: 0; }
 }
 .review-stars { color: var(--bronze); letter-spacing: .2em; font-size: 15px; }
 .review-text { white-space: pre-line; color: var(--ink); font-size: 16px; line-height: 1.65; }
-.review-author { display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
+.review-author { margin-top: auto; display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
 .review-author strong { display: block; font-weight: 500; font-size: 15px; text-transform: capitalize; }
 .review-author small { display: block; color: var(--ink-soft); font-size: 13px; }
 .review-avatar {
@@ -414,33 +433,11 @@ p { margin: 0; }
   font-size: 13px; font-weight: 500; letter-spacing: .04em;
 }
 .reviews-note { margin-top: 22px; font-size: 14px; color: var(--ink-soft); }
-@media (max-width: 960px) {
-  .review-grid {
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: min(82%, 340px);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding-bottom: 12px;
-  }
-  .review { scroll-snap-align: start; }
-}
 
-/* ---------- reserva (réplica visual do widget Amélia da barbearia) ---------- */
+/* ---------- reserva: widget Amélia do WordPress ---------- */
 .booking { background: linear-gradient(180deg, var(--paper) 0%, var(--linen) 100%); padding-block: 90px 110px; }
 .booking .section-title { margin-bottom: 40px; }
-/* widget Amélia, servido por uma página WordPress dentro de um iframe */
-.booking-frame {
-  max-width: 820px;
-  margin-inline: auto;
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--sheet);
-  box-shadow: 0 30px 60px -30px rgba(26, 44, 55, .35);
-}
-.booking-frame iframe { display: block; width: 100%; height: 660px; border: 0; }
-@media (max-width: 680px) { .booking-frame iframe { height: 980px; } }
-.booking-fallback { text-align: center; margin-top: 18px; font-size: 14px; color: var(--ink-soft); }
+.booking-widget { max-width: 820px; margin-inline: auto; min-height: 420px; }
 
 /* ---------- rodapé ---------- */
 .site-footer {
@@ -458,6 +455,9 @@ p { margin: 0; }
   *, *::before, *::after { transition-duration: .01ms !important; animation: none !important; }
 }
 </style>
+<!-- Amélia (plugin do WordPress de unicutz.com) -->
+<link rel="stylesheet" href="https://unicutz.com/wp-content/plugins/ameliabooking/v3/public/assets/style.css?ver=9.9.1">
+<link rel="stylesheet" href="https://unicutz.com/wp-content/plugins/ameliabooking/v3/src/assets/scss/common/fonts/font-roboto.css?ver=9.9.1">
 </head>
 <body>
 
@@ -481,7 +481,7 @@ p { margin: 0; }
       <a href="en/" hreflang="en">EN</a>
     </nav>
     <a class="brand" href="#topo" aria-label="UniCutz Wellness">
-      <img src="assets/logo-unicutz.png" alt="UniCutz" width="480" height="281">
+      <img src="https://unicutz.com/wp-content/uploads/2026/03/Logotipo_Unicutz_2.png" alt="UniCutz" width="1007" height="589">
       <span>WELLNESS</span>
     </a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-flyout">
@@ -621,7 +621,9 @@ p { margin: 0; }
         <h2 class="section-title">Mais do que um tratamento</h2>
         <span class="eyebrow"><b aria-hidden="true">★★★★★</b><span>Avaliações Google · UniCutz</span></span>
       </div>
-      <div class="review-grid">
+      <div class="review-carousel" data-reviews>
+        <div class="review-viewport">
+          <div class="review-track">
         <article class="review">
           <div class="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
           <p class="review-text" lang="pt-PT">Mais uma.vez, experiência muito boa, do início ao fim! Marcação super fácil pela NET, pontualidade, limpeza brilhante e extrema atenção e simpatia.
@@ -674,20 +676,63 @@ Continua assim. Trabalho nunca te vai faltar.</p>
             <span><strong>Alex</strong><small>Google · junho 2026</small></span>
           </footer>
         </article>
+          </div>
+        </div>
+        <div class="review-nav">
+          <button class="arrow prev" type="button" aria-label="Avaliação anterior"><svg aria-hidden="true" style="transform:scaleX(-1)"><use href="#i-angle"/></svg></button>
+          <div class="review-dots"></div>
+          <button class="arrow next" type="button" aria-label="Avaliação seguinte"><svg aria-hidden="true"><use href="#i-angle"/></svg></button>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ============ RESERVA ============
-       O widget Amélia só corre dentro do WordPress: vem de uma página WordPress (modelo Elementor Canvas)
-       que tem apenas o shortcode de marcação, mostrada aqui num iframe. -->
+       Widget de marcação Amélia: os scripts vêm do plugin no WordPress de unicutz.com e as marcações
+       vão para o mesmo sistema. A configuração (assets/amelia-config*.js) é uma cópia da que o WordPress
+       gera; se as definições da Amélia mudarem ou o plugin for atualizado, voltar a copiá-la. -->
   <section class="booking" id="marcacao">
     <div class="wrap">
       <h2 class="section-title">Faça a sua reserva</h2>
-      <div class="booking-frame">
-        <iframe src="https://unicutz.com/marcacoes-wellness/" title="Marcação online UniCutz Wellness" loading="lazy"></iframe>
+      <div class="booking-widget">
+<script>
+  if (typeof hasAmeliaEntitiesApiCall === 'undefined' && ('' === '' && '' === '' && '' !== '1')) {
+    var hasAmeliaEntitiesApiCall = true;
+  }
+  var ameliaShortcodeData = (typeof ameliaShortcodeData === 'undefined') ? [] : ameliaShortcodeData;
+  ameliaShortcodeData.push(
+    {
+      'hasApiCall': (typeof hasAmeliaEntitiesApiCall !== 'undefined') && hasAmeliaEntitiesApiCall,
+      'trigger': '',
+      'trigger_type': '',
+      'triggered_form': 'sbsNew',
+      'in_dialog': '',
+      'show': '',
+      'counter': '1000',
+      'category': '',
+      'service': '',
+      'employee': '',
+      'location': '',
+      'package': '',
+      'layout': '1',
+      'ivy': '',
+    }
+  );
+
+  var ameliaShortcodeDataTriggered = (typeof ameliaShortcodeDataTriggered === 'undefined') ? [] : ameliaShortcodeDataTriggered;
+  if (ameliaShortcodeData[ameliaShortcodeData.length - 1].trigger !== '' || ameliaShortcodeData[ameliaShortcodeData.length - 1].ivy !== '') {
+    if (ameliaShortcodeDataTriggered.filter(a => a.counter === ameliaShortcodeData[ameliaShortcodeData.length - 1].counter).length === 0) {
+      ameliaShortcodeDataTriggered.push(ameliaShortcodeData.pop());
+    } else {
+      ameliaShortcodeData.pop()
+    }
+  }
+  if (typeof hasAmeliaEntitiesApiCall !== 'undefined' && hasAmeliaEntitiesApiCall) {
+    hasAmeliaEntitiesApiCall = false;
+  }
+</script>
+<div id="amelia-v2-booking-1000" class="amelia-v2-booking"><step-form-wrapper></step-form-wrapper></div>
       </div>
-      <p class="booking-fallback">Se o formulário não aparecer, <a href="https://unicutz.com/marcacoes-wellness/" target="_blank" rel="noopener">abra a página de marcação</a>.</p>
     </div>
   </section>
 
@@ -816,6 +861,48 @@ document.querySelectorAll("[data-carousel]").forEach(function (root) {
   play();
 });
 
+
+/* ---------- carrossel de avaliações ---------- */
+document.querySelectorAll("[data-reviews]").forEach(function (root) {
+  var viewport = root.querySelector(".review-viewport");
+  var track = root.querySelector(".review-track");
+  var cards = track.children;
+  var dots = root.querySelector(".review-dots");
+  var i = 0, max = 0, timer = null;
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function perView() { return Math.max(1, Math.round(viewport.clientWidth / cards[0].offsetWidth)); }
+  function build() {
+    max = cards.length - perView();
+    dots.innerHTML = "";
+    for (var n = 0; n <= max; n++) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("aria-label", String(n + 1));
+      b.addEventListener("click", go.bind(null, n));
+      dots.appendChild(b);
+    }
+    go(Math.min(i, max));
+  }
+  function go(n) {
+    i = n > max ? 0 : n < 0 ? max : n;
+    track.style.transform = "translateX(" + (-cards[i].offsetLeft) + "px)";
+    Array.prototype.forEach.call(dots.children, function (d, k) { d.setAttribute("aria-current", k === i); });
+  }
+  function play() { if (!reduce) { stop(); timer = setInterval(function () { go(i + 1); }, 6000); } }
+  function stop() { clearInterval(timer); }
+
+  root.querySelector(".arrow.prev").addEventListener("click", function () { go(i - 1); });
+  root.querySelector(".arrow.next").addEventListener("click", function () { go(i + 1); });
+  root.addEventListener("mouseenter", stop);
+  root.addEventListener("mouseleave", play);
+  root.addEventListener("focusin", stop);
+  window.addEventListener("resize", build);
+  build();
+  play();
+});
 </script>
+<script src="assets/amelia-config.js"></script>
+<script type="module" crossorigin src="https://unicutz.com/wp-content/plugins/ameliabooking/v3/public/assets/public.js?ver=9.9.1"></script>
 </body>
 </html>
