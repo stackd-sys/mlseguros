@@ -1,0 +1,679 @@
+<!-- PÁGINA UNICUTZ WELLNESS (EN) · PARTE 1 de 2 · widget HTML do Elementor
+     Depois deste widget: widget Shortcode com [ameliastepbooking], num contentor com a classe CSS ucw-booking.
+     Depois disso: PARTE 2. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap">
+<style>
+/* UniCutz Wellness: a mesma sequência da home da barbearia (hero com vídeo, serviços com carrossel,
+   sobre nós, CTA, testemunhos, reserva Amélia), em papel claro com madeira e verde, como o espaço. */
+:is(#ucw, #ucw-rodape) {
+  --paper: #F7F2EB;       /* fundo principal */
+  --linen: #EFE7DB;       /* secções alternadas */
+  --sand: #E3D6C4;        /* placeholders, linhas fortes */
+  --sheet: #FCFAF6;       /* superfícies claras */
+  --ink: #2B2521;         /* texto */
+  --ink-soft: #6A5E54;    /* texto secundário */
+  --bronze: #A07B4C;      /* ornamentos */
+  --bronze-deep: #7A5A33; /* texto pequeno em bronze */
+  --sage: #93A998;        /* verde da UniCutz (faixa CTA, botões de serviço) */
+  --sage-deep: #56695A;
+  --wood: #8A5C3B;
+  --line: rgba(160, 123, 76, .32);
+  --shadow: rgba(66, 48, 30, .12);
+
+  --font-display: "Cormorant Garamond", "Cormorant", Garamond, "Times New Roman", serif;
+  --font-body: "Jost", "Futura", "Century Gothic", "Avenir Next", system-ui, sans-serif;
+
+  --wrap: 1140px;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  color-scheme: light;
+}
+
+:is(#ucw, #ucw-rodape) *, :is(#ucw, #ucw-rodape) { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+:is(#ucw, #ucw-rodape) {
+  position: relative;
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 17px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+:is(#ucw, #ucw-rodape) img, :is(#ucw, #ucw-rodape) video { max-width: 100%; display: block; }
+:is(#ucw, #ucw-rodape) a { color: inherit; }
+:is(#ucw, #ucw-rodape) h1, :is(#ucw, #ucw-rodape) h2, :is(#ucw, #ucw-rodape) h3 { font-family: var(--font-display); font-weight: 500; line-height: 1.15; margin: 0; text-wrap: balance; }
+:is(#ucw, #ucw-rodape) p { margin: 0; }
+:is(#ucw, #ucw-rodape) :focus-visible { outline: 2px solid var(--bronze); outline-offset: 3px; }
+
+:is(#ucw, #ucw-rodape) button { padding: 0; min-height: 0; line-height: 1; box-shadow: none; text-transform: none; letter-spacing: normal; border-radius: 0; }
+:is(#ucw, #ucw-rodape) .wrap {
+  width: 100%;
+  max-width: calc(var(--wrap) + 64px);
+  margin-inline: auto;
+  padding-left: var(--gutter-l);
+  padding-right: var(--gutter-r);
+}
+@media (min-width: 720px) {
+  :is(#ucw, #ucw-rodape) .wrap { padding-left: max(32px, env(safe-area-inset-left, 0px)); padding-right: max(32px, env(safe-area-inset-right, 0px)); }
+}
+
+/* ---------- elementos comuns ---------- */
+:is(#ucw, #ucw-rodape) .eyebrow {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--bronze-deep);
+}
+:is(#ucw, #ucw-rodape) .section-title { font-size: clamp(32px, 4.4vw, 50px); color: var(--ink); }
+:is(#ucw, #ucw-rodape) .lotus { width: 34px; height: 22px; color: var(--bronze); }
+
+:is(#ucw, #ucw-rodape) .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 15px 30px;
+  border-radius: 3px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  transition: background .25s ease, color .25s ease, border-color .25s ease;
+}
+:is(#ucw, #ucw-rodape) .btn:hover { background: transparent; color: var(--ink); }
+:is(#ucw, #ucw-rodape) .btn--light { background: var(--paper); border-color: var(--paper); color: var(--ink); }
+:is(#ucw, #ucw-rodape) .btn--light:hover { background: transparent; color: var(--ink); border-color: var(--ink); }
+:is(#ucw, #ucw-rodape) .btn--sage {
+  padding: 9px 16px;
+  font-size: 12px;
+  letter-spacing: .16em;
+  background: var(--sage);
+  border-color: var(--sage);
+  color: var(--ink);
+}
+:is(#ucw, #ucw-rodape) .btn--sage:hover { background: transparent; border-color: var(--sage-deep); color: var(--sage-deep); }
+:is(#ucw, #ucw-rodape) .btn--sage svg { width: 8px; height: 12px; }
+
+/* ---------- cabeçalho / idioma / menu ---------- */
+:is(#ucw, #ucw-rodape) .site-header {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 20;
+  padding-top: calc(20px + env(safe-area-inset-top, 0px));
+}
+:is(#ucw, #ucw-rodape) .site-header .wrap { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+:is(#ucw, #ucw-rodape) .lang {
+  justify-self: start;
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px;
+  background: rgba(252, 250, 246, .7);
+}
+:is(#ucw, #ucw-rodape) .lang a {
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  font: 500 11px/1 var(--font-body);
+  letter-spacing: .16em;
+  padding: 7px 10px;
+  border-radius: 999px;
+  text-decoration: none;
+}
+:is(#ucw, #ucw-rodape) .lang a[aria-current="page"] { background: var(--ink); color: var(--paper); }
+:is(#ucw, #ucw-rodape) .brand { grid-column: 2; display: flex; flex-direction: column; align-items: flex-end; text-decoration: none; }
+:is(#ucw, #ucw-rodape) .brand img { width: clamp(100px, 12vw, 150px); height: auto; }
+:is(#ucw, #ucw-rodape) .brand span {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .34em;
+  margin-top: 4px;
+  margin-right: -.34em;
+  color: var(--ink);
+}
+:is(#ucw, #ucw-rodape) .menu-toggle {
+  grid-column: 3;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: 0;
+  padding: 8px 0;
+  cursor: pointer;
+  color: var(--ink);
+  font: 500 12px/1 var(--font-body);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+:is(#ucw, #ucw-rodape) .menu-toggle i { display: grid; gap: 6px; width: 26px; }
+:is(#ucw, #ucw-rodape) .menu-toggle i::before, :is(#ucw, #ucw-rodape) .menu-toggle i::after { content: ""; height: 1px; background: currentColor; }
+:is(#ucw, #ucw-rodape) .menu-toggle i::after { width: 70%; justify-self: end; }
+@media (max-width: 560px) { :is(#ucw, #ucw-rodape) .menu-toggle .label { display: none; } }
+
+:is(#ucw, #ucw-rodape) .flyout-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(43, 37, 33, .28);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+:is(#ucw, #ucw-rodape) .flyout {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: 41;
+  width: min(360px, 86vw);
+  background: var(--paper);
+  padding: calc(28px + env(safe-area-inset-top, 0px)) calc(36px + env(safe-area-inset-right, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)) 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform .4s cubic-bezier(.2,.7,.2,1), visibility 0s linear .4s;
+  box-shadow: -20px 0 50px var(--shadow);
+}
+#ucw.menu-open .flyout { transform: none; visibility: visible; transition-delay: 0s; }
+#ucw.menu-open .flyout-overlay { opacity: 1; pointer-events: auto; }
+:is(#ucw, #ucw-rodape) .flyout-close {
+  align-self: flex-end;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  position: relative;
+  color: var(--ink);
+}
+:is(#ucw, #ucw-rodape) .flyout-close::before, :is(#ucw, #ucw-rodape) .flyout-close::after {
+  content: ""; position: absolute; left: 6px; right: 6px; top: 50%; height: 1px; background: currentColor;
+  transform: rotate(45deg);
+}
+:is(#ucw, #ucw-rodape) .flyout-close::after { transform: rotate(-45deg); }
+:is(#ucw, #ucw-rodape) .flyout nav ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+:is(#ucw, #ucw-rodape) .flyout nav a {
+  display: block;
+  padding: 10px 0;
+  font-family: var(--font-display);
+  font-size: 30px;
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  transition: color .2s ease, padding-left .2s ease;
+}
+:is(#ucw, #ucw-rodape) .flyout nav a:hover { color: var(--bronze-deep); padding-left: 6px; }
+:is(#ucw, #ucw-rodape) .flyout .btn { align-self: flex-start; }
+:is(#ucw, #ucw-rodape) .flyout .lotus { margin-top: auto; align-self: center; }
+
+/* ---------- hero ---------- */
+:is(#ucw, #ucw-rodape) .hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse 70% 60% at 40% 35%, rgba(255,255,255,.85), transparent 70%),
+    linear-gradient(115deg, transparent 0 46%, rgba(120, 92, 60, .05) 46% 52%, transparent 52% 60%, rgba(120, 92, 60, .04) 60% 64%, transparent 64%),
+    var(--paper);
+  padding-top: calc(150px + env(safe-area-inset-top, 0px));
+  padding-bottom: 90px;
+}
+/* ripas de madeira, como na parede do espaço */
+:is(#ucw, #ucw-rodape) .hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: clamp(18px, 6vw, 96px);
+  z-index: -1;
+  background:
+    repeating-linear-gradient(90deg,
+      #6E4529 0 2px,
+      var(--wood) 2px 9px,
+      #9B6B47 9px 13px,
+      #7A4E30 13px 16px,
+      #5B371F 16px 19px);
+  box-shadow: 8px 0 24px rgba(66, 48, 30, .18);
+}
+:is(#ucw, #ucw-rodape) .hero-grid { display: grid; gap: 48px; align-items: center; }
+:is(#ucw, #ucw-rodape) .hero-copy { display: grid; justify-items: center; gap: 26px; text-align: center; }
+:is(#ucw, #ucw-rodape) .hero h1 {
+  font-size: clamp(40px, 5vw, 68px);
+  font-weight: 400;
+  max-width: 16ch;
+  color: var(--ink);
+}
+:is(#ucw, #ucw-rodape) .hero h1 em { font-style: italic; color: var(--bronze-deep); }
+:is(#ucw, #ucw-rodape) .hero-services {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+:is(#ucw, #ucw-rodape) .hero-services b { color: var(--bronze); font-weight: 400; margin-inline: .5em; }
+:is(#ucw, #ucw-rodape) .hero-copy .btn { margin-top: 8px; }
+/* vídeo vertical numa moldura em arco */
+:is(#ucw, #ucw-rodape) .hero-video {
+  justify-self: center;
+  width: min(100%, 400px);
+  aspect-ratio: 9 / 14;
+  max-width: 100%;
+  border-radius: 999px 999px 14px 14px;
+  overflow: hidden;
+  background: var(--sand);
+  box-shadow: 0 40px 70px -30px rgba(66, 48, 30, .35);
+  border: 8px solid var(--sheet);
+}
+:is(#ucw, #ucw-rodape) .hero-video video { width: 100%; height: 100%; object-fit: cover; }
+@media (min-width: 900px) {
+  :is(#ucw, #ucw-rodape) .hero { padding-top: calc(170px + env(safe-area-inset-top, 0px)); padding-bottom: 110px; }
+  :is(#ucw, #ucw-rodape) .hero-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 64px; }
+  :is(#ucw, #ucw-rodape) .hero-copy { justify-items: start; text-align: left; padding-left: clamp(0px, 4vw, 60px); }
+  :is(#ucw, #ucw-rodape) .hero-video { width: min(100%, 420px); aspect-ratio: 9 / 15; }
+}
+
+:is(#ucw, #ucw-rodape) .leaves { position: absolute; pointer-events: none; z-index: -1; overflow: visible; }
+:is(#ucw, #ucw-rodape) .leaves--top { top: -30px; right: -40px; width: clamp(260px, 38vw, 520px); }
+:is(#ucw, #ucw-rodape) .leaves--bottom { bottom: -60px; left: clamp(0px, 3vw, 40px); width: clamp(200px, 26vw, 360px); }
+@media (max-width: 720px) {
+  :is(#ucw, #ucw-rodape) .leaves--top { right: -170px; top: -90px; opacity: .85; }
+  :is(#ucw, #ucw-rodape) .leaves--bottom { left: -40px; bottom: -90px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :is(#ucw, #ucw-rodape) .sway { transform-box: fill-box; animation: sway 9s ease-in-out infinite alternate; }
+  :is(#ucw, #ucw-rodape) .sway:nth-child(2n) { animation-duration: 11s; animation-delay: -3s; }
+}
+@keyframes sway { from { transform: rotate(-1.4deg); } to { transform: rotate(1.6deg); } }
+
+/* ---------- serviços ---------- */
+:is(#ucw, #ucw-rodape) .services { background: var(--sheet); padding-block: 110px; }
+:is(#ucw, #ucw-rodape) .section-head { display: grid; gap: 14px; max-width: 760px; margin-bottom: 56px; }
+:is(#ucw, #ucw-rodape) .services-grid { display: grid; grid-template-columns: 1fr; gap: 56px; }
+@media (min-width: 960px) {
+  :is(#ucw, #ucw-rodape) .services-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 72px; align-items: start; }
+}
+:is(#ucw, #ucw-rodape) .service-list { display: grid; }
+:is(#ucw, #ucw-rodape) .service {
+  display: grid;
+  gap: 12px;
+  padding-block: 30px;
+  border-top: 1px dotted var(--bronze);
+}
+:is(#ucw, #ucw-rodape) .service:first-child { border-top: 0; padding-top: 0; }
+:is(#ucw, #ucw-rodape) .service h3 { font-size: 30px; }
+:is(#ucw, #ucw-rodape) .service p { color: var(--ink-soft); max-width: 52ch; }
+:is(#ucw, #ucw-rodape) .service .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 6px; }
+
+/* carrossel de imagens (como na home original) */
+:is(#ucw, #ucw-rodape) .carousel { position: relative; border-radius: 10px; overflow: hidden; box-shadow: 0 30px 60px -30px var(--shadow); background: var(--sand); }
+@media (min-width: 960px) { :is(#ucw, #ucw-rodape) .carousel { position: sticky; top: 40px; } }
+:is(#ucw, #ucw-rodape) .carousel-track { display: flex; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+:is(#ucw, #ucw-rodape) .carousel-slide { flex: 0 0 100%; aspect-ratio: 4 / 5; max-width: 100%; }
+:is(#ucw, #ucw-rodape) .carousel-slide img { width: 100%; height: 100%; object-fit: cover; }
+:is(#ucw, #ucw-rodape) .carousel-btn {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(252, 250, 246, .85);
+  color: var(--ink);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background .2s ease;
+}
+:is(#ucw, #ucw-rodape) .carousel-btn:hover { background: var(--sheet); }
+:is(#ucw, #ucw-rodape) .carousel-btn svg { width: 10px; height: 16px; }
+:is(#ucw, #ucw-rodape) .carousel-btn.prev { left: 14px; }
+:is(#ucw, #ucw-rodape) .carousel-btn.next { right: 14px; }
+:is(#ucw, #ucw-rodape) .carousel-dots { position: absolute; bottom: 16px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; }
+:is(#ucw, #ucw-rodape) .carousel-dots button {
+  width: 9px; height: 9px; padding: 0; border-radius: 50%; border: 1px solid var(--sheet);
+  background: transparent; cursor: pointer;
+}
+:is(#ucw, #ucw-rodape) .carousel-dots button[aria-current="true"] { background: var(--sheet); }
+
+/* ---------- sobre nós ---------- */
+:is(#ucw, #ucw-rodape) .about {
+  background: linear-gradient(180deg, var(--paper) 0%, var(--linen) 100%);
+  padding-block: 110px 120px;
+}
+:is(#ucw, #ucw-rodape) .about-grid { display: grid; gap: 28px; max-width: 860px; }
+:is(#ucw, #ucw-rodape) .about-grid p { color: var(--ink-soft); max-width: 62ch; font-size: 18px; }
+:is(#ucw, #ucw-rodape) .space-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 64px; }
+:is(#ucw, #ucw-rodape) .space-grid figure { margin: 0; display: grid; gap: 12px; }
+:is(#ucw, #ucw-rodape) .space-grid figcaption { text-align: center; font-family: var(--font-display); font-size: 22px; order: -1; }
+:is(#ucw, #ucw-rodape) .space-grid img { width: 100%; height: auto; aspect-ratio: 3 / 4; max-width: 100%; object-fit: cover; border-radius: 10px; background: var(--sand); }
+@media (max-width: 760px) {
+  :is(#ucw, #ucw-rodape) .space-grid { grid-template-columns: 1fr; }
+  :is(#ucw, #ucw-rodape) .space-grid img { aspect-ratio: 4 / 3; }
+}
+
+/* ---------- faixa CTA ---------- */
+:is(#ucw, #ucw-rodape) .cta { background: var(--sage); padding-block: 26px; }
+:is(#ucw, #ucw-rodape) .cta .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 32px; }
+:is(#ucw, #ucw-rodape) .cta h3 { font-size: clamp(26px, 3vw, 34px); color: var(--ink); }
+
+/* ---------- testemunhos ---------- */
+:is(#ucw, #ucw-rodape) .reviews { background: var(--paper); padding-block: 110px 90px; }
+:is(#ucw, #ucw-rodape) .reviews .section-title { padding-bottom: 18px; border-bottom: 1px solid var(--sand); margin-bottom: 40px; }
+:is(#ucw, #ucw-rodape) .reviews-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 32px; padding-bottom: 18px; border-bottom: 1px solid var(--sand); margin-bottom: 40px; }
+:is(#ucw, #ucw-rodape) .reviews-head .section-title { padding: 0; border: 0; margin: 0; }
+:is(#ucw, #ucw-rodape) .reviews-head .eyebrow { display: flex; align-items: center; gap: 10px; }
+:is(#ucw, #ucw-rodape) .reviews-head .eyebrow b { color: var(--bronze); letter-spacing: .12em; font-size: 15px; }
+/* carrossel de avaliações: 3 por vez no computador, 2 no tablet, 1 no telemóvel */
+:is(#ucw, #ucw-rodape) .review-viewport { overflow: hidden; }
+:is(#ucw, #ucw-rodape) .review-track { display: flex; gap: 24px; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+:is(#ucw, #ucw-rodape) .review-track .review { flex: 0 0 calc((100% - 48px) / 3); min-width: 0; }
+@media (max-width: 960px) { :is(#ucw, #ucw-rodape) .review-track .review { flex-basis: calc((100% - 24px) / 2); } }
+@media (max-width: 640px) { :is(#ucw, #ucw-rodape) .review-track .review { flex-basis: 100%; } }
+:is(#ucw, #ucw-rodape) .review-nav { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 30px; }
+:is(#ucw, #ucw-rodape) .review-nav button.arrow {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--sheet); color: var(--ink);
+  display: grid; place-items: center; cursor: pointer;
+  transition: border-color .2s ease, background .2s ease;
+}
+:is(#ucw, #ucw-rodape) .review-nav button.arrow:hover { border-color: var(--bronze); background: var(--paper); }
+:is(#ucw, #ucw-rodape) .review-nav button.arrow svg { width: 10px; height: 16px; }
+:is(#ucw, #ucw-rodape) .review-dots { display: flex; gap: 8px; }
+:is(#ucw, #ucw-rodape) .review-dots button { width: 8px; height: 8px; padding: 0; border-radius: 50%; border: 1px solid var(--bronze); background: transparent; cursor: pointer; }
+:is(#ucw, #ucw-rodape) .review-dots button[aria-current="true"] { background: var(--bronze); }
+:is(#ucw, #ucw-rodape) .review {
+  display: flex !important;
+  flex-direction: column;
+  background: var(--sheet);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 26px 26px 22px;
+  display: grid;
+  gap: 16px;
+}
+:is(#ucw, #ucw-rodape) .review-stars { color: var(--bronze); letter-spacing: .2em; font-size: 15px; }
+:is(#ucw, #ucw-rodape) .review-text { white-space: pre-line; color: var(--ink); font-size: 16px; line-height: 1.65; }
+:is(#ucw, #ucw-rodape) .review-author { margin-top: auto; display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
+:is(#ucw, #ucw-rodape) .review-author strong { display: block; font-weight: 500; font-size: 15px; text-transform: capitalize; }
+:is(#ucw, #ucw-rodape) .review-author small { display: block; color: var(--ink-soft); font-size: 13px; }
+:is(#ucw, #ucw-rodape) .review-avatar {
+  flex: none; width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--sage); color: var(--ink);
+  font-size: 13px; font-weight: 500; letter-spacing: .04em;
+}
+:is(#ucw, #ucw-rodape) .reviews-note { margin-top: 22px; font-size: 14px; color: var(--ink-soft); }
+
+/* ---------- reserva: widget Amélia do WordPress ---------- */
+:is(#ucw, #ucw-rodape) .booking { background: var(--linen); padding-block: 90px 0; }
+:is(#ucw, #ucw-rodape) .booking .section-title { margin-bottom: 40px; }
+:is(#ucw, #ucw-rodape) .booking-widget { max-width: 820px; margin-inline: auto; min-height: 420px; }
+
+/* ---------- rodapé ---------- */
+:is(#ucw, #ucw-rodape) .site-footer {
+  background: var(--ink);
+  color: var(--linen);
+  font-size: 13px;
+  padding-block: 14px calc(14px + env(safe-area-inset-bottom, 0px));
+}
+:is(#ucw, #ucw-rodape) .site-footer .wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 24px; }
+:is(#ucw, #ucw-rodape) .site-footer a { text-decoration: none; color: var(--linen); opacity: .85; }
+:is(#ucw, #ucw-rodape) .site-footer a:hover { opacity: 1; text-decoration: underline; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  :is(#ucw, #ucw-rodape) *, :is(#ucw, #ucw-rodape), :is(#ucw, #ucw-rodape) *::before, :is(#ucw, #ucw-rodape) *::after { transition-duration: .01ms !important; animation: none !important; }
+}
+
+/* contentor Elementor do shortcode da Amélia (classe CSS: ucw-booking) */
+.ucw-booking { background: #EFE7DB; padding: 0 16px 110px !important; }
+.ucw-booking .amelia-v2-booking { max-width: 820px; margin-inline: auto; }
+</style>
+<div id="ucw">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-lotus" viewBox="0 0 34 22">
+    <g fill="none" stroke="currentColor" stroke-width="1">
+      <path d="M17 20.5C13 16.5 13 7.5 17 1.5c4 6 4 15 0 19Z"/>
+      <path d="M17 20.5C12.5 19.5 6.5 14 6.5 7c5 1 9.5 6 10.5 13.5Z"/>
+      <path d="M17 20.5C21.5 19.5 27.5 14 27.5 7c-5 1-9.5 6-10.5 13.5Z"/>
+      <path d="M17 20.5C11 21 3.5 18.5 1 14c5-1 11.5 1.5 16 6.5Zm0 0c6 .5 13.5-2 16-6.5-5-1-11.5 1.5-16 6.5Z"/>
+    </g>
+  </symbol>
+  <symbol id="i-angle" viewBox="0 0 8 12"><path d="M1.5 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+</svg>
+
+<!-- ============ CABEÇALHO ============ -->
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="#topo" aria-label="UniCutz Wellness">
+      <img src="https://unicutz.com/wp-content/uploads/2026/03/Logotipo_Unicutz_2.png" alt="UniCutz" width="1007" height="589">
+      <span>WELLNESS</span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-flyout">
+      <span class="label">Menu</span><i aria-hidden="true"></i>
+    </button>
+  </div>
+</header>
+
+<div class="flyout-overlay" data-close-menu></div>
+<aside class="flyout" id="menu-flyout" aria-label="Menu" aria-hidden="true">
+  <button class="flyout-close" type="button" aria-label="Close menu" data-close-menu></button>
+  <nav>
+    <ul>
+      <li><a href="#servicos" data-close-menu>Services</a></li>
+      <li><a href="#sobre-nos" data-close-menu>About Us</a></li>
+      <li><a href="#testemunhos" data-close-menu>Reviews</a></li>
+      <li><a href="https://unicutz.com/login-cliente">Login</a></li>
+    </ul>
+  </nav>
+  <a class="btn" href="#marcacao" data-close-menu>Book now</a>
+  <svg class="lotus" aria-hidden="true"><use href="#i-lotus"/></svg>
+</aside>
+
+<main id="topo">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <svg class="leaves leaves--top" data-leaves="top" viewBox="0 0 520 460" aria-hidden="true"></svg>
+    <svg class="leaves leaves--bottom" data-leaves="bottom" viewBox="0 0 360 340" aria-hidden="true"></svg>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <svg class="lotus" aria-hidden="true"><use href="#i-lotus"/></svg>
+        <h1>Taking care of yourself is also a way of <em>living better</em>.</h1>
+        <p class="hero-services">Massage<b>·</b>Aesthetics<b>·</b>Laser</p>
+        <a class="btn" href="#marcacao">Book now</a>
+      </div>
+      <div class="hero-video">
+        <video autoplay muted loop playsinline preload="metadata"
+               poster="https://unicutz.com/wp-content/uploads/2026/10/WhatsApp-Image-2026-10-06-at-14.52.19.jpeg"
+               aria-label="UniCutz Wellness presentation video">
+          <source src="https://unicutz.com/wp-content/uploads/2026/10/unicutz-wellness-intro-web.mp4" type="video/mp4">
+          <source src="https://unicutz.com/wp-content/uploads/2026/10/UNICUTZ-WELNESS-intro.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SERVIÇOS ============ -->
+  <section class="services" id="servicos">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Services</span>
+        <h2 class="section-title">Care and precision in every treatment, designed for your well-being.</h2>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-list">
+          <article class="service">
+            <h3>Laser Hair Removal</h3>
+            <p>Smoother skin for longer, with laser technology. Treatments for women and men, by area or in packs, tailored to your skin and hair type.</p>
+            <div class="actions"><a class="btn btn--sage" href="#marcacao"><svg aria-hidden="true"><use href="#i-angle"/></svg><span>Book now</span></a></div>
+          </article>
+          <article class="service">
+            <h3>Carbon Peel</h3>
+            <p>A deep cleanse that renews the skin, helps control oiliness and evens out skin tone. Suitable for the face and back.</p>
+            <div class="actions"><a class="btn btn--sage" href="#marcacao"><svg aria-hidden="true"><use href="#i-angle"/></svg><span>Book now</span></a></div>
+          </article>
+          <article class="service">
+            <h3>Tattoo Removal</h3>
+            <p>Gradual laser removal, in sessions adapted to the ink, the size and your skin. Every case is assessed in an initial consultation.</p>
+            <div class="actions"><a class="btn btn--sage" href="#marcacao"><svg aria-hidden="true"><use href="#i-angle"/></svg><span>Book a consultation</span></a></div>
+          </article>
+          <!-- Texto provisório: a lista completa de massagens e tratamentos de estética está a ser preparada pela equipa -->
+          <article class="service">
+            <h3>Massage &amp; Aesthetics</h3>
+            <p>From relaxing massages to face and body care, moments designed to slow down and look after yourself. The full list of treatments is coming soon.</p>
+            <div class="actions"><a class="btn btn--sage" href="#marcacao"><svg aria-hidden="true"><use href="#i-angle"/></svg><span>Book now</span></a></div>
+          </article>
+        </div>
+
+        <div class="carousel" data-carousel aria-roledescription="carousel" aria-label="Photos of the space">
+          <div class="carousel-track">
+            <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="1 / 2">
+              <img src="https://unicutz.com/wp-content/uploads/2026/10/WhatsApp-Image-2026-10-06-at-14.52.19.jpeg" alt="UniCutz Wellness reception, with a wooden slat wall and a green sofa" width="1536" height="2048" loading="lazy">
+            </div>
+            <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="2 / 2">
+              <img src="https://unicutz.com/wp-content/uploads/2026/10/WhatsApp-Image-2026-10-06-at-14.52.20.jpeg" alt="Treatment room with a massage table, green wall and soft light" width="1536" height="2048" loading="lazy">
+            </div>
+          </div>
+          <button class="carousel-btn prev" type="button" aria-label="Previous"><svg aria-hidden="true" style="transform:scaleX(-1)"><use href="#i-angle"/></svg></button>
+          <button class="carousel-btn next" type="button" aria-label="Next"><svg aria-hidden="true"><use href="#i-angle"/></svg></button>
+          <div class="carousel-dots"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SOBRE NÓS ============ -->
+  <section class="about" id="sobre-nos">
+    <div class="wrap">
+      <div class="about-grid">
+        <span class="eyebrow">About Us</span>
+        <h2 class="section-title">From massage to aesthetics, a space dedicated to your well-being.</h2>
+        <p>UniCutz Wellness was created to elevate the personal care experience, through quality services, personalised attention and an environment where well-being comes first.</p>
+      </div>
+
+      <!-- Na barbearia esta zona mostra a equipa; aqui mostra o espaço (imagens do vídeo de apresentação). -->
+      <div class="space-grid">
+        <figure>
+          <img src="https://unicutz.com/wp-content/uploads/2026/10/espaco-sala.jpg" alt="Massage room with warm light" width="900" height="1600" loading="lazy">
+          <figcaption>The treatments</figcaption>
+        </figure>
+        <figure>
+          <img src="https://unicutz.com/wp-content/uploads/2026/10/espaco-jardim.jpg" alt="Green plant wall next to wooden slats" width="900" height="1600" loading="lazy">
+          <figcaption>The space</figcaption>
+        </figure>
+        <figure>
+          <img src="https://unicutz.com/wp-content/uploads/2026/10/espaco-velas.jpg" alt="Green candles on a wooden counter" width="900" height="1600" loading="lazy">
+          <figcaption>The details</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAIXA CTA ============ -->
+  <section class="cta">
+    <div class="wrap">
+      <h3>Ready to take a moment for yourself?</h3>
+      <a class="btn btn--light" href="#marcacao">Book now</a>
+    </div>
+  </section>
+
+  <!-- ============ TESTEMUNHOS ============
+       Avaliações Google da barbearia UniCutz (copiadas do widget Trustindex de unicutz.com). -->
+  <section class="reviews" id="testemunhos">
+    <div class="wrap">
+      <div class="reviews-head">
+        <h2 class="section-title">More than a treatment</h2>
+        <span class="eyebrow"><b aria-hidden="true">★★★★★</b><span>Google reviews · UniCutz</span></span>
+      </div>
+      <div class="review-carousel" data-reviews>
+        <div class="review-viewport">
+          <div class="review-track">
+        <article class="review">
+          <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+          <p class="review-text" lang="pt-PT">Mais uma.vez, experiência muito boa, do início ao fim! Marcação super fácil pela NET, pontualidade, limpeza brilhante e extrema atenção e simpatia.
+O corte ficou exactamente como queríamos.
+Não podia recomendar mais o Unicutz, continuaremos a voltar ☺️</p>
+          <footer class="review-author">
+            <span class="review-avatar" aria-hidden="true">CB</span>
+            <span><strong>catarina batista</strong><small>Google · June 2026</small></span>
+          </footer>
+        </article>
+        <article class="review">
+          <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+          <p class="review-text" lang="pt-PT">“Excelente experiência. Atendimento muito simpático e acolhedor desde o início. Gostei especialmente do cuidado e da qualidade do corte à tesoura — percebe-se a atenção ao detalhe e o profissionalismo. Sem dúvida um sítio a repetir.”</p>
+          <footer class="review-author">
+            <span class="review-avatar" aria-hidden="true">MP</span>
+            <span><strong>Marcenaria Paulo Gomes</strong><small>Google · May 2026</small></span>
+          </footer>
+        </article>
+        <article class="review">
+          <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+          <p class="review-text" lang="pt-PT">De ha três anos para cá que é o barbeiro de eleição.  Tanto meu como do meu filho.  Muita paciência e dedicação para ele para que ele confiasse e pudessemos ter um barbeiro para os dois.
+Atendimento 5 estrelas tanto da parte do Frederico como dos restantes elementos que fazem da casa, uma casa de referência para muitas pessoas.
+Continua assim. Trabalho nunca te vai faltar.</p>
+          <footer class="review-author">
+            <span class="review-avatar" aria-hidden="true">P</span>
+            <span><strong>Pombinho666</strong><small>Google · June 2026</small></span>
+          </footer>
+        </article>
+        <article class="review">
+          <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+          <p class="review-text" lang="pt-PT">Experiência espetacular e única, planejo voltar mais vezes</p>
+          <footer class="review-author">
+            <span class="review-avatar" aria-hidden="true">JV</span>
+            <span><strong>João Victor Tedesco</strong><small>Google · June 2026</small></span>
+          </footer>
+        </article>
+        <article class="review">
+          <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+          <p class="review-text" lang="pt-PT">A melhor barbearia do concelho de Mafra e arredores!!! Equipa impecavel venham que não se vao arrepender!!!</p>
+          <footer class="review-author">
+            <span class="review-avatar" aria-hidden="true">JB</span>
+            <span><strong>Joao Barros</strong><small>Google · June 2026</small></span>
+          </footer>
+        </article>
+        <article class="review">
+          <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+          <p class="review-text" lang="en">Gabriel is a legend</p>
+          <footer class="review-author">
+            <span class="review-avatar" aria-hidden="true">A</span>
+            <span><strong>Alex</strong><small>Google · June 2026</small></span>
+          </footer>
+        </article>
+          </div>
+        </div>
+        <div class="review-nav">
+          <button class="arrow prev" type="button" aria-label="Previous review"><svg aria-hidden="true" style="transform:scaleX(-1)"><use href="#i-angle"/></svg></button>
+          <div class="review-dots"></div>
+          <button class="arrow next" type="button" aria-label="Next review"><svg aria-hidden="true"><use href="#i-angle"/></svg></button>
+        </div>
+      </div>
+      <p class="reviews-note">Reviews of the UniCutz barbershop, shown as published on Google.</p>
+    </div>
+  </section>
+
+  <!-- ============ RESERVA ============
+       O formulário vem a seguir, num widget Shortcode com [ameliastepbooking]. -->
+  <section class="booking" id="marcacao">
+    <div class="wrap">
+      <h2 class="section-title">Make your booking</h2>
+    </div>
+  </section>
+
+</main>
+</div>

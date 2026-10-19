@@ -1,0 +1,166 @@
+<!-- PÁGINA UNICUTZ WELLNESS (EN) · PARTE 2 de 2 · widget HTML do Elementor (a seguir ao widget Shortcode da Amélia) -->
+<div id="ucw-rodape">
+<footer class="site-footer">
+  <div class="wrap">
+    <span>Copyright © 2026 UniCutz Wellness</span>
+    <a href="https://unicutz.com/politica-de-cookies/">Cookie Policy</a>
+    <a href="https://unicutz.com/politica-de-privacidade/">Privacy Policy</a>
+  </div>
+</footer>
+</div>
+<script>
+/* ---------- folhas (desenhadas por código, sem imagens) ---------- */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var greens = [["#3F5A2E", "#6E8B4E"], ["#2F4A26", "#5C7A3E"], ["#4D6B36", "#88A36A"], ["#36532B", "#71904F"]];
+
+  function el(name, attrs, parent) {
+    var n = document.createElementNS(NS, name);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+
+  function leafPath(l, w) {
+    return "M0 0C" + w + " " + (-l * .28) + " " + (w * .75) + " " + (-l * .78) + " 0 " + (-l) +
+           "C" + (-w * .75) + " " + (-l * .78) + " " + (-w) + " " + (-l * .28) + " 0 0Z";
+  }
+
+  // ramo: caule em curva quadrática com folhas alternadas ao longo dele
+  function branch(svg, o) {
+    var g = el("g", { "class": "sway", filter: "url(#leaf-shadow-" + o.id + ")", style: "transform-origin:" + o.x0 + "px " + o.y0 + "px" }, svg);
+    el("path", { d: "M" + o.x0 + " " + o.y0 + "Q" + o.cx + " " + o.cy + " " + o.x1 + " " + o.y1, fill: "none", stroke: "#4A5E35", "stroke-width": 1.6 }, g);
+    for (var i = 1; i <= o.count; i++) {
+      var t = i / (o.count + 1), mt = 1 - t;
+      var x = mt * mt * o.x0 + 2 * mt * t * o.cx + t * t * o.x1;
+      var y = mt * mt * o.y0 + 2 * mt * t * o.cy + t * t * o.y1;
+      var dx = 2 * mt * (o.cx - o.x0) + 2 * t * (o.x1 - o.cx);
+      var dy = 2 * mt * (o.cy - o.y0) + 2 * t * (o.y1 - o.cy);
+      var ang = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+      var side = i % 2 ? 1 : -1;
+      var scale = 1 - t * .45;
+      var l = o.size * scale, w = o.size * .3 * scale;
+      var c = greens[(i + o.seed) % greens.length];
+      var gid = "lg-" + o.id + "-" + o.n + "-" + i;
+      var grad = el("linearGradient", { id: gid, x1: 0, y1: 0, x2: 1, y2: 1 }, svg.querySelector("defs"));
+      el("stop", { offset: 0, "stop-color": c[1] }, grad);
+      el("stop", { offset: 1, "stop-color": c[0] }, grad);
+      var leaf = el("g", { transform: "translate(" + x.toFixed(1) + " " + y.toFixed(1) + ") rotate(" + (ang + side * (48 + (i * 7 % 15))).toFixed(1) + ")" }, g);
+      el("path", { d: leafPath(l, w), fill: "url(#" + gid + ")" }, leaf);
+      el("path", { d: "M0 0L0 " + (-l * .92), stroke: "rgba(230,240,210,.35)", "stroke-width": 1, fill: "none" }, leaf);
+    }
+  }
+
+  var layouts = {
+    top: [
+      { x0: 540, y0: 10, cx: 380, cy: 60, x1: 200, y1: 250, count: 11, size: 84, seed: 0 },
+      { x0: 540, y0: 120, cx: 450, cy: 220, x1: 400, y1: 440, count: 8, size: 76, seed: 2 },
+      { x0: 470, y0: -10, cx: 330, cy: -10, x1: 250, y1: 60, count: 6, size: 52, seed: 1 }
+    ],
+    bottom: [
+      { x0: 20, y0: 360, cx: 60, cy: 200, x1: 250, y1: 70, count: 6, size: 110, seed: 1 },
+      { x0: 0, y0: 340, cx: 150, cy: 290, x1: 330, y1: 250, count: 4, size: 95, seed: 3 }
+    ]
+  };
+
+  document.querySelectorAll("[data-leaves]").forEach(function (svg) {
+    var key = svg.getAttribute("data-leaves");
+    var defs = el("defs", {}, svg);
+    var f = el("filter", { id: "leaf-shadow-" + key, x: "-30%", y: "-30%", width: "170%", height: "170%" }, defs);
+    el("feDropShadow", { dx: 10, dy: 14, stdDeviation: 7, "flood-color": "#42301E", "flood-opacity": .18 }, f);
+    layouts[key].forEach(function (o, n) { o.id = key; o.n = n; branch(svg, o); });
+  });
+})();
+
+/* ---------- menu lateral ---------- */
+(function () {
+  var toggle = document.querySelector(".menu-toggle");
+  var flyout = document.getElementById("menu-flyout");
+  function setOpen(open) {
+    document.getElementById("ucw").classList.toggle("menu-open", open);
+    toggle.setAttribute("aria-expanded", open);
+    flyout.setAttribute("aria-hidden", !open);
+    if (open) flyout.querySelector("a").focus();
+  }
+  toggle.addEventListener("click", function () { setOpen(true); });
+  document.querySelectorAll("[data-close-menu]").forEach(function (n) {
+    n.addEventListener("click", function () { setOpen(false); });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && document.getElementById("ucw").classList.contains("menu-open")) { setOpen(false); toggle.focus(); }
+  });
+})();
+
+/* ---------- carrossel ---------- */
+document.querySelectorAll("[data-carousel]").forEach(function (root) {
+  var track = root.querySelector(".carousel-track");
+  var slides = track.children;
+  var dots = root.querySelector(".carousel-dots");
+  var i = 0, timer = null;
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  for (var n = 0; n < slides.length; n++) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("aria-label", String(n + 1));
+    b.addEventListener("click", go.bind(null, n));
+    dots.appendChild(b);
+  }
+  function go(n) {
+    i = (n + slides.length) % slides.length;
+    track.style.transform = "translateX(" + (-100 * i) + "%)";
+    Array.prototype.forEach.call(dots.children, function (d, k) { d.setAttribute("aria-current", k === i); });
+  }
+  function play() { if (!reduce) { stop(); timer = setInterval(function () { go(i + 1); }, 4500); } }
+  function stop() { clearInterval(timer); }
+
+  root.querySelector(".prev").addEventListener("click", function () { go(i - 1); });
+  root.querySelector(".next").addEventListener("click", function () { go(i + 1); });
+  root.addEventListener("mouseenter", stop);
+  root.addEventListener("mouseleave", play);
+  root.addEventListener("focusin", stop);
+  go(0);
+  play();
+});
+
+
+/* ---------- carrossel de avaliações ---------- */
+document.querySelectorAll("[data-reviews]").forEach(function (root) {
+  var viewport = root.querySelector(".review-viewport");
+  var track = root.querySelector(".review-track");
+  var cards = track.children;
+  var dots = root.querySelector(".review-dots");
+  var i = 0, max = 0, timer = null;
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function perView() { return Math.max(1, Math.round(viewport.clientWidth / cards[0].offsetWidth)); }
+  function build() {
+    max = cards.length - perView();
+    dots.innerHTML = "";
+    for (var n = 0; n <= max; n++) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("aria-label", String(n + 1));
+      b.addEventListener("click", go.bind(null, n));
+      dots.appendChild(b);
+    }
+    go(Math.min(i, max));
+  }
+  function go(n) {
+    i = n > max ? 0 : n < 0 ? max : n;
+    track.style.transform = "translateX(" + (-cards[i].offsetLeft) + "px)";
+    Array.prototype.forEach.call(dots.children, function (d, k) { d.setAttribute("aria-current", k === i); });
+  }
+  function play() { if (!reduce) { stop(); timer = setInterval(function () { go(i + 1); }, 6000); } }
+  function stop() { clearInterval(timer); }
+
+  root.querySelector(".arrow.prev").addEventListener("click", function () { go(i - 1); });
+  root.querySelector(".arrow.next").addEventListener("click", function () { go(i + 1); });
+  root.addEventListener("mouseenter", stop);
+  root.addEventListener("mouseleave", play);
+  root.addEventListener("focusin", stop);
+  window.addEventListener("resize", build);
+  build();
+  play();
+});
+</script>
