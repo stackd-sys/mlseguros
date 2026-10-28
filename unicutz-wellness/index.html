@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap">
 <style>
-/* UniCutz Wellness: a mesma sequência da home da barbearia (hero com vídeo, serviços com carrossel,
+/* UniCutz Wellness: a mesma sequência da home da barbearia (hero com vídeo, serviços com vídeo,
    sobre nós, CTA, testemunhos, reserva Amélia), em papel claro com madeira e verde, como o espaço. */
 :root {
   --paper: #F7F2EB;       /* fundo principal */
@@ -235,17 +235,28 @@ p { margin: 0; }
 .flyout .btn { align-self: flex-start; }
 .flyout .lotus { margin-top: auto; align-self: center; }
 
-/* ---------- hero ---------- */
+/* ---------- hero: vídeo de fundo, como na barbearia ---------- */
 .hero {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background:
-    radial-gradient(ellipse 70% 60% at 40% 35%, rgba(255,255,255,.85), transparent 70%),
-    linear-gradient(115deg, transparent 0 46%, rgba(120, 92, 60, .05) 46% 52%, transparent 52% 60%, rgba(120, 92, 60, .04) 60% 64%, transparent 64%),
-    var(--paper);
-  padding-top: calc(150px + env(safe-area-inset-top, 0px));
-  padding-bottom: 90px;
+  background: var(--paper);
+  min-height: min(92svh, 920px);
+  display: grid;
+  align-items: end;
+  padding-top: calc(170px + env(safe-area-inset-top, 0px));
+  padding-bottom: 96px;
+}
+.hero-bg, .hero-shade { position: absolute; inset: 0; z-index: -1; }
+.hero-bg video { width: 100%; height: 100%; object-fit: cover; object-position: center 45%; }
+/* véu claro em cima (logo e menu) e em baixo (texto), com o vídeo a ver-se no meio */
+.hero-shade {
+  background: linear-gradient(180deg,
+    rgba(247, 242, 235, .88) 0%,
+    rgba(247, 242, 235, .2) 24%,
+    rgba(247, 242, 235, .5) 42%,
+    rgba(247, 242, 235, .9) 62%,
+    var(--paper) 100%);
 }
 /* ripas de madeira, como na parede do espaço */
 .hero::before {
@@ -253,7 +264,7 @@ p { margin: 0; }
   position: absolute;
   inset: 0 auto 0 0;
   width: clamp(18px, 6vw, 96px);
-  z-index: -1;
+  z-index: 0;
   background:
     repeating-linear-gradient(90deg,
       #6E4529 0 2px,
@@ -263,12 +274,19 @@ p { margin: 0; }
       #5B371F 16px 19px);
   box-shadow: 8px 0 24px rgba(66, 48, 30, .18);
 }
-.hero-grid { display: grid; gap: 48px; align-items: center; }
-.hero-copy { display: grid; justify-items: center; gap: 26px; text-align: center; }
+.hero-copy { position: relative; display: grid; justify-items: center; gap: 26px; text-align: center; }
+/* luz suave por trás do texto, para se ler bem em qualquer momento do vídeo */
+.hero-copy::before {
+  content: "";
+  position: absolute;
+  inset: -70px -12%;
+  z-index: -1;
+  background: radial-gradient(ellipse at center, rgba(247, 242, 235, .9) 0%, rgba(247, 242, 235, .6) 45%, transparent 72%);
+}
 .hero h1 {
-  font-size: clamp(40px, 5vw, 68px);
+  font-size: clamp(40px, 5.4vw, 74px);
   font-weight: 400;
-  max-width: 16ch;
+  max-width: 17ch;
   color: var(--ink);
 }
 .hero h1 em { font-style: italic; color: var(--bronze-deep); }
@@ -281,24 +299,8 @@ p { margin: 0; }
 }
 .hero-services b { color: var(--bronze); font-weight: 400; margin-inline: .5em; }
 .hero-copy .btn { margin-top: 8px; }
-/* vídeo vertical numa moldura em arco */
-.hero-video {
-  justify-self: center;
-  width: min(100%, 400px);
-  aspect-ratio: 9 / 14;
-  max-width: 100%;
-  border-radius: 999px 999px 14px 14px;
-  overflow: hidden;
-  background: var(--sand);
-  box-shadow: 0 40px 70px -30px rgba(66, 48, 30, .35);
-  border: 8px solid var(--sheet);
-}
-.hero-video video { width: 100%; height: 100%; object-fit: cover; }
-@media (min-width: 900px) {
-  .hero { padding-top: calc(170px + env(safe-area-inset-top, 0px)); padding-bottom: 110px; }
-  .hero-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 64px; }
-  .hero-copy { justify-items: start; text-align: left; padding-left: clamp(0px, 4vw, 60px); }
-  .hero-video { width: min(100%, 420px); aspect-ratio: 9 / 15; }
+@media (max-width: 720px) {
+  .hero { min-height: max(80svh, 600px); padding-bottom: 72px; }
 }
 
 .leaves { position: absolute; pointer-events: none; z-index: -1; overflow: visible; }
@@ -333,37 +335,20 @@ p { margin: 0; }
 .service p { color: var(--ink-soft); max-width: 52ch; }
 .service .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 6px; }
 
-/* carrossel de imagens (como na home original) */
-.carousel { position: relative; border-radius: 10px; overflow: hidden; box-shadow: 0 30px 60px -30px var(--shadow); background: var(--sand); }
-@media (min-width: 960px) { .carousel { position: sticky; top: 40px; } }
-.carousel-track { display: flex; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
-.carousel-slide { flex: 0 0 100%; aspect-ratio: 4 / 5; max-width: 100%; }
-.carousel-slide img { width: 100%; height: 100%; object-fit: cover; }
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  translate: 0 -50%;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 0;
-  background: rgba(252, 250, 246, .85);
-  color: var(--ink);
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  transition: background .2s ease;
+/* vídeo do espaço numa moldura em arco, ao lado dos serviços */
+.services-video {
+  justify-self: center;
+  width: min(100%, 420px);
+  aspect-ratio: 9 / 15;
+  max-width: 100%;
+  border-radius: 999px 999px 14px 14px;
+  overflow: hidden;
+  background: var(--sand);
+  box-shadow: 0 40px 70px -30px rgba(66, 48, 30, .35);
+  border: 8px solid var(--paper);
 }
-.carousel-btn:hover { background: var(--sheet); }
-.carousel-btn svg { width: 10px; height: 16px; }
-.carousel-btn.prev { left: 14px; }
-.carousel-btn.next { right: 14px; }
-.carousel-dots { position: absolute; bottom: 16px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; }
-.carousel-dots button {
-  width: 9px; height: 9px; padding: 0; border-radius: 50%; border: 1px solid var(--sheet);
-  background: transparent; cursor: pointer;
-}
-.carousel-dots button[aria-current="true"] { background: var(--sheet); }
+.services-video video { width: 100%; height: 100%; object-fit: cover; }
+@media (min-width: 960px) { .services-video { position: sticky; top: 40px; } }
 
 /* ---------- sobre nós ---------- */
 .about {
@@ -509,23 +494,23 @@ p { margin: 0; }
 
   <!-- ============ HERO ============ -->
   <section class="hero">
+    <div class="hero-bg">
+      <video autoplay muted loop playsinline preload="metadata"
+             poster="https://unicutz.com/wp-content/uploads/2026/10/WhatsApp-Image-2026-10-06-at-14.52.19.jpeg" aria-hidden="true">
+        <source src="assets/unicutz-wellness-intro-web.mp4" type="video/mp4">
+      </video>
+    </div>
+    <span class="hero-shade" aria-hidden="true"></span>
     <svg class="leaves leaves--top" data-leaves="top" viewBox="0 0 520 460" aria-hidden="true"></svg>
     <svg class="leaves leaves--bottom" data-leaves="bottom" viewBox="0 0 360 340" aria-hidden="true"></svg>
-    <div class="wrap hero-grid">
+    <div class="wrap">
       <div class="hero-copy">
         <svg class="lotus" aria-hidden="true"><use href="#i-lotus"/></svg>
         <h1>Cuidar de si é também uma forma de <em>viver melhor</em>.</h1>
         <p class="hero-services">Massagem<b>·</b>Estética<b>·</b>Laser</p>
         <a class="btn" href="#marcacao">Marcar agora</a>
       </div>
-      <div class="hero-video">
-        <video autoplay muted loop playsinline preload="metadata"
-               poster="https://unicutz.com/wp-content/uploads/2026/10/WhatsApp-Image-2026-10-06-at-14.52.19.jpeg"
-               aria-label="Vídeo de apresentação do espaço UniCutz Wellness">
-          <source src="assets/unicutz-wellness-intro-web.mp4" type="video/mp4">
-        </video>
       </div>
-    </div>
   </section>
 
   <!-- ============ SERVIÇOS ============ -->
@@ -561,18 +546,12 @@ p { margin: 0; }
           </article>
         </div>
 
-        <div class="carousel" data-carousel aria-roledescription="carrossel" aria-label="Fotografias do espaço">
-          <div class="carousel-track">
-            <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="1 / 2">
-              <img src="https://unicutz.com/wp-content/uploads/2026/10/WhatsApp-Image-2026-10-06-at-14.52.19.jpeg" alt="Receção da UniCutz Wellness, com parede em ripas de madeira e sofá verde" width="1536" height="2048" loading="lazy">
-            </div>
-            <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="2 / 2">
-              <img src="https://unicutz.com/wp-content/uploads/2026/10/WhatsApp-Image-2026-10-06-at-14.52.20.jpeg" alt="Sala de tratamentos com marquesa, parede verde e luz suave" width="1536" height="2048" loading="lazy">
-            </div>
-          </div>
-          <button class="carousel-btn prev" type="button" aria-label="Anterior"><svg aria-hidden="true" style="transform:scaleX(-1)"><use href="#i-angle"/></svg></button>
-          <button class="carousel-btn next" type="button" aria-label="Seguinte"><svg aria-hidden="true"><use href="#i-angle"/></svg></button>
-          <div class="carousel-dots"></div>
+        <div class="services-video">
+          <video autoplay muted loop playsinline preload="metadata"
+                 poster="https://unicutz.com/wp-content/uploads/2026/10/WhatsApp-Image-2026-10-06-at-14.52.19.jpeg"
+                 aria-label="Vídeo de apresentação do espaço UniCutz Wellness">
+            <source src="assets/unicutz-wellness-intro-web.mp4" type="video/mp4">
+          </video>
         </div>
       </div>
     </div>
@@ -831,37 +810,6 @@ Continua assim. Trabalho nunca te vai faltar.</p>
   });
 })();
 
-/* ---------- carrossel ---------- */
-document.querySelectorAll("[data-carousel]").forEach(function (root) {
-  var track = root.querySelector(".carousel-track");
-  var slides = track.children;
-  var dots = root.querySelector(".carousel-dots");
-  var i = 0, timer = null;
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  for (var n = 0; n < slides.length; n++) {
-    var b = document.createElement("button");
-    b.type = "button";
-    b.setAttribute("aria-label", String(n + 1));
-    b.addEventListener("click", go.bind(null, n));
-    dots.appendChild(b);
-  }
-  function go(n) {
-    i = (n + slides.length) % slides.length;
-    track.style.transform = "translateX(" + (-100 * i) + "%)";
-    Array.prototype.forEach.call(dots.children, function (d, k) { d.setAttribute("aria-current", k === i); });
-  }
-  function play() { if (!reduce) { stop(); timer = setInterval(function () { go(i + 1); }, 4500); } }
-  function stop() { clearInterval(timer); }
-
-  root.querySelector(".prev").addEventListener("click", function () { go(i - 1); });
-  root.querySelector(".next").addEventListener("click", function () { go(i + 1); });
-  root.addEventListener("mouseenter", stop);
-  root.addEventListener("mouseleave", play);
-  root.addEventListener("focusin", stop);
-  go(0);
-  play();
-});
 
 
 /* ---------- carrossel de avaliações ---------- */

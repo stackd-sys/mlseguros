@@ -91,37 +91,6 @@
   });
 })();
 
-/* ---------- carrossel ---------- */
-document.querySelectorAll("[data-carousel]").forEach(function (root) {
-  var track = root.querySelector(".carousel-track");
-  var slides = track.children;
-  var dots = root.querySelector(".carousel-dots");
-  var i = 0, timer = null;
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  for (var n = 0; n < slides.length; n++) {
-    var b = document.createElement("button");
-    b.type = "button";
-    b.setAttribute("aria-label", String(n + 1));
-    b.addEventListener("click", go.bind(null, n));
-    dots.appendChild(b);
-  }
-  function go(n) {
-    i = (n + slides.length) % slides.length;
-    track.style.transform = "translateX(" + (-100 * i) + "%)";
-    Array.prototype.forEach.call(dots.children, function (d, k) { d.setAttribute("aria-current", k === i); });
-  }
-  function play() { if (!reduce) { stop(); timer = setInterval(function () { go(i + 1); }, 4500); } }
-  function stop() { clearInterval(timer); }
-
-  root.querySelector(".prev").addEventListener("click", function () { go(i - 1); });
-  root.querySelector(".next").addEventListener("click", function () { go(i + 1); });
-  root.addEventListener("mouseenter", stop);
-  root.addEventListener("mouseleave", play);
-  root.addEventListener("focusin", stop);
-  go(0);
-  play();
-});
 
 
 /* ---------- carrossel de avaliações ---------- */
