@@ -38,6 +38,8 @@
   --sage: #93A998;        /* verde da UniCutz (faixa CTA, botões de serviço) */
   --sage-deep: #56695A;
   --wood: #8A5C3B;
+  --on-video: #FFFFFF;    /* texto sobre o vídeo do cabeçalho */
+  --gold-light: #E9D9BF;  /* destaque dourado sobre o vídeo */
   --line: rgba(160, 123, 76, .32);
   --shadow: rgba(66, 48, 30, .12);
 
@@ -152,6 +154,7 @@ p { margin: 0; }
 .lang a[aria-current="page"] { background: var(--ink); color: var(--paper); }
 .brand { grid-column: 2; display: flex; flex-direction: column; align-items: flex-end; text-decoration: none; }
 .brand img { width: clamp(100px, 12vw, 150px); height: auto; }
+.site-header .brand span, .site-header .menu-toggle { color: var(--on-video); }
 .brand span {
   font-size: 10px;
   font-weight: 500;
@@ -243,21 +246,14 @@ p { margin: 0; }
   background: var(--paper);
   min-height: min(92svh, 920px);
   display: grid;
-  align-items: end;
+  align-items: center;
   padding-top: calc(170px + env(safe-area-inset-top, 0px));
   padding-bottom: 96px;
 }
 .hero-bg, .hero-shade { position: absolute; inset: 0; z-index: -1; }
 .hero-bg video { width: 100%; height: 100%; object-fit: cover; object-position: center 45%; }
-/* véu claro em cima (logo e menu) e em baixo (texto), com o vídeo a ver-se no meio */
-.hero-shade {
-  background: linear-gradient(180deg,
-    rgba(247, 242, 235, .88) 0%,
-    rgba(247, 242, 235, .2) 24%,
-    rgba(247, 242, 235, .5) 42%,
-    rgba(247, 242, 235, .9) 62%,
-    var(--paper) 100%);
-}
+/* véu escuro, como na barbearia: o vídeo vê-se nítido e o texto lê-se a branco */
+.hero-shade { background: linear-gradient(180deg, rgba(24, 18, 13, .5) 0%, rgba(24, 18, 13, .28) 38%, rgba(24, 18, 13, .5) 100%); }
 /* ripas de madeira, como na parede do espaço */
 .hero::before {
   content: "";
@@ -275,30 +271,26 @@ p { margin: 0; }
   box-shadow: 8px 0 24px rgba(66, 48, 30, .18);
 }
 .hero-copy { position: relative; display: grid; justify-items: center; gap: 26px; text-align: center; }
-/* luz suave por trás do texto, para se ler bem em qualquer momento do vídeo */
-.hero-copy::before {
-  content: "";
-  position: absolute;
-  inset: -70px -12%;
-  z-index: -1;
-  background: radial-gradient(ellipse at center, rgba(247, 242, 235, .9) 0%, rgba(247, 242, 235, .6) 45%, transparent 72%);
-}
 .hero h1 {
-  font-size: clamp(40px, 5.4vw, 74px);
+  font-size: clamp(40px, 4.8vw, 70px);
   font-weight: 400;
-  max-width: 17ch;
-  color: var(--ink);
+  max-width: 940px;
+  color: var(--on-video);
+  text-shadow: 0 2px 24px rgba(0, 0, 0, .25);
 }
-.hero h1 em { font-style: italic; color: var(--bronze-deep); }
+.hero h1 em { font-style: italic; color: var(--gold-light); }
+.hero .lotus { color: var(--gold-light); }
 .hero-services {
   font-size: 13px;
   font-weight: 400;
   letter-spacing: .3em;
   text-transform: uppercase;
-  color: var(--ink-soft);
+  color: var(--on-video);
+  opacity: .9;
 }
-.hero-services b { color: var(--bronze); font-weight: 400; margin-inline: .5em; }
+.hero-services b { color: var(--gold-light); font-weight: 400; margin-inline: .5em; }
 .hero-copy .btn { margin-top: 8px; }
+.hero .btn--light:hover { color: var(--on-video); border-color: var(--on-video); }
 @media (max-width: 720px) {
   .hero { min-height: max(80svh, 600px); padding-bottom: 72px; }
 }
@@ -335,17 +327,14 @@ p { margin: 0; }
 .service p { color: var(--ink-soft); max-width: 52ch; }
 .service .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 6px; }
 
-/* vídeo do espaço numa moldura em arco, ao lado dos serviços */
+/* vídeo do espaço ao lado dos serviços */
 .services-video {
-  justify-self: center;
-  width: min(100%, 420px);
-  aspect-ratio: 9 / 15;
+  aspect-ratio: 4 / 5;
   max-width: 100%;
-  border-radius: 999px 999px 14px 14px;
+  border-radius: 10px;
   overflow: hidden;
   background: var(--sand);
-  box-shadow: 0 40px 70px -30px rgba(66, 48, 30, .35);
-  border: 8px solid var(--paper);
+  box-shadow: 0 30px 60px -30px var(--shadow);
 }
 .services-video video { width: 100%; height: 100%; object-fit: cover; }
 @media (min-width: 960px) { .services-video { position: sticky; top: 40px; } }
@@ -466,7 +455,7 @@ p { margin: 0; }
       <a href="./" hreflang="en" aria-current="page">EN</a>
     </nav>
     <a class="brand" href="#topo" aria-label="UniCutz Wellness">
-      <img src="https://unicutz.com/wp-content/uploads/2026/03/Logotipo_Unicutz_2.png" alt="UniCutz" width="1007" height="589">
+      <img src="https://unicutz.com/wp-content/uploads/2026/06/Logotipo_Unicutz_3-1.png" alt="UniCutz" width="1007" height="589">
       <span>WELLNESS</span>
     </a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-flyout">
@@ -497,7 +486,7 @@ p { margin: 0; }
     <div class="hero-bg">
       <video autoplay muted loop playsinline preload="metadata"
              poster="https://unicutz.com/wp-content/uploads/2026/10/WhatsApp-Image-2026-10-06-at-14.52.19.jpeg" aria-hidden="true">
-        <source src="../assets/unicutz-wellness-intro-web.mp4" type="video/mp4">
+        <source src="../assets/unicutz-wellness-intro-1080.mp4" type="video/mp4">
       </video>
     </div>
     <span class="hero-shade" aria-hidden="true"></span>
@@ -508,7 +497,7 @@ p { margin: 0; }
         <svg class="lotus" aria-hidden="true"><use href="#i-lotus"/></svg>
         <h1>Taking care of yourself is also a way of <em>living better</em>.</h1>
         <p class="hero-services">Massage<b>·</b>Aesthetics<b>·</b>Laser</p>
-        <a class="btn" href="#marcacao">Book now</a>
+        <a class="btn btn--light" href="#marcacao">Book now</a>
       </div>
       </div>
   </section>
