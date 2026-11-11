@@ -9,7 +9,7 @@ const year = new Date().getFullYear();
     <div class="footer__grid">
       <div class="footer__about">
         <Logo inverse />
-        <p>Mediação de seguros na Ericeira há mais de {company.years} anos. Comparamos as principais seguradoras e acompanhamos cada cliente, sobretudo quando é preciso participar um sinistro.</p>
+        <p>Mediadora de seguros na Ericeira há mais de {company.years} anos. Trabalhamos com várias seguradoras e tratamos dos sinistros dos nossos clientes.</p>
         <div class="footer__reg">
           {company.legalName}<br />
           Mediador de seguros inscrito na ASF com o n.º {company.asf} ·
@@ -25,16 +25,16 @@ const year = new Date().getFullYear();
         <h3>Empresas</h3>
         <ul>
           {ramosBySegment('empresas').map((r) => <li><a href={`/seguros/${r.slug}/`}>{r.name}</a></li>)}
-          <li><a href="/seguros-empresas/#auditoria">Auditoria gratuita</a></li>
+          <li><a href="/seguros-empresas/#auditoria">Análise gratuita de apólices</a></li>
         </ul>
       </div>
       <div>
         <h3>Contactos</h3>
         <ul class="footer__contact">
-          <li><Icon name="pin" size={18} /><a href={company.mapsHref} target="_blank" rel="noopener">{company.address.street}<br />{company.address.postalCode} {company.address.locality}</a></li>
-          <li><Icon name="phone" size={18} /><span><a href={company.phoneHref}>{company.phone}</a><br /><small>{company.phoneNote}</small></span></li>
-          <li><Icon name="mail" size={18} /><a href={`mailto:${company.email}`}>{company.email}</a></li>
-          <li><Icon name="alert" size={18} /><a href="/sinistros/">Participar um sinistro</a></li>
+          <li><a href={company.mapsHref} target="_blank" rel="noopener">{company.address.street}<br />{company.address.postalCode} {company.address.locality}</a></li>
+          <li><span><a href={company.phoneHref}>{company.phone}</a><br /><small>{company.phoneNote}</small></span></li>
+          <li><a href={`mailto:${company.email}`}>{company.email}</a></li>
+          <li><a href="/sinistros/">Participar um sinistro</a></li>
         </ul>
       </div>
     </div>
@@ -49,10 +49,10 @@ const year = new Date().getFullYear();
 </footer>
 
 <a class="wa-float" href={company.whatsappHref} target="_blank" rel="noopener" aria-label="Falar por WhatsApp">
-  <Icon name="whatsapp" size={28} />
+  <Icon name="whatsapp" size={26} />
 </a>
 <nav class="mobile-bar" aria-label="Contacto rápido">
-  <a href={company.phoneHref}><Icon name="phone" size={18} /> Ligar</a>
-  <a href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> WhatsApp</a>
-  <a class="primary" href="/simulacao/">Simulação <Icon name="arrow" size={16} /></a>
+  <a href={company.phoneHref}>Ligar</a>
+  <a href={company.whatsappHref} target="_blank" rel="noopener">WhatsApp</a>
+  <a class="primary" href="/simulacao/">Pedir simulação</a>
 </nav>

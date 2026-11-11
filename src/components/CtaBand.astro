@@ -1,30 +1,15 @@
 ---
-import Icon from './Icon.astro';
-import Photo from './Photo.astro';
+// Faixa de contacto no fim das páginas.
 import { company } from '../data/site.js';
-interface Props { title?: string; text?: string; tipo?: string }
-const {
-  title = 'Vamos rever os seus seguros?',
-  text = 'Diga-nos o que precisa proteger. Respondemos no próprio dia útil, com uma proposta clara e sem compromisso.',
-  tipo,
-} = Astro.props;
+interface Props { title?: string; tipo?: string }
+const { title = 'Quer rever os seus seguros connosco?', tipo } = Astro.props;
 ---
-<section class="section" style="padding-top:0">
+<section class="contact-strip">
   <div class="container">
-    <div class="cta-band">
-      <Photo name="ericeiraAerial" alt="" sizes="100vw" />
-      <div class="cta-band__inner">
-        <div>
-          <span class="eyebrow">Fale connosco</span>
-          <h2>{title}</h2>
-          <p>{text}</p>
-        </div>
-        <div class="cta-band__actions">
-          <a class="btn" href={tipo ? `/simulacao/?tipo=${tipo}` : '/simulacao/'}>Pedir simulação gratuita <Icon name="arrow" size={18} /></a>
-          <a class="btn btn--light" href={company.phoneHref}><Icon name="phone" size={18} /> {company.phone}</a>
-          <small style="color:#9da2ad;text-align:center">{company.phoneNote}</small>
-        </div>
-      </div>
+    <div>
+      <h2>{title}</h2>
+      <p>Ligue para o <a class="link" href={company.phoneHref}>{company.phone}</a> <span class="muted small">({company.phoneNote.toLowerCase()})</span>, escreva para <a class="link" href={`mailto:${company.email}`}>{company.email}</a> ou passe no escritório, na {company.address.street}, Ericeira.</p>
     </div>
+    <a class="btn" href={tipo ? `/simulacao/?tipo=${tipo}` : '/simulacao/'}>Pedir simulação</a>
   </div>
 </section>

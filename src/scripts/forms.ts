@@ -47,7 +47,7 @@ export function setupForm(form: HTMLFormElement, opts: { endpoint: string; email
         });
         if (!res.ok) throw new Error(String(res.status));
         form.reset();
-        show('ok', 'Obrigado! Recebemos o seu pedido e entramos em contacto no próximo dia útil.');
+        show('ok', 'Obrigado. Recebemos o seu pedido e vamos contactá-lo em breve.');
         form.dispatchEvent(new CustomEvent('sent'));
       } catch {
         show('err', `Não foi possível enviar. Ligue-nos ou escreva para ${opts.email}.`);
@@ -62,6 +62,6 @@ export function setupForm(form: HTMLFormElement, opts: { endpoint: string; email
       .map(([k, v]) => `${k.replace(/_/g, ' ')}: ${v}`)
       .join('\n');
     location.href = `mailto:${opts.email}?subject=${encodeURIComponent(opts.subject)}&body=${encodeURIComponent(body)}`;
-    show('ok', 'Abrimos o seu programa de email com o pedido preenchido. Basta carregar em enviar.');
+    show('ok', 'Abrimos o seu programa de email com o pedido já escrito. Falta só carregar em enviar.');
   });
 }

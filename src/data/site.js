@@ -75,11 +75,11 @@ export const ramos = [
     segment: 'particulares',
     icon: 'car',
     name: 'Seguro Automóvel',
-    short: 'Para o seu carro ou para a frota da empresa: responsabilidade civil, danos próprios e assistência em viagem à medida.',
+    short: 'Para o seu carro ou para as viaturas da empresa, da responsabilidade civil obrigatória aos danos próprios.',
     seoTitle: 'Seguro Automóvel e Frota na Ericeira e Mafra',
     seoDescription: 'Seguro automóvel para particulares e frotas de empresa. Compare a Fidelidade, Allianz, Generali Tranquilidade e Ageas com um mediador local na Ericeira. Simulação gratuita e apoio em caso de acidente.',
     image: 'driving',
-    intro: 'O seguro de responsabilidade civil automóvel é obrigatório, mas as diferenças entre apólices estão nos pormenores: franquias, veículo de substituição, assistência e quem o ajuda quando há um acidente. Comparamos as opções das seguradoras com quem trabalhamos e explicamos cada uma sem letras pequenas.',
+    intro: 'O seguro de responsabilidade civil automóvel é obrigatório, mas as diferenças entre apólices estão nos pormenores: franquias, veículo de substituição, assistência e quem o ajuda quando há um acidente. Comparamos as opções das seguradoras com quem trabalhamos e explicamos o que muda de uma para outra.',
     coverages: [
       ['Responsabilidade civil obrigatória', 'Danos causados a terceiros, dentro dos capitais mínimos legais ou superiores.'],
       ['Danos próprios', 'Choque, colisão, capotamento, incêndio, furto ou roubo do seu veículo.'],
@@ -101,11 +101,11 @@ export const ramos = [
     segment: 'particulares',
     icon: 'home',
     name: 'Seguro Habitação',
-    short: 'Multirriscos para casa própria, arrendada ou de férias: edifício, recheio, danos por água e responsabilidade civil.',
+    short: 'Multirriscos para casa própria, arrendada ou de férias, com edifício, recheio e danos por água.',
     seoTitle: 'Seguro Multirriscos Habitação na Ericeira',
     seoDescription: 'Seguro multirriscos habitação para casa própria, arrendada ou de férias na Ericeira e Mafra. Edifício, recheio, fenómenos sísmicos e assistência 24h.',
     image: 'familyHome',
-    intro: 'A casa é, para a maioria das famílias, o maior investimento de uma vida. Um multirriscos bem feito protege o edifício e o recheio pelos valores certos, o que evita a regra proporcional num sinistro. Ajudamos a calcular os capitais e a escolher as coberturas que fazem sentido para a sua casa.',
+    intro: 'Um multirriscos bem feito protege o edifício e o recheio pelos valores certos, o que evita a regra proporcional num sinistro. Ajudamos a calcular os capitais e a escolher as coberturas que fazem sentido para a sua casa.',
     coverages: [
       ['Incêndio, raio e explosão', 'Obrigatório em frações de propriedade horizontal.'],
       ['Danos por água', 'Roturas de canalizações e infiltrações, incluindo pesquisa de avarias.'],
@@ -126,11 +126,11 @@ export const ramos = [
     segment: 'particulares',
     icon: 'heart',
     name: 'Seguro de Saúde',
-    short: 'Consultas, exames e internamento na rede privada: planos individuais, familiares ou de grupo para empresas.',
+    short: 'Planos individuais, familiares ou de grupo, com consultas, exames e internamento na rede privada.',
     seoTitle: 'Seguro de Saúde Individual, Familiar e de Grupo',
     seoDescription: 'Compare seguros de saúde individuais, familiares e de grupo para empresas. Consultas, exames, internamento e estomatologia com o apoio de um mediador na Ericeira.',
     image: 'doctor',
-    intro: 'Os seguros de saúde parecem todos iguais até ao dia em que são precisos. Plafonds, copagamentos, períodos de carência e rede de prestadores fazem toda a diferença. Comparamos planos e explicamos o que cada um cobre de facto na sua zona.',
+    intro: 'Entre seguros de saúde, o que muda é o plafond, o copagamento, o período de carência e a rede de prestadores. Comparamos planos e dizemos que clínicas e hospitais da zona cada um inclui.',
     coverages: [
       ['Internamento e cirurgia', 'Com plafonds anuais adequados a situações graves.'],
       ['Ambulatório', 'Consultas de especialidade, exames e análises.'],
@@ -152,11 +152,11 @@ export const ramos = [
     segment: 'particulares',
     icon: 'shield',
     name: 'Seguro de Vida',
-    short: 'Proteção para a família e para o crédito à habitação, em caso de morte ou invalidez.',
+    short: 'Para o crédito à habitação ou para deixar a família protegida em caso de morte ou invalidez.',
     seoTitle: 'Seguro de Vida e Crédito Habitação',
     seoDescription: 'Seguro de vida para crédito habitação ou proteção familiar. Poupe ao transferir o seguro do banco para outra seguradora, com apoio de um mediador na Ericeira.',
     image: 'familyPark',
-    intro: 'O seguro de vida protege quem depende de si. No crédito à habitação é exigido pelo banco, mas pode ser contratado noutra seguradora, e a poupança ao longo do empréstimo pode ser significativa. Fazemos as contas e tratamos da transferência.',
+    intro: 'No crédito à habitação, o banco exige seguro de vida, mas não obriga a que seja o dele. Contratado noutra seguradora, costuma sair mais barato ao longo do empréstimo. Fazemos as contas consigo e tratamos da transferência.',
     coverages: [
       ['Morte', 'Pagamento do capital seguro aos beneficiários ou ao banco.'],
       ['Invalidez absoluta e definitiva', 'Quando deixa de poder exercer qualquer atividade.'],
@@ -168,7 +168,7 @@ export const ramos = [
     audience: ['Titulares de crédito à habitação', 'Pais com filhos a cargo', 'Sócios de empresas', 'Quem quer poupar no seguro do banco'],
     faq: [
       ['Posso transferir o seguro de vida do banco?', 'Sim. A lei permite contratar o seguro de vida do crédito numa seguradora à sua escolha, desde que cumpra as coberturas exigidas pelo banco. Convém confirmar se o contrato do crédito tem alguma bonificação de spread ligada ao seguro do banco; fazemos essa conta consigo.'],
-      ['Quanto posso poupar?', 'Depende da idade, do capital e do prazo, mas a diferença costuma ser relevante. Pedimos-lhe a última declaração do banco e fazemos a simulação sem compromisso.'],
+      ['Quanto posso poupar?', 'Depende da idade, do capital e do prazo, mas a diferença costuma ser relevante. Com a última declaração do banco, fazemos a simulação.'],
       ['Preciso de fazer exames médicos?', 'Depende do capital e da idade. Na maioria dos casos basta um questionário de saúde.'],
     ],
   },
@@ -178,7 +178,7 @@ export const ramos = [
     segment: 'empresas',
     icon: 'hardhat',
     name: 'Acidentes de Trabalho',
-    short: 'Seguro obrigatório para trabalhadores por conta de outrem e independentes, com gestão simples de folhas de férias.',
+    short: 'Seguro obrigatório para quem tem trabalhadores e para trabalhadores independentes. Tratamos também das folhas de férias.',
     seoTitle: 'Seguro de Acidentes de Trabalho em Mafra e Ericeira',
     seoDescription: 'Seguro de acidentes de trabalho obrigatório para empresas e independentes em Mafra e Ericeira. Enquadramento correto da atividade e apoio na gestão de sinistros.',
     image: 'worker',
@@ -218,7 +218,7 @@ export const ramos = [
     ],
     audience: ['Comércio e lojas', 'Restauração e cafés', 'Escritórios e consultórios', 'Armazéns e oficinas'],
     faq: [
-      ['Qual é a diferença para o multirriscos habitação?', 'Os riscos de uma atividade comercial são diferentes: mercadorias, clientes nas instalações, equipamentos profissionais e a paragem do negócio. O multirriscos empresarial foi desenhado para isso.'],
+      ['Qual é a diferença para o multirriscos habitação?', 'Os riscos de uma atividade comercial são diferentes: mercadorias, clientes nas instalações, equipamentos profissionais e a paragem do negócio. O multirriscos empresarial cobre esses riscos.'],
       ['O que são perdas de exploração?', 'É a cobertura que compensa a quebra de faturação e as despesas fixas (rendas, salários) enquanto o negócio está parado por causa de um sinistro coberto.'],
       ['Sou inquilino. Preciso de segurar o edifício?', 'Normalmente não, mas deve segurar o recheio, as obras que fez no espaço e a responsabilidade civil. Confirmamos o que o contrato de arrendamento exige.'],
     ],
@@ -228,7 +228,7 @@ export const ramos = [
     segment: 'empresas',
     icon: 'scale',
     name: 'Responsabilidade Civil',
-    short: 'Exploração, profissional e produtos: proteção contra reclamações de clientes e terceiros.',
+    short: 'Seguros de responsabilidade civil de exploração, profissional e de produtos, para reclamações de clientes e terceiros.',
     seoTitle: 'Seguro de Responsabilidade Civil Profissional e de Exploração',
     seoDescription: 'Seguros de responsabilidade civil de exploração, profissional e de produtos para empresas e profissionais liberais. Análise gratuita do risco.',
     image: 'advisorCouple',
@@ -245,7 +245,7 @@ export const ramos = [
     faq: [
       ['A minha atividade tem seguro obrigatório?', 'Várias atividades têm: alojamento local, mediação imobiliária, empreiteiros, técnicos de certificação, entre outras. Diga-nos a sua atividade e confirmamos.'],
       ['Que capital devo contratar?', 'Depende da atividade, da dimensão e do que os seus clientes exigem. Por vezes os contratos públicos ou grandes clientes impõem capitais mínimos.'],
-      ['Cobre reclamações de trabalhos antigos?', 'Depende da apólice (regime de ocorrência ou de reclamação). É um pormenor importante que explicamos antes de contratar.'],
+      ['Cobre reclamações de trabalhos antigos?', 'Depende da apólice (regime de ocorrência ou de reclamação). Explicamos a diferença antes de contratar.'],
     ],
   },
 ];
@@ -254,9 +254,9 @@ export const ramosBySegment = (segment) => ramos.filter((r) => r.segment === seg
 
 // Perguntas gerais (home e contactos).
 export const generalFaq = [
-  ['O que faz um mediador de seguros?', 'Um mediador trabalha com várias seguradoras, compara propostas e aconselha-o sobre a melhor solução. Acompanha-o também depois de contratar, nas alterações à apólice e sobretudo nos sinistros.'],
-  ['Pagar através de um mediador fica mais caro?', 'Não. O preço da apólice é o mesmo da seguradora. O que ganha é aconselhamento, comparação entre várias companhias e alguém do seu lado quando precisa de participar um sinistro.'],
+  ['O que faz um mediador de seguros?', 'Um mediador trabalha com várias seguradoras, compara propostas e aconselha-o na escolha. Depois de contratar, trata das alterações à apólice e ajuda-o quando há um sinistro.'],
+  ['Pagar através de um mediador fica mais caro?', 'Não. O preço da apólice é o mesmo da seguradora. A diferença é que tem alguém que compara várias companhias por si e que o ajuda quando precisa de participar um sinistro.'],
   ['Com que seguradoras trabalham?', 'Trabalhamos com Fidelidade, Allianz, Generali Tranquilidade e Ageas, entre outras. Isso permite-nos comparar condições e escolher a que melhor se ajusta a cada caso.'],
-  ['Posso transferir os meus seguros atuais para a ML Seguros?', 'Sim. Analisamos as apólices que já tem, sem compromisso, e tratamos da transferência na data de renovação, sem que fique sem cobertura.'],
+  ['Posso transferir os meus seguros atuais para a ML Seguros?', 'Sim. Analisamos as apólices que já tem e, se decidir mudar, tratamos da transferência na data de renovação para não ficar sem cobertura.'],
   ['Onde estão localizados?', 'Estamos na Rua Dr. Eduardo Burnay, 20-B, na Ericeira. Atendemos clientes de todo o concelho de Mafra e, à distância, de qualquer ponto do país.'],
 ];

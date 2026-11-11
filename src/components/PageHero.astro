@@ -1,10 +1,9 @@
 ---
-import Photo from './Photo.astro';
-interface Props { title: string; lead?: string; image?: string; crumbs?: { label: string; href?: string }[] }
-const { title, lead, image, crumbs = [] } = Astro.props;
+// Cabeçalho simples das páginas interiores: caminho, título e uma frase.
+interface Props { title: string; lead?: string; crumbs?: { label: string; href?: string }[] }
+const { title, lead, crumbs = [] } = Astro.props;
 ---
-<section class="page-hero">
-  {image && <Photo name={image} alt="" sizes="100vw" priority />}
+<section class="page-head">
   <div class="container">
     <nav aria-label="Caminho">
       <ol class="crumbs">
@@ -12,7 +11,7 @@ const { title, lead, image, crumbs = [] } = Astro.props;
         {crumbs.map((c) => c.href ? <li><a href={c.href}>{c.label}</a></li> : <li aria-current="page">{c.label}</li>)}
       </ol>
     </nav>
-    <h1 set:html={title} />
+    <h1>{title}</h1>
     {lead && <p>{lead}</p>}
     <slot />
   </div>

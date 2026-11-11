@@ -1,12 +1,12 @@
 # ML Seguros — site
 
-Novo site da ML Seguros (mlseguros.pt). É um site estático feito em [Astro](https://astro.build), com um design inspirado no template **Covar** (Awaiken) e adaptado à marca: o vermelho do logótipo, tinta escura e um fundo quente.
+Novo site da ML Seguros (mlseguros.pt). É um site estático feito em [Astro](https://astro.build), com a estrutura inspirada no template **Covar** (Awaiken) e um estilo sóbrio: títulos em serifa (Source Serif 4), texto em Source Sans 3, e o vermelho do logótipo só em botões e ligações.
 
 Resolve os pontos da auditoria de 24/09/2026:
 
 | Problema no site atual | No site novo |
 |---|---|
-| Home com 24 MB, 6 plugins, 5 famílias de fontes | Site estático, sem plugins. Uma fonte self-hosted (~49 KB), ícones SVG inline, fotos responsivas com lazy-load |
+| Home com 24 MB, 6 plugins, 5 famílias de fontes | Site estático, sem plugins. Duas fontes self-hosted, ícones SVG só onde ajudam (telefone, email, WhatsApp), fotos responsivas com lazy-load |
 | Só 2 páginas de serviço | 7 páginas, uma por ramo (`/seguros/<ramo>/`), cada uma com coberturas, público, FAQ e schema |
 | Formulário com prefixo +1 | +351 por defeito e validação de número PT |
 | SEO duplicado e genérico | Um título, descrição e H1 por página, canonical, Open Graph, `InsuranceAgency` + `LocalBusiness`, `FAQPage`, `BreadcrumbList` e sitemap automático |
@@ -30,6 +30,12 @@ npm install
 npm run dev      # http://localhost:4321
 npm run build    # gera ./dist, pronto para Netlify, Cloudflare Pages, Vercel ou qualquer alojamento estático
 ```
+
+## Regras de estilo e texto
+
+Para o site não parecer feito por IA nem por template:
+- **Visual**: sem etiquetas por cima dos títulos, sem metade do título a vermelho, sem cartões a flutuar, gradientes, números decorativos ou animações. Cantos quase retos e listas com linhas simples.
+- **Texto**: frases diretas e concretas, sem slogans ("não somos um call center"), sem listas de três palavras para dar ritmo, sem travessões, e sem promessas que a empresa não confirmou (prazos de resposta, por exemplo).
 
 ## Onde alterar conteúdo
 

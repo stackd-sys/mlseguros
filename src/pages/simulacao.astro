@@ -8,35 +8,34 @@ import { company, ramosBySegment } from '../data/site.js';
 
 const groups = [
   { label: 'Particulares', items: ramosBySegment('particulares') },
-  { label: 'Empresas', items: [...ramosBySegment('empresas'), { slug: 'auditoria-empresas', name: 'Auditoria gratuita', icon: 'clipboard' }] },
+  { label: 'Empresas', items: [...ramosBySegment('empresas'), { slug: 'auditoria-empresas', name: 'Análise gratuita de apólices', icon: 'clipboard' }] },
 ];
 const empresas = [...ramosBySegment('empresas').map((r) => r.slug), 'auditoria-empresas'].join(' ');
 ---
 <Base
   title="Pedir Simulação de Seguro"
-  description="Peça uma simulação de seguro gratuita em 3 passos: automóvel, habitação, saúde, vida, acidentes de trabalho e seguros para empresas. Resposta no próximo dia útil."
+  description="Peça uma simulação de seguro gratuita: automóvel, habitação, saúde, vida, acidentes de trabalho e seguros para empresas."
   image="couple"
 >
   <PageHero
-    title="Simulação gratuita <span class='hl'>em 3 passos</span>"
-    lead="Diga-nos o que quer proteger. Comparamos as seguradoras e enviamos uma proposta clara, sem compromisso."
-    image="couple"
+    title="Pedir simulação"
+    lead="Três passos curtos. Depois de recebermos o pedido, pedimos propostas às seguradoras e contactamo-lo com os valores."
     crumbs={[{ label: 'Simulação' }]}
   />
 
-  <section class="section section--warm">
+  <section class="section">
     <div class="container layout-aside">
       <form class="panel form" id="sim" novalidate>
         <ol class="progress" aria-label="Progresso">
-          <li class="is-active">1. Tipo de seguro</li>
-          <li>2. Dados base</li>
+          <li class="is-active">1. Seguro</li>
+          <li>2. Dados</li>
           <li>3. Contacto</li>
         </ol>
 
         <!-- Passo 1 -->
         <fieldset class="sim-step" data-step="1">
           <legend class="sr-only">Tipo de seguro</legend>
-          <h2 style="font-size:1.6rem">Que seguro procura?</h2>
+          <h2 style="font-size:1.4rem">Que seguro procura?</h2>
           {groups.map((g) => (
             <>
               <p class="choice-group-title">{g.label}</p>
@@ -44,7 +43,7 @@ const empresas = [...ramosBySegment('empresas').map((r) => r.slug), 'auditoria-e
                 {g.items.map((r) => (
                   <label class="choice">
                     <input type="radio" name="tipo_de_seguro" value={r.slug} data-label={r.name} required />
-                    <span><Icon name={r.icon} size={22} /> {r.name}</span>
+                    <span>{r.name}</span>
                   </label>
                 ))}
               </div>
@@ -54,8 +53,8 @@ const empresas = [...ramosBySegment('empresas').map((r) => r.slug), 'auditoria-e
 
         <!-- Passo 2 -->
         <div class="sim-step" data-step="2" hidden>
-          <h2 style="font-size:1.6rem">Alguns dados base</h2>
-          <p class="form-note" style="margin-bottom:1rem">Só o essencial para prepararmos a comparação. Os pormenores tratamos por telefone.</p>
+          <h2 style="font-size:1.4rem">Alguns dados</h2>
+          <p class="form-note" style="margin-bottom:1rem">Só o necessário para pedirmos as primeiras propostas. O resto vemos ao telefone.</p>
 
           <fieldset class="form" data-for="automovel">
             <div class="form-row">
@@ -103,7 +102,7 @@ const empresas = [...ramosBySegment('empresas').map((r) => r.slug), 'auditoria-e
 
         <!-- Passo 3 -->
         <div class="sim-step form" data-step="3" hidden>
-          <h2 style="font-size:1.6rem">Como o contactamos?</h2>
+          <h2 style="font-size:1.4rem">Os seus contactos</h2>
           <div class="field"><label for="nome">Nome</label><input id="nome" name="nome" autocomplete="name" required /></div>
           <div class="form-row">
             <PhoneField />
@@ -118,20 +117,20 @@ const empresas = [...ramosBySegment('empresas').map((r) => r.slug), 'auditoria-e
 
         <div class="sim-nav">
           <button type="button" class="btn btn--outline" data-prev hidden>Anterior</button>
-          <button type="button" class="btn" data-next style="margin-left:auto">Seguinte <Icon name="arrow" size={18} /></button>
-          <button type="submit" class="btn" data-submit hidden style="margin-left:auto">Enviar pedido <Icon name="arrow" size={18} /></button>
+          <button type="button" class="btn" data-next style="margin-left:auto">Seguinte</button>
+          <button type="submit" class="btn" data-submit hidden style="margin-left:auto">Enviar pedido</button>
         </div>
       </form>
 
-      <aside class="aside-card">
-        <h3>Prefere falar já?</h3>
-        <p>Ligue-nos ou envie mensagem. Respondemos no próprio dia útil.</p>
-        <a class="plain" href={company.phoneHref}><Icon name="phone" size={20} /> {company.phone}</a>
-        <small>{company.phoneNote}</small>
-        <a class="plain" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={20} /> WhatsApp</a>
-        <a class="plain" href={`mailto:${company.email}`}><Icon name="mail" size={20} /> {company.email}</a>
-        <hr />
-        <p style="margin:0;font-size:.9rem">A simulação é gratuita e não o obriga a nada. Os seus dados são usados apenas para responder ao pedido.</p>
+      <aside class="box">
+        <h2>Prefere falar?</h2>
+        <p>Ligue ou envie mensagem. Também pode passar no escritório, na {company.address.street}, Ericeira.</p>
+        <ul>
+          <li><a href={company.phoneHref}><Icon name="phone" size={18} /> {company.phone}</a></li>
+          <li><a href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> WhatsApp</a></li>
+          <li><a href={`mailto:${company.email}`}><Icon name="mail" size={18} /> {company.email}</a></li>
+        </ul>
+        <p class="muted small" style="margin-top:1rem">A simulação não tem custo nem compromisso. Usamos os seus dados só para responder ao pedido.</p>
       </aside>
     </div>
   </section>
@@ -202,6 +201,6 @@ const empresas = [...ramosBySegment('empresas').map((r) => r.slug), 'auditoria-e
   window.scrollTo(0, 0);
 
   const cfg = (window as any).__form;
-  setupForm(form, { endpoint: cfg.endpoint, email: cfg.email, subject: 'Pedido de simulação — site' });
+  setupForm(form, { endpoint: cfg.endpoint, email: cfg.email, subject: 'Pedido de simulação (site)' });
   form.addEventListener('sent', () => { syncType(); go(0); });
 </script>

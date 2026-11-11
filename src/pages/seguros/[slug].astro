@@ -45,75 +45,64 @@ const schema = [
 ];
 ---
 <Base title={ramo.seoTitle} description={ramo.seoDescription} image={ramo.image} schema={schema}>
-  <PageHero title={ramo.name} lead={ramo.short} image={ramo.image} crumbs={[hub, { label: ramo.name }]}>
-    <div class="hero__ctas">
-      <a class="btn" href={`/simulacao/?tipo=${ramo.slug}`}>Simular {ramo.name.toLowerCase()} <Icon name="arrow" size={18} /></a>
-      <a class="btn btn--light" href={company.phoneHref}><Icon name="phone" size={18} /> {company.phone}</a>
+  <PageHero title={ramo.name} lead={ramo.short} crumbs={[hub, { label: ramo.name }]}>
+    <div class="actions">
+      <a class="btn" href={`/simulacao/?tipo=${ramo.slug}`}>Pedir simulação</a>
+      <a class="btn btn--outline" href={company.phoneHref}>Ligar {company.phone}</a>
     </div>
   </PageHero>
 
   <section class="section">
     <div class="container layout-aside">
       <div class="prose">
-        <span class="eyebrow">Porque é importante</span>
-        <h2>O que precisa de saber</h2>
+        <figure><Photo name={ramo.image} alt="" sizes="(max-width: 960px) 100vw, 760px" /></figure>
         <p class="lead">{ramo.intro}</p>
 
-        <h2>Coberturas <span class="hl">principais</span></h2>
-        <div class="cover-grid">
+        <h2>Coberturas principais</h2>
+        <dl class="cover-list">
           {ramo.coverages.map(([t, d]) => (
-            <div class="cover">
-              <Icon name="shield" size={28} />
-              <h3>{t}</h3>
-              <p>{d}</p>
-            </div>
+            <div><dt>{t}</dt><dd>{d}</dd></div>
           ))}
-        </div>
-        <p class="form-note" style="margin-top:1rem">As coberturas, capitais e exclusões variam entre seguradoras. Confirmamos tudo por escrito antes de contratar.</p>
+        </dl>
+        <p class="muted small" style="margin-top:1rem">Coberturas, capitais e exclusões variam entre seguradoras. Antes de contratar, enviamos tudo por escrito.</p>
 
         <h2>Para quem é</h2>
-        <ul class="pill-list">{ramo.audience.map((a) => <li><Icon name="check" size={18} /> {a}</li>)}</ul>
+        <ul class="plain-list">{ramo.audience.map((a) => <li>{a}</li>)}</ul>
 
         <h2>Perguntas frequentes</h2>
         <Faq items={ramo.faq} />
       </div>
 
-      <aside class="aside-card" aria-label="Pedir proposta">
-        <h3>Receba uma proposta sem compromisso</h3>
-        <p>Comparamos as condições da Fidelidade, Allianz, Generali Tranquilidade e Ageas e explicamos as diferenças.</p>
-        <a class="btn btn--block" href={`/simulacao/?tipo=${ramo.slug}`}>Pedir simulação <Icon name="arrow" size={18} /></a>
-        <hr />
-        <a class="plain" href={company.phoneHref}><Icon name="phone" size={20} /> {company.phone}</a>
-        <a class="plain" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={20} /> WhatsApp</a>
-        <a class="plain" href={`mailto:${company.email}?subject=${encodeURIComponent(ramo.name)}`}><Icon name="mail" size={20} /> {company.email}</a>
-        <hr />
-        <a class="plain" href="/sinistros/"><Icon name="alert" size={20} /> Já é cliente? Participar sinistro</a>
+      <aside class="box" aria-label="Pedir proposta">
+        <h2>Pedir proposta</h2>
+        <p>Pedimos condições à Fidelidade, Allianz, Generali Tranquilidade e Ageas e mostramos-lhe as diferenças.</p>
+        <a class="btn btn--block" href={`/simulacao/?tipo=${ramo.slug}`}>Pedir simulação</a>
+        <ul>
+          <li><a href={company.phoneHref}><Icon name="phone" size={18} /> {company.phone}</a></li>
+          <li><a href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> WhatsApp</a></li>
+          <li><a href={`mailto:${company.email}?subject=${encodeURIComponent(ramo.name)}`}><Icon name="mail" size={18} /> {company.email}</a></li>
+          <li><a href="/sinistros/">Já é cliente? Participar um sinistro</a></li>
+        </ul>
       </aside>
     </div>
   </section>
 
-  <section class="section section--warm">
+  <section class="section section--alt">
     <div class="container">
-      <div class="section-head section-head--split">
-        <div>
-          <span class="eyebrow">Outros seguros</span>
-          <h2>Também para <span class="hl">{hub.label.toLowerCase()}</span></h2>
-        </div>
-        <a class="link-arrow" href={hub.href}>Ver todos <Icon name="arrow" size={18} /></a>
+      <div class="section-intro">
+        <h2>Outros seguros para {hub.label.toLowerCase()}</h2>
       </div>
-      <div class="cards">
+      <ul class="ramo-list">
         {related.map((r) => (
-          <article class="card">
-            <span class="card__icon"><Icon name={r.icon} size={30} /></span>
-            <h3>{r.name}</h3>
+          <li>
+            <h3><a href={`/seguros/${r.slug}/`}>{r.name}</a></h3>
             <p>{r.short}</p>
-            <a class="link-arrow stretched" href={`/seguros/${r.slug}/`}>Saber mais <Icon name="arrow" size={18} /></a>
-          </article>
+          </li>
         ))}
-      </div>
+      </ul>
+      <p style="margin-top:1.5rem"><a class="more" href={hub.href}>Ver todos</a></p>
     </div>
   </section>
 
-  <div style="height:clamp(4rem,9vw,7.5rem)"></div>
-  <CtaBand title={`Pedir proposta: ${ramo.name}`} tipo={ramo.slug} />
+  <CtaBand title={`Pedir proposta de ${ramo.name.toLowerCase()}`} tipo={ramo.slug} />
 </Base>

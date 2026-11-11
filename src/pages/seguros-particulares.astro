@@ -9,17 +9,16 @@ import SegmentPage from '../components/SegmentPage.astro';
 >
   <SegmentPage
     segment="particulares"
-    title="Seguros para <span class='hl'>particulares</span> e famílias"
-    lead="Carro, casa, saúde e as pessoas de quem gosta. Comparamos as principais seguradoras e explicamos cada apólice em linguagem simples."
-    image="familyHome"
+    title="Seguros para particulares"
+    lead="Carro, casa, saúde e vida. Comparamos as seguradoras com quem trabalhamos e explicamos cada apólice antes de assinar."
     crumb="Particulares"
-    introTitle="Proteção pessoal e familiar, <span class='hl'>sem surpresas</span>"
-    introText="Um seguro só mostra o que vale quando é preciso. Por isso começamos por perceber a sua vida, e só depois procuramos a apólice."
+    introTitle="Como ajudamos"
     introImage="homeVisit"
-    points={[
-      ['search', 'Revemos o que já tem', 'Muitas famílias pagam coberturas repetidas entre casa, carro e cartões.'],
-      ['handshake', 'Negociamos por si', 'Com várias seguradoras, conseguimos condições que sozinho não teria.'],
-      ['shield', 'Estamos lá no sinistro', 'Participação, peritagem e acompanhamento, sem call centers.'],
-    ]}
-  />
+    introAlt="Mediador a conversar com um casal sénior em casa"
+  >
+    <Fragment slot="intro">
+      <p>Muitas famílias têm coberturas repetidas entre o seguro da casa, o do carro e os cartões bancários, ou um seguro de vida do banco mais caro do que precisa de ser. Começamos por ver o que já tem.</p>
+      <p>Depois pedimos propostas a várias seguradoras e mostramos-lhe as diferenças. Se um dia tiver um sinistro, liga-nos a nós e tratamos da participação e da peritagem.</p>
+    </Fragment>
+  </SegmentPage>
 </Base>

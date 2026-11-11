@@ -1,9 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
-import Icon from '../components/Icon.astro';
 import Photo from '../components/Photo.astro';
 import Faq from '../components/Faq.astro';
-import { company, insurers, ramos, ramosBySegment, generalFaq } from '../data/site.js';
+import CtaBand from '../components/CtaBand.astro';
+import { company, insurers, ramosBySegment, generalFaq } from '../data/site.js';
 
 const faqSchema = {
   '@context': 'https://schema.org',
@@ -20,165 +20,99 @@ const segments = [
   description="Mediador de seguros na Ericeira há mais de 25 anos. Seguros automóvel, habitação, saúde, vida e acidentes de trabalho. Comparamos Fidelidade, Allianz, Generali e Ageas."
   schema={[faqSchema]}
 >
-  <!-- HERO -->
   <section class="hero">
     <div class="container">
       <div>
-        <span class="eyebrow">Mediação de seguros na Ericeira</span>
-        <h1>O descanso de saber que tudo o que construiu <span class="hl">está seguro.</span></h1>
-        <p class="lead">A sua família e o seu negócio merecem mais do que um seguro padrão. Comparamos as principais seguradoras e ficamos do seu lado nos momentos em que mais precisa, sem call centers.</p>
-        <div class="hero__ctas">
-          <a class="btn" href="/seguros-particulares/">Proteção particular <Icon name="arrow" size={18} /></a>
-          <a class="btn btn--outline" href="/seguros-empresas/">Soluções para empresas</a>
+        <h1>O descanso de saber que tudo o que construiu está seguro.</h1>
+        <p class="lead">Somos uma mediadora de seguros na Ericeira, com mais de {company.years} anos de trabalho. Comparamos propostas de várias seguradoras e, quando há um sinistro, é connosco que fala.</p>
+        <div class="actions">
+          <a class="btn" href="/seguros-particulares/">Seguros para particulares</a>
+          <a class="btn btn--outline" href="/seguros-empresas/">Seguros para empresas</a>
         </div>
-        <ul class="checks">
-          <li><Icon name="check" /> +{company.years} anos de experiência</li>
-          <li><Icon name="check" /> Rigor e transparência</li>
-          <li><Icon name="check" /> Consultoria sem custos</li>
-        </ul>
+        <p class="facts">
+          <strong>{company.address.street}, {company.address.locality}</strong><br />
+          <a href={company.phoneHref}>{company.phone}</a> · Mediador registado na ASF com o n.º {company.asf}
+        </p>
       </div>
-      <div class="hero__media">
-        <div class="hero__img">
-          <Photo name="heroAdvisor" alt="Mediador de seguros a cumprimentar um casal sénior sorridente" sizes="(max-width: 960px) 100vw, 560px" priority />
-        </div>
-        <div class="float-card float-card--years">
-          <strong>+{company.years}</strong>
-          <span>anos na Ericeira</span>
-        </div>
-        <a class="float-card float-card--rating" href={company.google.href} target="_blank" rel="noopener">
-          <span class="rating-big">{company.google.rating}</span>
-          <span>
-            <span class="stars">{[1,2,3,4,5].map(() => <Icon name="star" />)}</span>
-            <small>{company.google.count} avaliações no Google</small>
-          </span>
-        </a>
-      </div>
+      <figure>
+        <Photo name="heroAdvisor" alt="Mediador de seguros a cumprimentar um casal sénior" sizes="(max-width: 900px) 100vw, 520px" priority />
+      </figure>
     </div>
   </section>
 
-  <!-- SEGURADORAS -->
-  <section class="partners" aria-label="Seguradoras parceiras">
+  <section class="insurers" aria-label="Seguradoras">
     <div class="container">
-      <p>Trabalhamos com as principais seguradoras do mercado</p>
-      <ul>{insurers.map((i) => <li><a href={i.href} target="_blank" rel="noopener">{i.name}</a></li>)}</ul>
+      <p>Trabalhamos com {insurers.map((i, n) => (
+        <>{n > 0 && (n === insurers.length - 1 ? ' e ' : ', ')}<a href={i.href} target="_blank" rel="noopener">{i.name}</a></>
+      ))}, entre outras.</p>
     </div>
   </section>
 
-  <!-- SERVIÇOS -->
-  <section class="section section--warm" id="seguros">
+  <section class="section" id="seguros">
     <div class="container">
-      <div class="section-head section-head--split">
-        <div>
-          <span class="eyebrow">Os nossos seguros</span>
-          <h2>Um seguro para cada <span class="hl">momento da vida.</span></h2>
-          <p class="lead" style="margin:0">Escolha o que quer proteger e veja o que cobre, para quem é e as perguntas mais frequentes.</p>
-        </div>
-        <div class="tabs" role="tablist" aria-label="Tipo de cliente">
-          {segments.map((s, i) => (
-            <button role="tab" type="button" id={`tab-${s.id}`} aria-controls={`panel-${s.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>{s.label}</button>
-          ))}
-        </div>
+      <div class="section-intro">
+        <h2>Seguros</h2>
+        <p>Cada seguro tem uma página com as coberturas principais e as perguntas que mais nos fazem.</p>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Tipo de cliente">
+        {segments.map((s, i) => (
+          <button role="tab" type="button" id={`tab-${s.id}`} aria-controls={`panel-${s.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>{s.label}</button>
+        ))}
       </div>
       {segments.map((s, i) => (
-        <div class="cards" role="tabpanel" id={`panel-${s.id}`} aria-labelledby={`tab-${s.id}`} hidden={i !== 0}>
-          {s.items.map((r, n) => (
-            <article class="card">
-              <span class="card__num" aria-hidden="true">{String(n + 1).padStart(2, '0')}</span>
-              <span class="card__icon"><Icon name={r.icon} size={30} /></span>
-              <h3>{r.name}</h3>
+        <ul class="ramo-list" role="tabpanel" id={`panel-${s.id}`} aria-labelledby={`tab-${s.id}`} hidden={i !== 0}>
+          {s.items.map((r) => (
+            <li>
+              <h3><a href={`/seguros/${r.slug}/`}>{r.name}</a></h3>
               <p>{r.short}</p>
-              <a class="link-arrow stretched" href={`/seguros/${r.slug}/`}>Saber mais <Icon name="arrow" size={18} /></a>
-            </article>
+            </li>
           ))}
-        </div>
+        </ul>
       ))}
     </div>
   </section>
 
-  <!-- AUDITORIA PME -->
-  <section class="section" style="padding-bottom:0">
-    <div class="container">
-      <div class="promo">
-        <div class="promo__body">
-          <span class="eyebrow">Para empresas</span>
-          <h2>Auditoria gratuita à carteira de seguros da sua empresa</h2>
-          <p>Muitas empresas pagam coberturas que não usam e ficam descobertas onde mais importa. Analisamos as apólices atuais e entregamos um relatório claro, sem custos nem compromisso.</p>
-          <ul>
-            <li><Icon name="check" /> Coberturas em falta e duplicadas</li>
-            <li><Icon name="check" /> Enquadramento correto de acidentes de trabalho</li>
-            <li><Icon name="check" /> Comparação de preços entre seguradoras</li>
-          </ul>
-          <a class="btn btn--light" href="/simulacao/?tipo=auditoria-empresas">Pedir auditoria gratuita <Icon name="arrow" size={18} /></a>
-        </div>
-        <div class="promo__img">
-          <Photo name="advisorCouple" alt="Mediador a apresentar uma proposta a um casal" sizes="(max-width: 860px) 100vw, 500px" />
-        </div>
+  <section class="section section--alt" id="auditoria">
+    <div class="container feature">
+      <div>
+        <h2>Análise gratuita às apólices da sua empresa</h2>
+        <p>Envie-nos as apólices que a empresa tem hoje. Vemos se há coberturas em falta ou repetidas, se o seguro de acidentes de trabalho está bem enquadrado e se há condições melhores noutras seguradoras.</p>
+        <p>A análise não tem custo e não fica obrigado a mudar.</p>
+        <a class="btn" href="/simulacao/?tipo=auditoria-empresas">Pedir análise</a>
       </div>
+      <Photo name="advisorCouple" alt="Mediador a apresentar uma proposta a dois clientes" sizes="(max-width: 860px) 100vw, 540px" />
     </div>
   </section>
 
-  <!-- PROCESSO + NÚMEROS -->
-  <section class="section section--dark" style="margin-top:clamp(4rem,9vw,7.5rem)">
+  <section class="section">
     <div class="container">
-      <div class="section-head section-head--center">
-        <span class="eyebrow">Como trabalhamos</span>
-        <h2>Do primeiro contacto ao sinistro, <span class="hl">sempre connosco.</span></h2>
+      <div class="section-intro">
+        <h2>Como trabalhamos</h2>
       </div>
       <ol class="steps">
-        <li class="step"><span class="step__num">01</span><h3>Conversa inicial</h3><p>Percebemos o que tem, o que precisa proteger e quanto paga hoje.</p></li>
-        <li class="step"><span class="step__num">02</span><h3>Comparação</h3><p>Pedimos propostas a várias seguradoras com as mesmas coberturas.</p></li>
-        <li class="step"><span class="step__num">03</span><h3>Proposta clara</h3><p>Explicamos as diferenças e recomendamos, sem pressão.</p></li>
-        <li class="step"><span class="step__num">04</span><h3>Acompanhamento</h3><p>Alterações, renovações e sinistros tratados por nós.</p></li>
+        <li><h3>Falamos consigo</h3><p>Por telefone, WhatsApp ou no escritório. Vemos que seguros tem e quanto paga.</p></li>
+        <li><h3>Pedimos propostas</h3><p>A várias seguradoras, com as mesmas coberturas, para poder comparar.</p></li>
+        <li><h3>Escolhe</h3><p>Explicamos as diferenças entre as propostas. A decisão é sua.</p></li>
+        <li><h3>Acompanhamos</h3><p>Renovações, alterações e sinistros passam por nós.</p></li>
       </ol>
-      <div class="stats">
-        <div><strong>{company.years}<em>+</em></strong><span>anos de mediação na Ericeira</span></div>
-        <div><strong>{insurers.length}<em>+</em></strong><span>seguradoras parceiras</span></div>
-        <div><strong>0<em>€</em></strong><span>pela análise e simulação</span></div>
-        <div><strong>{company.google.rating}<em>★</em></strong><span>{company.google.count} avaliações no Google</span></div>
-      </div>
     </div>
   </section>
 
-  <!-- AVALIAÇÕES -->
-  <section class="section section--warm">
-    <div class="container reviews">
-      <div class="review-score">
-        <span class="eyebrow">Avaliações Google</span>
-        <div class="num">{company.google.rating}</div>
-        <span class="stars">{[1,2,3,4,5].map(() => <Icon name="star" />)}</span>
-        <p>Com base em {company.google.count} avaliações de clientes no Google.</p>
-        <a class="btn btn--dark" href={company.google.href} target="_blank" rel="noopener">Ler as avaliações <Icon name="arrowUpRight" size={18} /></a>
-      </div>
+  <section class="section section--alt">
+    <div class="container feature feature--top">
       <div>
-        <span class="eyebrow">O que dizem os clientes</span>
-        <h2>Atendimento próximo, <span class="hl">de pessoas reais.</span></h2>
-        <p class="lead">Os nossos clientes destacam a disponibilidade, a clareza das explicações e o acompanhamento quando algo corre mal. É isso que queremos continuar a ser: a pessoa a quem liga quando precisa.</p>
-        <ul class="pill-list">
-          <li><Icon name="check" size={18} /> Disponibilidade</li>
-          <li><Icon name="check" size={18} /> Explicações claras</li>
-          <li><Icon name="check" size={18} /> Apoio em sinistros</li>
-          <li><Icon name="check" size={18} /> Preços competitivos</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="section">
-    <div class="container split" style="align-items:start">
-      <div>
-        <span class="eyebrow">Perguntas frequentes</span>
-        <h2>Dúvidas sobre <span class="hl">mediação de seguros?</span></h2>
-        <p class="lead">Se não encontrar aqui a resposta, ligue-nos ou envie uma mensagem por WhatsApp.</p>
-        <div class="hero__ctas">
-          <a class="btn" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> Falar por WhatsApp</a>
-          <a class="btn btn--outline" href="/contactos/">Contactos</a>
+        <h2>Perguntas frequentes</h2>
+        <p>Não encontra a resposta? Ligue para o <a class="link" href={company.phoneHref}>{company.phone}</a> ou envie mensagem por <a class="link" href={company.whatsappHref} target="_blank" rel="noopener">WhatsApp</a>.</p>
+        <div class="rating">
+          <strong>{company.google.rating}</strong>
+          <span><span class="stars" aria-hidden="true">★★★★★</span><br />{company.google.count} avaliações no Google · <a class="link" href={company.google.href} target="_blank" rel="noopener">ler</a></span>
         </div>
       </div>
       <Faq items={generalFaq} />
     </div>
   </section>
 
+  <CtaBand />
 </Base>
 
 <script>

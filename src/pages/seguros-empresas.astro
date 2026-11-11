@@ -1,45 +1,36 @@
 ---
 import Base from '../layouts/Base.astro';
 import SegmentPage from '../components/SegmentPage.astro';
-import Icon from '../components/Icon.astro';
 import Photo from '../components/Photo.astro';
 ---
 <Base
   title="Seguros para Empresas em Mafra e Ericeira"
-  description="Seguros para PME: acidentes de trabalho, multirriscos empresarial, responsabilidade civil, frota automóvel e saúde de grupo. Auditoria gratuita à carteira de seguros."
+  description="Seguros para PME: acidentes de trabalho, multirriscos empresarial, responsabilidade civil, frota automóvel e saúde de grupo. Análise gratuita das apólices da empresa."
   image="worker"
 >
   <SegmentPage
     segment="empresas"
-    title="Seguros para <span class='hl'>empresas</span> e profissionais"
-    lead="Do seguro obrigatório de acidentes de trabalho à proteção das instalações e da atividade. Um só interlocutor para todos os seguros da empresa."
-    image="handshake"
+    title="Seguros para empresas"
+    lead="Acidentes de trabalho, instalações, responsabilidade civil, viaturas e saúde da equipa, com um só contacto para todos os seguros da empresa."
     crumb="Empresas"
-    introTitle="Menos tempo com seguros, <span class='hl'>mais tempo no negócio</span>"
-    introText="Tratamos das apólices, das folhas de férias, das renovações e dos sinistros para que se possa concentrar no que faz melhor."
-    introImage="advisorCouple"
-    points={[
-      ['clipboard', 'Enquadramento correto', 'Atividade e massa salarial bem declaradas evitam acertos e recusas.'],
-      ['users', 'Um só interlocutor', 'Todos os seguros da empresa geridos por quem conhece o seu negócio.'],
-      ['alert', 'Resposta rápida em sinistros', 'Ajudamos a participar dentro dos prazos e a manter a atividade.'],
-    ]}
+    introTitle="Como ajudamos"
+    introImage="handshake"
+    introAlt="Aperto de mão numa reunião de escritório"
   >
-    <section class="section" id="auditoria" style="padding-top:0">
-      <div class="container">
-        <div class="promo">
-          <div class="promo__body">
-            <span class="eyebrow">Oferta para PME</span>
-            <h2>Auditoria gratuita à carteira de seguros</h2>
-            <p>Envie-nos as apólices atuais. Em poucos dias recebe um relatório com coberturas em falta, duplicações e uma comparação de preços, sem custos nem compromisso.</p>
-            <ul>
-              <li><Icon name="check" /> Análise de todas as apólices da empresa</li>
-              <li><Icon name="check" /> Riscos descobertos identificados</li>
-              <li><Icon name="check" /> Proposta de otimização de custos</li>
-            </ul>
-            <a class="btn btn--light" href="/simulacao/?tipo=auditoria-empresas">Pedir auditoria gratuita <Icon name="arrow" size={18} /></a>
-          </div>
-          <div class="promo__img"><Photo name="elderly" alt="Consultor a analisar documentos com um empresário" sizes="(max-width: 860px) 100vw, 500px" /></div>
+    <Fragment slot="intro">
+      <p>Tratamos das apólices, das folhas de férias e das renovações. Declarar bem a atividade e a massa salarial evita recusas e acertos no fim do ano.</p>
+      <p>Quando há um acidente de trabalho ou um sinistro nas instalações, ajudamos a participar dentro dos prazos e acompanhamos o processo com a seguradora.</p>
+    </Fragment>
+
+    <section class="section" id="auditoria">
+      <div class="container feature">
+        <div>
+          <h2>Análise gratuita às apólices da empresa</h2>
+          <p>Envie-nos as apólices atuais. Vemos se há coberturas em falta ou repetidas, se o seguro de acidentes de trabalho está bem enquadrado e se há condições melhores noutras seguradoras. Depois explicamos o que encontrámos.</p>
+          <p>A análise não tem custo e não fica obrigado a mudar.</p>
+          <a class="btn" href="/simulacao/?tipo=auditoria-empresas">Pedir análise</a>
         </div>
+        <Photo name="elderly" alt="Mediador a rever documentos com um cliente" sizes="(max-width: 860px) 100vw, 540px" />
       </div>
     </section>
   </SegmentPage>

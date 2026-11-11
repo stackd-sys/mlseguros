@@ -1,5 +1,4 @@
 ---
-import Icon from './Icon.astro';
 import Photo from './Photo.astro';
 import PageHero from './PageHero.astro';
 import CtaBand from './CtaBand.astro';
@@ -9,56 +8,36 @@ interface Props {
   segment: 'particulares' | 'empresas';
   title: string;
   lead: string;
-  image: string;
   crumb: string;
   introTitle: string;
-  introText: string;
   introImage: string;
-  points: [string, string, string][];
+  introAlt: string;
 }
-const { segment, title, lead, image, crumb, introTitle, introText, introImage, points } = Astro.props;
+const { segment, title, lead, crumb, introTitle, introImage, introAlt } = Astro.props;
 const items = ramosBySegment(segment);
 ---
-<PageHero title={title} lead={lead} image={image} crumbs={[{ label: crumb }]}>
-  <div class="hero__ctas">
-    <a class="btn" href="/simulacao/">Pedir simulação <Icon name="arrow" size={18} /></a>
-  </div>
-</PageHero>
+<PageHero title={title} lead={lead} crumbs={[{ label: crumb }]} />
 
-<section class="section section--warm">
+<section class="section">
   <div class="container">
-    <div class="section-head">
-      <span class="eyebrow">Seguros para {crumb.toLowerCase()}</span>
-      <h2>Escolha o que <span class="hl">quer proteger</span></h2>
-    </div>
-    <div class="cards">
-      {items.map((r, n) => (
-        <article class="card">
-          <span class="card__num" aria-hidden="true">{String(n + 1).padStart(2, '0')}</span>
-          <span class="card__icon"><Icon name={r.icon} size={30} /></span>
-          <h3>{r.name}</h3>
+    <ul class="ramo-list">
+      {items.map((r) => (
+        <li>
+          <h3><a href={`/seguros/${r.slug}/`}>{r.name}</a></h3>
           <p>{r.short}</p>
-          <a class="link-arrow stretched" href={`/seguros/${r.slug}/`}>Saber mais <Icon name="arrow" size={18} /></a>
-        </article>
+          <a class="more" href={`/seguros/${r.slug}/`}>Coberturas e perguntas frequentes</a>
+        </li>
       ))}
-    </div>
+    </ul>
   </div>
 </section>
 
-<section class="section">
-  <div class="container split">
-    <div class="collage" style="padding:0">
-      <div class="collage__main"><Photo name={introImage} alt="" sizes="(max-width: 900px) 100vw, 600px" /></div>
-    </div>
+<section class="section section--alt">
+  <div class="container feature">
+    <Photo name={introImage} alt={introAlt} sizes="(max-width: 860px) 100vw, 540px" />
     <div>
-      <span class="eyebrow">Porquê a ML Seguros</span>
-      <h2 set:html={introTitle} />
-      <p class="lead">{introText}</p>
-      <ul class="feature-list" style="grid-template-columns:1fr">
-        {points.map(([icon, t, d]) => (
-          <li><span class="ic"><Icon name={icon} /></span><div><strong>{t}</strong><p>{d}</p></div></li>
-        ))}
-      </ul>
+      <h2>{introTitle}</h2>
+      <slot name="intro" />
     </div>
   </div>
 </section>
