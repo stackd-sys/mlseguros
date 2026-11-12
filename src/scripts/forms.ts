@@ -27,6 +27,10 @@ export function setupForm(form: HTMLFormElement, opts: { endpoint: string; email
     delete data['_gotcha'];
     if ((form.querySelector('[name="_gotcha"]') as HTMLInputElement | null)?.value) return; // spam
     data['origem'] = location.pathname;
+    // Nas escolhas, envia o nome visível (ex.: "Seguro Automóvel") e não o código interno.
+    form.querySelectorAll<HTMLInputElement>('input[type="radio"]:checked[data-label]').forEach((r) => {
+      data[r.name] = r.dataset.label!;
+    });
 
     const show = (state: 'ok' | 'err', msg: string) => {
       if (!status) return;

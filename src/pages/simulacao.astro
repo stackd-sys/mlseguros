@@ -202,5 +202,6 @@ const empresas = [...ramosBySegment('empresas').map((r) => r.slug), 'auditoria-e
 
   const cfg = (window as any).__form;
   setupForm(form, { endpoint: cfg.endpoint, email: cfg.email, subject: 'Pedido de simulação (site)' });
-  form.addEventListener('sent', () => { syncType(); go(0); });
+  // Fica no último passo, onde está a mensagem de confirmação.
+  form.addEventListener('sent', () => syncType());
 </script>

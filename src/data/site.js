@@ -28,9 +28,9 @@ export const company = {
     href: 'https://www.google.com/maps/search/?api=1&query=ML+Seguros+Ericeira',
   },
   areaServed: ['Ericeira', 'Mafra', 'Sintra', 'Torres Vedras', 'Lisboa'],
-  // Endpoint que recebe os formulários (ex.: Formspree, Make, n8n, webhook do CRM).
-  // Enquanto estiver vazio, os formulários abrem o email do visitante já preenchido.
-  formEndpoint: '',
+  // Endereço que recebe os formulários (o CRM da ML: <domínio do CRM>/api/site/pedido),
+  // definido em PUBLIC_FORM_ENDPOINT. Sem ele, os formulários abrem o email do visitante já preenchido.
+  formEndpoint: import.meta.env.PUBLIC_FORM_ENDPOINT ?? '',
 };
 
 // Seguradoras parceiras (texto; substituir por logótipos oficiais em /public/parceiros/ se autorizados).
