@@ -33,6 +33,13 @@ export const company = {
   formEndpoint: import.meta.env.PUBLIC_FORM_ENDPOINT ?? '',
 };
 
+// Versão da política de privacidade. Ao alterá-la, subir também VERSAO_POLITICA
+// no CRM (lib/rgpd.ts), para a área de cliente pedir de novo a confirmação.
+export const privacy = {
+  version: '2026-11',
+  updated: '13 de novembro de 2026',
+};
+
 // Seguradoras parceiras (texto; substituir por logótipos oficiais em /public/parceiros/ se autorizados).
 export const insurers = [
   { name: 'Fidelidade', href: 'https://www.fidelidade.pt' },

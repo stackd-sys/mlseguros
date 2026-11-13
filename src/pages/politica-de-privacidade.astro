@@ -1,33 +1,83 @@
 ---
 import Base from '../layouts/Base.astro';
 import LegalPage from '../components/LegalPage.astro';
-import { company } from '../data/site.js';
+import { company, privacy } from '../data/site.js';
+const mail = `mailto:${company.email}`;
 ---
-<Base title="Informação Legal e Privacidade" description="Informação legal sobre a ML Seguros, mediador registado na ASF, meios de reclamação e como tratamos os dados pessoais recolhidos no site.">
+<Base title="Informação Legal e Privacidade" description="Informação legal sobre a ML Seguros, mediador registado na ASF, meios de reclamação e como tratamos os dados pessoais de quem nos contacta e dos nossos clientes, incluindo na área de cliente.">
   <LegalPage title="Informação legal e privacidade">
     <h2>Identificação</h2>
-    <p>{company.legalName}<br />NIF {company.nif}<br />{company.address.street}, {company.address.postalCode} {company.address.locality}<br />{company.phone} ({company.phoneNote.toLowerCase()}) · <a href={`mailto:${company.email}`}>{company.email}</a></p>
+    <p>{company.legalName}<br />NIF {company.nif}<br />{company.address.street}, {company.address.postalCode} {company.address.locality}<br />{company.phone} ({company.phoneNote.toLowerCase()}) · <a href={mail}>{company.email}</a></p>
     <h2>Registo de mediador</h2>
     <p>Mediador de seguros inscrito na Autoridade de Supervisão de Seguros e Fundos de Pensões (ASF) com o n.º {company.asf}. O registo pode ser verificado em <a href="https://www.asf.com.pt" target="_blank" rel="noopener">www.asf.com.pt</a>.</p>
     <h2>Reclamações</h2>
     <p>Pode apresentar reclamação diretamente para {company.email}, no <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">Livro de Reclamações Eletrónico</a> ou junto da ASF.</p>
     <h2>Resolução alternativa de litígios</h2>
     <p>Em caso de litígio, o consumidor pode recorrer ao CIMPAS – Centro de Informação, Mediação e Arbitragem de Seguros (<a href="https://www.cimpas.pt" target="_blank" rel="noopener">www.cimpas.pt</a>). Mais informação no Portal do Consumidor (<a href="https://www.consumidor.gov.pt" target="_blank" rel="noopener">www.consumidor.gov.pt</a>).</p>
-    <h2>Privacidade e cookies</h2>
-    <p>Esta secção explica como a {company.legalName} trata os dados pessoais que nos envia através deste site.</p>
+
+    <h2 id="privacidade">Política de privacidade</h2>
+    <p class="muted small">Versão {privacy.version}, atualizada a {privacy.updated}.</p>
+    <p>Esta política explica como a {company.legalName} trata os dados pessoais de quem nos contacta pelo site, de quem nos pede uma proposta e dos nossos clientes, incluindo na área de cliente.</p>
+
     <h3>Responsável pelo tratamento</h3>
-    <p>{company.legalName}, NIF {company.nif}, {company.address.street}, {company.address.postalCode} {company.address.locality}. Contacto: <a href={`mailto:${company.email}`}>{company.email}</a>.</p>
-    <h3>Que dados recolhemos</h3>
-    <p>Os dados que indica nos formulários (nome, contactos, dados sobre o seguro pretendido) e a mensagem que nos envia. Não pedimos dados de saúde através do site.</p>
+    <p>{company.legalName}, NIF {company.nif}, {company.address.street}, {company.address.postalCode} {company.address.locality}. Para qualquer questão sobre os seus dados, escreva para <a href={mail}>{company.email}</a>.</p>
+
+    <h3>Que dados tratamos</h3>
+    <ul>
+      <li><strong>Pedidos pelo site:</strong> nome, contactos, o seguro que procura e a mensagem que nos envia. Não pedimos dados de saúde através do site.</li>
+      <li><strong>Clientes:</strong> nome, NIF, data de nascimento, profissão, contactos, morada, IBAN para o pagamento dos prémios e, se o indicar, um contacto de emergência.</li>
+      <li><strong>Os seus seguros:</strong> propostas, apólices, recibos, sinistros, dados sobre o que segura (por exemplo, a matrícula do veículo ou a morada da casa) e os documentos que nos entrega.</li>
+      <li><strong>Dados de saúde:</strong> nos seguros de vida, de saúde e de acidentes, e em alguns sinistros, só os necessários para a proposta, o contrato ou a participação, com o seu consentimento explícito.</li>
+      <li><strong>Contactos connosco:</strong> as notas dos telefonemas, emails e reuniões, e os pedidos que faz na área de cliente.</li>
+      <li><strong>Área de cliente:</strong> o email com que entra, a data do convite e do último acesso, e as suas escolhas sobre privacidade e marketing, com a data e a forma como as fez. A palavra-passe é guardada de forma que nem nós a conseguimos ver.</li>
+      <li><strong>Outras pessoas:</strong> se nos der dados de outras pessoas (segurados, beneficiários, condutores, familiares), informe-as de que o fez. Se recomendar alguém na área de cliente, guardamos o nome, o contacto e o seguro que procura, e a sua indicação de que essa pessoa autorizou o contacto.</li>
+    </ul>
+
     <h3>Para que os usamos</h3>
-    <p>Apenas para responder ao seu pedido, preparar propostas de seguro e, se se tornar cliente, gerir os seus contratos. A base legal é o seu consentimento e as diligências pré-contratuais a seu pedido.</p>
+    <ul>
+      <li><strong>Responder ao seu pedido e preparar propostas.</strong> Base legal: as diligências pré-contratuais que nos pede e o consentimento que dá no formulário (artigo 6.º, n.º 1, alíneas a) e b), do RGPD).</li>
+      <li><strong>Mediar e gerir os seus seguros:</strong> colocar o contrato numa seguradora, tratar das renovações, dos recibos e das alterações, e acompanhá-lo nos sinistros. Base legal: a execução do contrato (alínea b).</li>
+      <li><strong>Área de cliente:</strong> mostrar-lhe os seus seguros e documentos e receber os seus pedidos. Base legal: a execução do contrato (alínea b).</li>
+      <li><strong>Cumprir obrigações legais:</strong> os deveres de um mediador de seguros perante a ASF, a faturação e as obrigações fiscais, a prevenção do branqueamento de capitais nos seguros de vida e os pedidos de autoridades. Base legal: obrigação legal (alínea c).</li>
+      <li><strong>Novidades, campanhas e propostas de novos seguros</strong>, por email, SMS ou telefone. Base legal: o seu consentimento (alínea a), que pode retirar quando quiser. Sem ele, não lhe enviamos campanhas, mas continua a receber tudo o que diz respeito aos seus seguros: renovações, recibos e sinistros.</li>
+      <li><strong>Demonstrar as suas escolhas e defender direitos:</strong> guardamos quando e como deu ou retirou o consentimento, e um registo das alterações feitas aos seus dados. Base legal: o nosso interesse legítimo em provar o cumprimento da lei e em nos defendermos num litígio (alínea f).</li>
+    </ul>
+
     <h3>Com quem partilhamos</h3>
-    <p>Com as seguradoras a quem pedimos propostas em seu nome, e com prestadores que nos ajudam a operar o site e o email, sempre no âmbito do pedido. Não vendemos dados a terceiros.</p>
+    <ul>
+      <li><strong>Seguradoras:</strong> as que consultamos para lhe fazer uma proposta e a do seu contrato. Cada seguradora é responsável pelo tratamento que faz dos seus dados e tem a sua própria política de privacidade.</li>
+      <li><strong>Outros mediadores com quem trabalhamos</strong>, quando o seu seguro é colocado através deles, só com os dados necessários para isso.</li>
+      <li><strong>Autoridades:</strong> a ASF, a Autoridade Tributária, os tribunais e outras entidades públicas, quando a lei o exige.</li>
+      <li><strong>Prestadores de serviços</strong> que nos ajudam a funcionar (alojamento do site e da área de cliente, base de dados, envio de email, informática e contabilidade). Tratam os dados só por nossa conta, com um contrato que os obriga a protegê-los.</li>
+    </ul>
+    <p>Não vendemos dados a ninguém.</p>
+
+    <h3>Transferências para fora do Espaço Económico Europeu</h3>
+    <p>Alguns dos nossos prestadores de serviços são empresas com sede fora do Espaço Económico Europeu. Quando os dados saem do EEE, a transferência assenta numa decisão de adequação da Comissão Europeia (como o Quadro de Privacidade de Dados UE-EUA) ou nas cláusulas contratuais-tipo aprovadas pela Comissão. Pode pedir-nos informação sobre estas garantias.</p>
+
     <h3>Durante quanto tempo</h3>
-    <p>Pedidos que não resultem em contrato são apagados ao fim de 12 meses. Os dados de clientes são conservados durante o contrato e pelos prazos legais aplicáveis.</p>
+    <ul>
+      <li><strong>Pedidos que não resultem em contrato:</strong> são apagados ao fim de 12 meses.</li>
+      <li><strong>Clientes:</strong> enquanto tiver seguros connosco. Depois, só o que a lei obriga a guardar: 10 anos para a faturação e os documentos contabilísticos, 7 anos depois do fim da relação para os documentos de prevenção do branqueamento de capitais e 5 anos depois do fim do contrato, o prazo para fazer valer direitos de um contrato de seguro.</li>
+      <li><strong>Marketing:</strong> até retirar o consentimento. Guardamos o registo das suas escolhas enquanto for preciso para as demonstrar.</li>
+      <li><strong>Área de cliente:</strong> o acesso é desativado quando deixa de ser nosso cliente.</li>
+    </ul>
+
     <h3>Os seus direitos</h3>
-    <p>Pode pedir acesso, retificação, apagamento, limitação ou portabilidade dos seus dados, ou retirar o consentimento, escrevendo para {company.email}. Pode também apresentar reclamação à Comissão Nacional de Proteção de Dados (<a href="https://www.cnpd.pt" target="_blank" rel="noopener">cnpd.pt</a>).</p>
+    <p>Pode pedir acesso aos seus dados, a sua correção, apagamento, limitação ou portabilidade, opor-se ao seu tratamento e retirar o consentimento a qualquer momento, sem que isso afete o que foi feito antes. Na área de cliente, pode ver os seus dados, pedir alterações e mudar a sua escolha sobre marketing no perfil. Para o resto, escreva para <a href={mail}>{company.email}</a>.</p>
+    <p>Respondemos no prazo de um mês, que pode ser prolongado por mais dois nos pedidos complexos, e sem custos. Podemos pedir-lhe que confirme a sua identidade. Pode também apresentar reclamação à Comissão Nacional de Proteção de Dados (<a href="https://www.cnpd.pt" target="_blank" rel="noopener">cnpd.pt</a>).</p>
+
+    <h3>Decisões automáticas</h3>
+    <p>Não tomamos decisões sobre si baseadas apenas em tratamento automatizado. A aceitação e o preço de cada seguro são decididos pela seguradora, segundo as suas regras.</p>
+
+    <h3>Segurança</h3>
+    <p>Só a equipa da {company.name} acede aos dados dos clientes, cada pessoa com a sua conta. Na área de cliente, cada cliente vê apenas os seus seguros e os das pessoas que lhe estão associadas (por exemplo, os filhos menores ou a sua empresa). As ligações são cifradas e as alterações ficam registadas. Se houver uma violação de dados que o possa afetar, avisamos nos termos da lei.</p>
+
     <h3>Cookies</h3>
     <p>Este site não usa cookies de publicidade nem de estatística. O mapa do Google só é carregado se carregar em «Mostrar mapa» na página de contactos; nesse momento a Google pode instalar os seus próprios cookies, de acordo com a política de privacidade da Google.</p>
+    <p>A área de cliente usa apenas os cookies necessários para manter a sessão iniciada e guarda no seu browser preferências de visualização. Também não usa cookies de publicidade nem de estatística.</p>
+
+    <h3>Alterações a esta política</h3>
+    <p>Se alterarmos esta política de forma relevante, publicamos aqui a nova versão e pedimos-lhe que tome conhecimento dela na próxima entrada na área de cliente.</p>
   </LegalPage>
 </Base>

@@ -48,6 +48,7 @@ Tudo está em `src/data/site.js`: contactos, seguradoras, fotografias, ramos (te
 - [ ] **Fotografias**: são fotos do Pexels (licença gratuita) carregadas diretamente do CDN do Pexels, todas revistas: sem texto legível em inglês e com pessoas coerentes com um público português. Ao trocar uma foto, manter estas regras. O ideal é substituí-las por fotos reais da equipa e do escritório da Ericeira (ponto "pessoas reais" da auditoria).
 - [ ] **Equipa e avaliações**: a página "Sobre nós" não tem nomes nem citações, porque não se devem inventar. Acrescentar a equipa (nomes e funções) e 2 a 3 avaliações reais do Google, com autorização.
 - [ ] **Rever textos**: os textos de "Sobre nós" (história) e as FAQ de cada ramo devem ser validados pela ML Seguros.
+- [ ] **Política de privacidade** (versão em `privacy` no `site.js`; ao mudá-la, subir também `VERSAO_POLITICA` no CRM): a ML deve confirmar se os dados de saúde são tratados com consentimento explícito, se os clientes dos parceiros de mediação (Barymont, Sabseg, Vitorinos) têm dados partilhados com eles, se há encarregado de proteção de dados e se usa um contabilista externo.
 - [ ] **Alojamento**: fazer um único redirect `http://www` → `https://mlseguros.pt` e redirects 301 das páginas antigas (`/particulares/` → `/seguros-particulares/`, etc.).
 - [ ] **Área de Cliente**: ligar o botão ao portal do CRM.
 - [ ] Confirmar o link do Facebook antes de o voltar a incluir.
