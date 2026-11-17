@@ -36,7 +36,7 @@ npm run build    # gera ./dist
 
 Todos os formulários (`src/components/Formulario.astro`) enviam para o endereço em `PUBLIC_FORM_ENDPOINT`. Há dois destinos, e muda-se só esta variável:
 
-- **Email (enquanto o CRM não está em produção):** `PUBLIC_FORM_ENDPOINT=/api/pedido`. A função `api/pedido.js` envia cada pedido para `EMAIL_PEDIDOS` (geral@mlseguros.pt). O assunto diz o tipo e quem pede (ex.: "Proposta (Seguro Automóvel): Ana Costa"); o email traz os campos, a página de onde veio e ligações para ligar e para o WhatsApp. Se a pessoa deixou email, responder ao email responde-lhe. O envio está numa camada trocável (`api/_lib/email.js`, hoje Resend; em local, Mailpit).
+- **Email (enquanto o CRM não está em produção):** `PUBLIC_FORM_ENDPOINT=/api/pedido/`. A função `api/pedido.js` envia cada pedido para `EMAIL_PEDIDOS` (geral@mlseguros.pt). O assunto diz o tipo e quem pede (ex.: "Proposta (Seguro Automóvel): Ana Costa"); o email traz os campos, a página de onde veio e ligações para ligar e para o WhatsApp. Se a pessoa deixou email, responder ao email responde-lhe. O envio está numa camada trocável (`api/_lib/email.js`, hoje Resend; em local, Mailpit).
 - **CRM:** `PUBLIC_FORM_ENDPOINT=https://<domínio do CRM>/api/site/pedido`. Pedidos de proposta entram como **lead**; sinistros, mensagens e pedidos para ligarem como **tarefa por atribuir**, com a tarefa "Contactar". No CRM, `SITE_ORIGENS` tem de ter o endereço do site.
 
 Depois de enviar, o visitante vai para `/obrigado/<tipo>/`, que o trata pelo primeiro nome. É o endereço a usar para medir conversões.
@@ -88,7 +88,7 @@ Com `PUBLIC_GTM_ID`, o site carrega o Google Tag Manager com o Consent Mode v2 (
 
 | Variável | Para quê |
 |----------|----------|
-| `PUBLIC_FORM_ENDPOINT` | Para onde vão os formulários: `/api/pedido` (email) ou a rota do CRM (`https://<domínio do CRM>/api/site/pedido`) |
+| `PUBLIC_FORM_ENDPOINT` | Para onde vão os formulários: `/api/pedido/` (email) ou a rota do CRM (`https://<domínio do CRM>/api/site/pedido`) |
 | `EMAIL_PEDIDOS` | Quem recebe os pedidos por email (`geral@mlseguros.pt`) |
 | `EMAIL_REMETENTE` | Ex.: `Site ML Seguros <pedidos@site.mlseguros.pt>` (domínio verificado no Resend) |
 | `EMAIL_FORNECEDOR`, `RESEND_API_KEY` | `resend` e a chave da conta Resend em nome da ML |
@@ -117,7 +117,7 @@ Dados da empresa, seguros, coberturas e perguntas: `src/data/site.js`. Fotografi
 
 - [ ] Push de `site-novo` (pré-visualização na Vercel) e, depois de testar, para a branch de produção: `git push origin site-novo:claude/aml-seguros-redesign-dclczi`.
 - [ ] Resend em nome da ML, na região da UE, com o subdomínio `site.mlseguros.pt` verificado (um subdomínio, como o Resend recomenda: uma chave roubada não serve para enviar emails em nome de geral@mlseguros.pt). Os registos do Resend (`resend._domainkey.site` e `send.site`) acrescentam-se ao DNS no Microsoft 365, sem mexer nos MX, SPF e TXT da Microsoft. Chave só com permissão de envio e só para esse domínio.
-- [ ] Variáveis na Vercel: `PUBLIC_PUBLICADO=true`, `PUBLIC_FORM_ENDPOINT=/api/pedido`, `PUBLIC_GTM_ID`, `EMAIL_PEDIDOS`, `EMAIL_REMETENTE`, `EMAIL_FORNECEDOR=resend`, `RESEND_API_KEY`. Sem `PUBLIC_CRM_URL`.
+- [ ] Variáveis na Vercel: `PUBLIC_PUBLICADO=true`, `PUBLIC_FORM_ENDPOINT=/api/pedido/`, `PUBLIC_GTM_ID`, `EMAIL_PEDIDOS`, `EMAIL_REMETENTE`, `EMAIL_FORNECEDOR=resend`, `RESEND_API_KEY`. Sem `PUBLIC_CRM_URL`.
 - [ ] Antes de mudar o DNS, testar cada formulário no endereço `.vercel.app` e confirmar que o email chega a geral@mlseguros.pt (e não ao spam).
 - [ ] DNS: só os registos do site (`@` e `www`) mudam para a Vercel. Os registos MX, SPF e de verificação da Microsoft ficam como estão, para o email continuar a funcionar.
 - [ ] Guias: na Vercel, em Settings, Git, Deploy Hooks, criar um hook para a branch de produção e guardá-lo no GitHub como segredo `VERCEL_DEPLOY_HOOK`. Testar com "Run workflow" em Actions.
