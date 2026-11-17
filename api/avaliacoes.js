@@ -2,6 +2,7 @@ import { lerAvaliacoes } from './_lib/avaliacoes.js';
 
 // Devolve a nota, o total e até cinco avaliações para a secção do site.
 // Sem configuração responde 204 e o site mostra só a ligação para o Google.
+// Sem cache: as regras da Google Maps Platform não deixam guardar avaliações.
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
@@ -10,7 +11,7 @@ export default async function handler(req, res) {
   try {
     const dados = await lerAvaliacoes();
     if (!dados) return res.status(204).end();
-    res.setHeader('Cache-Control', 'public, s-maxage=3600');
+    res.setHeader('Cache-Control', 'no-store');
     return res.status(200).json(dados);
   } catch (e) {
     console.error('avaliacoes:', e.message);

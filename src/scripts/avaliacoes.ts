@@ -65,8 +65,8 @@ function carrossel(caixa: HTMLElement, d: Dados) {
   if (lista.length < 2) caixa.querySelector<HTMLElement>('.testemunho__setas')!.hidden = true;
 }
 
-if (caixas.length) {
-  fetch('/api/avaliacoes', { headers: { Accept: 'application/json' } })
+function carregar() {
+  fetch('/api/avaliacoes/', { headers: { Accept: 'application/json' } })
     .then((r) => (r.status === 200 ? (r.json() as Promise<Dados>) : null))
     .then((d) => {
       if (!d) return;
@@ -85,4 +85,15 @@ if (caixas.length) {
       }
     })
     .catch(() => {});
+}
+
+// A Google não deixa guardar as avaliações e cada leitura é uma consulta à API:
+// só se pedem quando a secção está quase à vista.
+if (caixas.length) {
+  const vigia = new IntersectionObserver((entradas) => {
+    if (!entradas.some((e) => e.isIntersecting)) return;
+    vigia.disconnect();
+    carregar();
+  }, { rootMargin: '400px 0px' });
+  caixas.forEach((c) => vigia.observe(c));
 }
