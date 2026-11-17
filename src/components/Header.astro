@@ -1,81 +1,95 @@
 ---
-import Logo from './Logo.astro';
 import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import Btn from './Btn.astro';
 import { company, ramosBySegment } from '../data/site.js';
 
-const path = Astro.url.pathname;
-const groups = [
-  { label: 'Particulares', href: '/seguros-particulares/', items: ramosBySegment('particulares') },
-  { label: 'Empresas', href: '/seguros-empresas/', items: ramosBySegment('empresas') },
+interface Props { proposta: string }
+const { proposta } = Astro.props;
+const atual = Astro.url.pathname;
+const particulares = ramosBySegment('particulares');
+const empresas = ramosBySegment('empresas');
+const menus = [
+  {
+    nome: 'Particulares', href: '/seguros-particulares/',
+    itens: [
+      ...particulares.map((r) => ({ nome: r.label, sub: r.menu, href: `/seguros/${r.slug}/` })),
+      { sep: true },
+      { nome: 'Todos os seguros para particulares', href: '/seguros-particulares/' },
+    ],
+  },
+  {
+    nome: 'Empresas', href: '/seguros-empresas/',
+    itens: [
+      ...empresas.map((r) => ({ nome: r.label, sub: r.menu, href: `/seguros/${r.slug}/` })),
+      { nome: 'Frota automóvel', sub: 'As viaturas numa só apólice', href: '/seguros/automovel/' },
+      { nome: 'Saúde de grupo', sub: 'Seguro de saúde para a equipa', href: '/seguros/saude/' },
+      { sep: true },
+      { nome: 'Análise das apólices da empresa', href: '/seguros-empresas/#analise' },
+    ],
+  },
 ];
-const links = [
-  { label: 'Sinistros', href: '/sinistros/' },
-  { label: 'Sobre nós', href: '/sobre-nos/' },
-  { label: 'Contactos', href: '/contactos/' },
+const simples = [
+  { nome: 'Sinistros', href: '/sinistros/' },
+  { nome: 'Sobre nós', href: '/sobre-nos/' },
+  { nome: 'Contactos', href: '/contactos/' },
 ];
+const horario = company.hours.rows[0];
 ---
+<a class="skip" href="#conteudo">Saltar para o conteúdo</a>
 <div class="topbar">
-  <div class="container">
-    <ul>
-      <li><a href={company.mapsHref} target="_blank" rel="noopener">{company.address.street}, {company.address.locality}</a></li>
-      <li class="hide-md"><a href={`mailto:${company.email}`}>{company.email}</a></li>
-    </ul>
-    <ul>
-      <li class="hide-md">Registo ASF n.º {company.asf}</li>
-      <li><a href={company.phoneHref}>{company.phone}</a></li>
-    </ul>
+  <div class="wrap">
+    <p class="topbar__left"><Icon name="clock" />{horario.label}, {horario.value.replace(' e ', ' · ')} · {company.address.street}, {company.address.locality}</p>
+    <div class="topbar__right">
+      <a href={company.phoneHref}><Icon name="phone" />{company.phone}</a>
+      <a class="topbar__mail" href={`mailto:${company.email}`}><Icon name="mail" />{company.email}</a>
+      <a href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" />WhatsApp</a>
+      <span class="topbar__social">
+        <a href={company.social.instagram} target="_blank" rel="noopener" aria-label="Instagram da ML Seguros"><Icon name="instagram" /></a>
+        <a href={company.social.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn da ML Seguros"><Icon name="linkedin" /></a>
+      </span>
+    </div>
   </div>
 </div>
-
-<header class="header">
-  <div class="container">
+<header class="header" data-header>
+  <div class="wrap">
     <Logo />
-    <nav class="nav" id="nav" aria-label="Principal">
-      <ul>
-        {groups.map((g) => (
-          <li class="nav__item">
-            <button class="nav__link" type="button" aria-expanded="false" aria-current={path.startsWith(g.href) ? 'page' : undefined}>
-              {g.label} <Icon name="chevron" size={14} />
-            </button>
-            <ul class="nav__drop">
-              {g.items.map((r) => (
-                <li><a href={`/seguros/${r.slug}/`}>{r.name}</a></li>
-              ))}
-              <li><a class="all" href={g.href}>Todos os seguros para {g.label.toLowerCase()}</a></li>
-            </ul>
-          </li>
-        ))}
-        {links.map((l) => (
-          <li><a class="nav__link" href={l.href} aria-current={path.startsWith(l.href) ? 'page' : undefined}>{l.label}</a></li>
-        ))}
-      </ul>
-      <button type="button" class="btn btn--outline nav__cta client-btn" aria-disabled="true" title="Área de Cliente (brevemente)">Área de Cliente</button>
-      <a class="btn nav__cta" href="/simulacao/">Pedir simulação</a>
+    <nav class="nav" aria-label="Principal">
+      {menus.map((m) => (
+        <div class="nav__item">
+          <a class="nav__link" href={m.href} aria-current={atual === m.href ? 'page' : undefined}>{m.nome}<Icon name="chevron-down" /></a>
+          <div class="nav__menu">
+            {m.itens.map((i) => ('sep' in i ? <hr /> : <a href={i.href}><span>{i.nome}{i.sub && <small>{i.sub}</small>}</span><Icon name="arrow-up-right" /></a>))}
+          </div>
+        </div>
+      ))}
+      {simples.map((s) => <div class="nav__item"><a class="nav__link" href={s.href} aria-current={atual === s.href ? 'page' : undefined}>{s.nome}</a></div>)}
     </nav>
-    <div class="header__actions">
-      <button type="button" class="btn btn--outline btn--sm client-btn" aria-disabled="true" title="Área de Cliente (brevemente)">Área de Cliente</button>
-      <a class="btn btn--sm" href="/simulacao/">Pedir simulação</a>
-      <button class="burger" type="button" aria-controls="nav" aria-expanded="false" aria-label="Abrir menu">
-        <Icon name="menu" size={22} />
-      </button>
+    <div class="header__cta">
+      {company.crmUrl && <a class="btn-login" href={`${company.crmUrl}/portal`} aria-label="Área de cliente: entrar no portal"><Icon name="user-round" /><span>Área de cliente</span></a>}
+      <Btn href={proposta}>Pedir proposta</Btn>
+      <button class="burger" type="button" aria-label="Abrir o menu" aria-expanded="false" aria-controls="menu-movel" data-menu-abrir><Icon name="menu" /></button>
     </div>
   </div>
 </header>
-
-<script>
-  const burger = document.querySelector<HTMLButtonElement>('.burger');
-  const nav = document.getElementById('nav');
-  burger?.addEventListener('click', () => {
-    const open = nav!.classList.toggle('is-open');
-    burger.setAttribute('aria-expanded', String(open));
-    burger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
-    document.body.style.overflow = open ? 'hidden' : '';
-  });
-  document.querySelectorAll<HTMLButtonElement>('.nav__item > .nav__link').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const item = btn.parentElement!;
-      const open = item.classList.toggle('is-open');
-      btn.setAttribute('aria-expanded', String(open));
-    });
-  });
-</script>
+<div class="mnav" id="menu-movel" data-menu role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="mnav__top">
+    <Logo />
+    <button class="burger" type="button" aria-label="Fechar o menu" data-menu-fechar><Icon name="x" /></button>
+  </div>
+  <a href="/">Início</a>
+  {menus.map((m) => (
+    <details>
+      <summary>{m.nome}<Icon name="chevron-down" /></summary>
+      {m.itens.filter((i) => !('sep' in i)).map((i: any) => <a href={i.href}>{i.nome}</a>)}
+    </details>
+  ))}
+  {simples.map((s) => <a href={s.href}>{s.nome}</a>)}
+  {company.crmUrl && <a href={`${company.crmUrl}/portal`}>Área de cliente</a>}
+  <div class="mnav__cta">
+    <Btn href={proposta}>Pedir proposta</Btn>
+    <p>Ou ligue para</p>
+    <a class="mnav__tel" href={company.phoneHref}>{company.phone}</a>
+    <p>{company.phoneNote.charAt(0).toUpperCase() + company.phoneNote.slice(1)}. {horario.label}, {horario.value}.</p>
+  </div>
+</div>

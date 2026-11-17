@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { ramosBySegment } from '../data/site.js';
+import { guiasVisiveis } from '../data/guias';
+
+const guias = await guiasVisiveis();
+
+const grupos = [
+  { titulo: 'Seguros para particulares', href: '/seguros-particulares/', itens: ramosBySegment('particulares').map((r) => ({ nome: r.label, href: `/seguros/${r.slug}/` })) },
+  {
+    titulo: 'Seguros para empresas', href: '/seguros-empresas/',
+    itens: [...ramosBySegment('empresas').map((r) => ({ nome: r.label, href: `/seguros/${r.slug}/` })), { nome: 'Análise das apólices da empresa', href: '/seguros-empresas/#analise' }],
+  },
+  {
+    titulo: 'Pedidos e ajuda', href: '/simulacao/',
+    itens: [{ nome: 'Pedido de proposta', href: '/simulacao/' }, { nome: 'Participar um sinistro', href: '/sinistros/' }, { nome: 'Documentos num sinistro', href: '/sinistros/#documentos' }, { nome: 'Contactos', href: '/contactos/' }],
+  },
+  {
+    titulo: 'A ML Seguros', href: '/sobre-nos/',
+    itens: [...(guias.length ? [{ nome: 'Guias', href: '/guias/' }] : []), { nome: 'Página inicial', href: '/' }, { nome: 'Sobre nós', href: '/sobre-nos/' }, { nome: 'Informação legal e privacidade', href: '/politica-de-privacidade/' }, { nome: 'Créditos das fotografias', href: '/creditos/' }],
+  },
+  ...(guias.length ? [{ titulo: 'Guias', href: '/guias/', itens: guias.map((g) => ({ nome: g.data.titulo, href: `/guias/${g.id}/` })) }] : []),
+];
+---
+<Base title="Mapa do site" description="Todas as páginas do site da ML Seguros: seguros para particulares e empresas, pedido de proposta, sinistros, contactos e informação legal." image="sobre3">
+  <PageHero titulo="Mapa do site" foto="sobre3" migalhas={[{ nome: 'Mapa do site' }]} />
+  <section class="sec">
+    <div class="wrap mapa">
+      {grupos.map((g) => (
+        <div class="lista-lado reveal">
+          <h2><a href={g.href}>{g.titulo}</a></h2>
+          <ul>{g.itens.map((i) => <li><a href={i.href}>{i.nome}<Icon name="arrow-up-right" /></a></li>)}</ul>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>

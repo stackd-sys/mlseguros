@@ -1,0 +1,28 @@
+---
+// Consent Mode v2 (modo avançado) e Google Tag Manager. Por defeito tudo recusado;
+// a escolha guardada no cookie ml_consent é aplicada antes de o GTM carregar.
+import { site } from '../data/site.js';
+const gtmId = site.gtm;
+---
+{gtmId && (
+  <script is:inline define:vars={{ gtmId }}>
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    gtag('consent', 'default', {
+      ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied',
+      personalization_storage: 'denied', functionality_storage: 'granted', security_storage: 'granted', wait_for_update: 500,
+    });
+    gtag('set', 'ads_data_redaction', true);
+    gtag('set', 'url_passthrough', true);
+    try {
+      var m = document.cookie.match(/(?:^|; )ml_consent=([^;]*)/);
+      var c = m ? decodeURIComponent(m[1]).split('|') : [];
+      if (c[0] === '1') {
+        var est = c[1] === '1' ? 'granted' : 'denied';
+        var mkt = c[2] === '1' ? 'granted' : 'denied';
+        gtag('consent', 'update', { analytics_storage: est, ad_storage: mkt, ad_user_data: mkt, ad_personalization: mkt, personalization_storage: mkt });
+      }
+    } catch (e) {}
+    (function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f); })(window, document, 'script', 'dataLayer', gtmId);
+  </script>
+)}

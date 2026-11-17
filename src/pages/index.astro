@@ -1,137 +1,239 @@
 ---
 import Base from '../layouts/Base.astro';
-import Photo from '../components/Photo.astro';
+import Tag from '../components/Tag.astro';
+import Btn from '../components/Btn.astro';
+import Icon from '../components/Icon.astro';
+import Selo from '../components/Selo.astro';
 import Faq from '../components/Faq.astro';
-import CtaBand from '../components/CtaBand.astro';
-import { company, insurers, ramosBySegment, generalFaq } from '../data/site.js';
+import CartaoSeguro from '../components/CartaoSeguro.astro';
+import Avaliacoes from '../components/Avaliacoes.astro';
+import SeccaoFaq from '../components/SeccaoFaq.astro';
+import SeccaoProposta from '../components/SeccaoProposta.astro';
+import CartaoGuia from '../components/CartaoGuia.astro';
+import { guiasVisiveis } from '../data/guias';
+import { company, ramos, insurers } from '../data/site.js';
+import { fotos, fotoSrc, fotoSrcset } from '../data/fotos.js';
 
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: generalFaq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
-};
-const segments = [
-  { id: 'particulares', label: 'Particulares', items: ramosBySegment('particulares') },
-  { id: 'empresas', label: 'Empresas', items: ramosBySegment('empresas') },
+const img = (k: string, sizes: string, extra: Record<string, unknown> = {}) => ({
+  src: fotoSrc(k, 1200), srcset: fotoSrcset(k), sizes, alt: fotos[k].alt, width: fotos[k].largura, height: fotos[k].altura,
+  loading: 'lazy' as const, decoding: 'async' as const, style: fotos[k].pos ? `object-position:${fotos[k].pos}` : undefined, ...extra,
+});
+
+const perguntas: [string, string][] = [
+  ['O que faz um mediador de seguros?', 'Pede propostas a várias seguradoras, compara-as consigo e trata do contrato. Depois, faz as alterações à apólice e ajuda quando há um sinistro.'],
+  ['Fazer o seguro com um mediador fica mais caro?', 'Não. O preço da apólice é o da seguradora. A diferença é ter alguém que compara várias companhias por si e que atende quando precisa.'],
+  ['Com que seguradoras trabalham?', `Com a ${insurers.slice(0, -1).map((i) => i.name).join(', a ')} e a ${insurers.at(-1)!.name}, entre outras.`],
+  ['Posso passar os meus seguros para a ML Seguros?', 'Sim. Vemos as apólices que tem e, se decidir mudar, tratamos da mudança na data de renovação, sem ficar nenhum dia sem seguro.'],
+  ['Tive um acidente. O que faço primeiro?', 'Ponha-se em segurança e ligue-nos. No carro, preencha a Declaração Amigável com o outro condutor e tire fotografias.'],
 ];
+const sinistros: [string, string][] = [
+  ['Acidente de carro', 'Preencha a Declaração Amigável com o outro condutor, tire fotografias dos carros e do local e ligue-nos. A participação deve seguir até 8 dias depois do acidente.'],
+  ['Danos em casa', 'Trave o estrago se puder, fotografe tudo antes de reparar e guarde as faturas e os bens estragados até à peritagem.'],
+  ['Acidente de trabalho', 'Primeiro a assistência médica ao trabalhador. Depois ligue-nos logo: a participação à seguradora tem prazos curtos.'],
+];
+const passos = [
+  { icone: 'message-circle-more', titulo: 'Uma conversa sobre os seguros que tem', texto: 'Por telefone, WhatsApp, email ou no escritório. Se já tem seguros, traga as apólices: vemos o que cobrem e quanto paga.' },
+  { icone: 'files', titulo: 'Propostas de várias seguradoras', texto: 'Com as mesmas coberturas, para os preços se poderem comparar. Explicamos as diferenças e a escolha é sua.' },
+  { icone: 'life-buoy', titulo: 'O acompanhamento depois de assinar', texto: 'Renovações, alterações e sinistros passam por nós. Quando precisa, fala com quem já conhece o seu processo.' },
+];
+const vantagens = [
+  { icone: 'scale', titulo: 'Propostas lado a lado' },
+  { icone: 'life-buoy', titulo: 'Ajuda nos sinistros' },
+  { icone: 'map-pin', titulo: 'Escritório na Ericeira' },
+  { icone: 'file-search', titulo: 'Revisão das apólices que tem' },
+];
+const h = company.hours.rows[0];
+const guias = (await guiasVisiveis()).slice(0, 3);
 ---
 <Base
-  title="ML Seguros | Mediador de Seguros na Ericeira e Mafra"
-  description="Mediador de seguros na Ericeira há mais de 25 anos. Seguros automóvel, habitação, saúde, vida e acidentes de trabalho. Comparamos Fidelidade, Allianz, Generali e Ageas."
-  schema={[faqSchema]}
+  title="ML Seguros: mediadora de seguros na Ericeira"
+  description="Seguros automóvel, habitação, saúde, vida e para empresas, com propostas de várias seguradoras e apoio nos sinistros. Escritório na Ericeira, concelho de Mafra."
+  proposta="#proposta"
+  heroImage="hero"
 >
-  <section class="hero">
-    <div class="container">
-      <div>
-        <h1>O descanso de saber que tudo o que construiu está seguro.</h1>
-        <p class="lead">Somos uma mediadora de seguros na Ericeira, com mais de {company.years} anos de trabalho. Comparamos propostas de várias seguradoras e, quando há um sinistro, é connosco que fala.</p>
-        <div class="actions">
-          <a class="btn" href="/seguros-particulares/">Seguros para particulares</a>
-          <a class="btn btn--outline" href="/seguros-empresas/">Seguros para empresas</a>
+  <section class="hero" aria-labelledby="hero-h">
+    <img class="hero__bg" src={fotoSrc('hero', 1600)} srcset={fotoSrcset('hero')} sizes="100vw" alt={fotos.hero.alt} width="2400" height="1600" fetchpriority="high" style={`object-position:${fotos.hero.pos}`} />
+    <div class="wrap">
+      <div class="hero__content">
+        <div class="reveal">
+          <Tag claro>Mediadora de seguros na Ericeira</Tag>
+          <h1 id="hero-h">Os seus seguros, tratados na Ericeira</h1>
         </div>
-        <p class="facts">
-          <strong>{company.address.street}, {company.address.locality}</strong><br />
-          <a href={company.phoneHref}>{company.phone}</a> · Mediador registado na ASF com o n.º {company.asf}
-        </p>
+        <div class="hero__side reveal" data-d="1">
+          <p>Carro, casa, saúde, vida e empresas. Pedimos propostas a várias seguradoras, explicamos o que muda entre elas e ficamos consigo quando há um sinistro.</p>
+          <div class="btns">
+            <Btn href="#proposta">Pedir proposta</Btn>
+            <a class="link link--light" href="/sinistros/">Participar um sinistro</a>
+          </div>
+        </div>
       </div>
-      <figure>
-        <Photo name="heroAdvisor" alt="Mediador de seguros a cumprimentar um casal sénior" sizes="(max-width: 900px) 100vw, 520px" priority />
-      </figure>
+      <div class="hero__strip reveal" data-d="2">
+        <p>Trabalhamos com várias seguradoras, entre elas</p>
+        <div class="marcas">{insurers.map((i) => <a href={i.href} target="_blank" rel="noopener">{i.name}</a>)}</div>
+      </div>
     </div>
   </section>
 
-  <section class="insurers" aria-label="Seguradoras">
-    <div class="container">
-      <p>Trabalhamos com {insurers.map((i, n) => (
-        <>{n > 0 && (n === insurers.length - 1 ? ' e ' : ', ')}<a href={i.href} target="_blank" rel="noopener">{i.name}</a></>
-      ))}, entre outras.</p>
+  <section class="sec" id="sobre" aria-labelledby="sobre-h">
+    <div class="wrap grid-2">
+      <div class="about-media reveal">
+        <div class="about-media__a"><img {...img('passoDepois', '(max-width: 991px) 80vw, 460px')} /></div>
+        <svg class="about-media__seta" viewBox="0 0 80 110" fill="none" aria-hidden="true"><path d="M60 6C20 12 6 40 34 56s14 40-14 48" stroke="currentColor" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round"/><path d="m52 2 10 4-6 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="about-media__b"><img {...img('passoConversa', '(max-width: 991px) 60vw, 360px')} /></div>
+        <Selo />
+      </div>
+      <div class="reveal" data-d="1">
+        <Tag>Sobre nós</Tag>
+        <h2 id="sobre-h" style="margin-top:16px">Há mais de {company.years} anos com escritório na Ericeira</h2>
+        <p class="lead" style="margin-top:20px">A maior parte dos nossos clientes vive ou trabalha no concelho de Mafra. Quando ligam por causa de um sinistro ou de uma renovação, do outro lado está quem acompanha o seguro deles.</p>
+        <p class="citacao">“Pomos as propostas lado a lado e explicamos o que muda. A escolha é sempre de quem fica com o seguro.”</p>
+        <div class="stats">
+          <div class="stat"><strong data-conta={company.years} data-sufixo="+">{company.years}+</strong><span>anos de escritório na Ericeira</span></div>
+          <div class="stat"><strong>0 €</strong><span>pelo pedido de proposta, sem compromisso</span></div>
+          <div class="stats__foto"><img class="media-img" {...img('sobre3', '260px')} /></div>
+          <div class="stats__cta"><Btn href="/sobre-nos/">Conhecer a ML Seguros</Btn></div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="section" id="seguros">
-    <div class="container">
-      <div class="section-intro">
-        <h2>Seguros</h2>
-        <p>Cada seguro tem uma página com as coberturas principais e as perguntas que mais nos fazem.</p>
+  <section class="sec sec--soft" id="seguros" aria-labelledby="seguros-h">
+    <div class="wrap">
+      <div class="head head--split reveal">
+        <div><Tag>Os nossos seguros</Tag><h2 id="seguros-h">Seguros para a família e para a empresa</h2></div>
+        <div class="stack">
+          <p>Cada seguro tem a sua página, com as coberturas, as perguntas que mais nos fazem e um pedido de proposta já preenchido com o seguro.</p>
+          <Btn href="/simulacao/">Pedir uma simulação</Btn>
+        </div>
       </div>
-      <div class="tabs" role="tablist" aria-label="Tipo de cliente">
-        {segments.map((s, i) => (
-          <button role="tab" type="button" id={`tab-${s.id}`} aria-controls={`panel-${s.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>{s.label}</button>
-        ))}
+      <div class="slider reveal" data-d="1" data-slider>
+        <div class="slider__track" data-slider-pista>
+          {ramos.map((r) => <CartaoSeguro href={`/seguros/${r.slug}/`} nome={r.label} linha={r.short} foto={r.image} />)}
+        </div>
+        <div class="slider__nav">
+          <button class="arrow-btn" type="button" aria-label="Anterior" data-slider-ant><Icon name="arrow-left" /></button>
+          <div class="slider__dots" data-slider-pontos></div>
+          <button class="arrow-btn" type="button" aria-label="Seguinte" data-slider-seg><Icon name="arrow-right" /></button>
+        </div>
       </div>
-      {segments.map((s, i) => (
-        <ul class="ramo-list" role="tabpanel" id={`panel-${s.id}`} aria-labelledby={`tab-${s.id}`} hidden={i !== 0}>
-          {s.items.map((r) => (
-            <li>
-              <h3><a href={`/seguros/${r.slug}/`}>{r.name}</a></h3>
-              <p>{r.short}</p>
-            </li>
-          ))}
+      <p class="nota-tel"><span class="ico"><Icon name="phone" /></span><span>Não encontra o seguro de que precisa? Ligue para o <a href={company.phoneHref}>{company.phone}</a></span></p>
+    </div>
+  </section>
+
+  <section class="sec" id="porque" aria-labelledby="porque-h">
+    <div class="wrap grid-2">
+      <div class="reveal">
+        <Tag>Porquê um mediador</Tag>
+        <h2 id="porque-h" style="margin-top:16px">Várias seguradoras, um só contacto</h2>
+        <p class="lead" style="margin-top:20px">O preço da apólice é o da seguradora. A diferença é ter alguém que compara as propostas por si, trata das alterações e atende quando precisa.</p>
+        <ul class="checks">
+          <li><Icon name="check" />A proposta não tem custo e não fica obrigado a mudar.</li>
+          <li><Icon name="check" />Tratamos da mudança na data de renovação, sem ficar um dia sem seguro.</li>
         </ul>
+        <div class="feats">
+          {vantagens.map((v) => <div class="feat"><span class="ico"><Icon name={v.icone} /></span><h3>{v.titulo}</h3></div>)}
+        </div>
+        <div class="btns" style="margin-top:36px"><Btn href="/contactos/">Falar connosco</Btn></div>
+      </div>
+      <div class="foto-card reveal" data-d="1">
+        <img {...img('passoPropostas', '(max-width: 991px) 100vw, 620px')} />
+        <div class="foto-card__box"><Avaliacoes modo="cartao" /></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faixa" aria-labelledby="faixa-h">
+    <img class="faixa__bg" {...img('sobre', '100vw', { alt: '' })} />
+    <div class="wrap reveal">
+      <Tag claro>{company.address.locality}, concelho de {company.address.municipality}</Tag>
+      <h2 id="faixa-h">Passe pelo escritório na Rua Dr. Eduardo Burnay</h2>
+      <p>{h.label}, das {h.value.replace('–', ' às ').replace(' e ', ' e das ').replace('–', ' às ')}. Traga as apólices que tem e vemo-las consigo.</p>
+      <div class="btns"><Btn href={company.mapsHref} externo variante="light">Ver no Google Maps</Btn></div>
+    </div>
+    <div class="letreiro" aria-hidden="true">
+      {[0, 1].map(() => (
+        <div class="letreiro__fila">
+          {ramos.map((r) => <><span>{r.label}</span><img src="/logo-ml-64.png" alt="" width="26" height="26" /></>)}
+        </div>
       ))}
     </div>
   </section>
 
-  <section class="section section--alt" id="auditoria">
-    <div class="container feature">
-      <div>
-        <h2>Análise gratuita às apólices da sua empresa</h2>
-        <p>Envie-nos as apólices que a empresa tem hoje. Vemos se há coberturas em falta ou repetidas, se o seguro de acidentes de trabalho está bem enquadrado e se há condições melhores noutras seguradoras.</p>
-        <p>A análise não tem custo e não fica obrigado a mudar.</p>
-        <a class="btn" href="/simulacao/?tipo=auditoria-empresas">Pedir análise</a>
+  <section class="sec" id="como" aria-labelledby="como-h">
+    <div class="wrap grid-2">
+      <div class="duo reveal">
+        <div class="duo__pontos" aria-hidden="true"></div>
+        <div class="duo__a"><img class="media-img" {...img('habitacao2', '(max-width: 991px) 70vw, 420px')} /></div>
+        <div class="duo__b"><img class="media-img" {...img('habitacao', '(max-width: 991px) 55vw, 340px')} /></div>
+        <Selo href="/simulacao/" />
       </div>
-      <Photo name="advisorCouple" alt="Mediador a apresentar uma proposta a dois clientes" sizes="(max-width: 860px) 100vw, 540px" />
+      <div class="reveal" data-d="1">
+        <Tag>Como trabalhamos</Tag>
+        <h2 id="como-h" style="margin-top:16px">Do primeiro telefonema ao sinistro</h2>
+        <p class="lead" style="margin-top:20px">É assim com um seguro novo e com os que já tem noutro lado.</p>
+        <ol class="passos">
+          {passos.map((p) => <li class="passo"><span class="ico ico--soft"><Icon name={p.icone} /></span><div><h3>{p.titulo}</h3><p>{p.texto}</p></div></li>)}
+        </ol>
+      </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="container">
-      <div class="section-intro">
-        <h2>Como trabalhamos</h2>
-      </div>
-      <ol class="steps">
-        <li><h3>Falamos consigo</h3><p>Por telefone, WhatsApp ou no escritório. Vemos que seguros tem e quanto paga.</p></li>
-        <li><h3>Pedimos propostas</h3><p>A várias seguradoras, com as mesmas coberturas, para poder comparar.</p></li>
-        <li><h3>Escolhe</h3><p>Explicamos as diferenças entre as propostas. A decisão é sua.</p></li>
-        <li><h3>Acompanhamos</h3><p>Renovações, alterações e sinistros passam por nós.</p></li>
-      </ol>
-    </div>
-  </section>
-
-  <section class="section section--alt">
-    <div class="container feature feature--top">
-      <div>
-        <h2>Perguntas frequentes</h2>
-        <p>Não encontra a resposta? Ligue para o <a class="link" href={company.phoneHref}>{company.phone}</a> ou envie mensagem por <a class="link" href={company.whatsappHref} target="_blank" rel="noopener">WhatsApp</a>.</p>
-        <div class="rating">
-          <strong>{company.google.rating}</strong>
-          <span><span class="stars" aria-hidden="true">★★★★★</span><br />{company.google.count} avaliações no Google · <a class="link" href={company.google.href} target="_blank" rel="noopener">ler</a></span>
+  <section class="sec sec--dark" id="sinistros" aria-labelledby="sinistros-h">
+    <div class="wrap grid-2">
+      <div class="painel reveal">
+        <h3>Participar um sinistro</h3>
+        <p>Deixe-nos o que aconteceu no formulário ou ligue. Dizemos-lhe que documentos juntar e tratamos da participação à seguradora.</p>
+        <div class="chips">
+          <a href="/sinistros/#documentos">Carro</a><a href="/sinistros/#documentos">Casa</a><a href="/sinistros/#documentos">Trabalho</a><a href="/sinistros/#documentos">Saúde</a>
+        </div>
+        <div class="painel__foto">
+          <img {...img('sinistros2', '(max-width: 991px) 100vw, 620px', { alt: '' })} />
+          <Btn href="/sinistros/#participar">Participar o sinistro</Btn>
         </div>
       </div>
-      <Faq items={generalFaq} />
+      <div class="reveal" data-d="1">
+        <Tag claro>Sinistros</Tag>
+        <h2 id="sinistros-h" style="margin-top:16px">Num sinistro, ligue-nos primeiro</h2>
+        <p class="lead" style="margin-top:20px">Participamos à seguradora consigo e acompanhamos o processo até ao fim. A decisão e o pagamento são da seguradora; nós insistimos por si.</p>
+        <div style="margin-top:20px"><Faq perguntas={sinistros} nome="sinistros" escuro numerar /></div>
+        <div class="factos">
+          <div><strong>112</strong><span>primeiro, se houver feridos, incêndio ou perigo</span></div>
+          <div><strong>8 dias</strong><span>para participar um acidente de carro</span></div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <CtaBand />
-</Base>
+  <SeccaoProposta
+    titulo="Proposta sem custo, de várias seguradoras"
+    texto="Diga-nos que seguro procura e como o podemos contactar. Pedimos as propostas e ligamos-lhe com os valores."
+    formId="home"
+  />
 
-<script>
-  const tabs = [...document.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
-  const select = (tab: HTMLButtonElement) => {
-    tabs.forEach((t) => {
-      const on = t === tab;
-      t.setAttribute('aria-selected', String(on));
-      t.tabIndex = on ? 0 : -1;
-      document.getElementById(t.getAttribute('aria-controls')!)!.hidden = !on;
-    });
-  };
-  tabs.forEach((tab, i) => {
-    tab.addEventListener('click', () => select(tab));
-    tab.addEventListener('keydown', (e) => {
-      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-      const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
-      next.focus();
-      select(next);
-    });
-  });
-</script>
+  <SeccaoFaq titulo="O que nos perguntam mais" perguntas={perguntas} />
+
+  <section class="testemunho" aria-labelledby="av-h">
+    <img class="testemunho__bg" {...img('avaliacoes', '(max-width: 991px) 100vw, 60vw', { alt: '' })} />
+    <div class="wrap">
+      <div class="testemunho__card reveal">
+        <Tag>Avaliações no Google</Tag>
+        <h2 id="av-h">O que dizem os clientes</h2>
+        <Avaliacoes modo="destaque" />
+      </div>
+    </div>
+  </section>
+
+  {guias.length > 0 && (
+    <section class="sec" id="guias" aria-labelledby="guias-h">
+      <div class="wrap">
+        <div class="head head--center reveal">
+          <Tag>Guias</Tag>
+          <h2 id="guias-h">Guias para tratar dos seus seguros</h2>
+          <p>Respostas às perguntas que mais nos fazem no escritório.</p>
+        </div>
+        <div class="guias-grid">{guias.map((g) => <CartaoGuia guia={g} class="reveal" />)}</div>
+        <div class="btns reveal" style="justify-content:center;margin-top:44px"><Btn href="/guias/">Ver todos os guias</Btn></div>
+      </div>
+    </section>
+  )}
+</Base>

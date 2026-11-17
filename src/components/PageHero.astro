@@ -1,18 +1,33 @@
 ---
-// Cabeçalho simples das páginas interiores: caminho, título e uma frase.
-interface Props { title: string; lead?: string; crumbs?: { label: string; href?: string }[] }
-const { title, lead, crumbs = [] } = Astro.props;
+import Icon from './Icon.astro';
+import { fotos, fotoSrc, fotoSrcset } from '../data/fotos.js';
+
+interface Props { titulo: string; foto: string; migalhas?: { nome: string; href?: string }[]; lead?: string; aviso?: string }
+const { titulo, foto, migalhas = [], lead, aviso } = Astro.props;
+const f = fotos[foto];
+const trilho = [{ nome: 'Início', href: '/' }, ...migalhas];
+const caminho = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: trilho.map((m, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: m.nome,
+    item: new URL(i === trilho.length - 1 || !m.href ? Astro.url.pathname : m.href, Astro.site).href,
+  })),
+};
 ---
-<section class="page-head">
-  <div class="container">
-    <nav aria-label="Caminho">
+<section class="ph" aria-labelledby="ph-h">
+  <img class="ph__bg" src={fotoSrc(foto, 1600)} srcset={fotoSrcset(foto)} sizes="100vw" alt="" width={f.largura} height={f.altura} fetchpriority="high" style={f.pos ? `object-position:${f.pos}` : undefined} />
+  <div class="wrap">
+    <h1 id="ph-h" class="reveal">{titulo}</h1>
+    {lead && <p class="ph__lead reveal" data-d="1">{lead}</p>}
+    <nav aria-label="Estás aqui" class="reveal" data-d="1">
       <ol class="crumbs">
-        <li><a href="/">Início</a></li>
-        {crumbs.map((c) => c.href ? <li><a href={c.href}>{c.label}</a></li> : <li aria-current="page">{c.label}</li>)}
+        {trilho.map((m, i) => <li>{m.href && i < trilho.length - 1 ? <a href={m.href}>{m.nome}</a> : <span aria-current="page">{m.nome}</span>}</li>)}
       </ol>
     </nav>
-    <h1>{title}</h1>
-    {lead && <p>{lead}</p>}
-    <slot />
+    {aviso && <p class="ph__aviso reveal" data-d="2"><Icon name="siren" />{aviso}</p>}
   </div>
+  <script type="application/ld+json" set:html={JSON.stringify(caminho)} />
 </section>

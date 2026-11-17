@@ -1,58 +1,69 @@
 ---
-import Logo from './Logo.astro';
 import Icon from './Icon.astro';
-import { company, ramosBySegment } from '../data/site.js';
-const year = new Date().getFullYear();
+import Logo from './Logo.astro';
+import Formulario from './Formulario.astro';
+import { company, ramos } from '../data/site.js';
+import { guiasVisiveis } from '../data/guias';
+
+const links = [
+  { nome: 'Início', href: '/' },
+  { nome: 'Particulares', href: '/seguros-particulares/' },
+  { nome: 'Empresas', href: '/seguros-empresas/' },
+  { nome: 'Sinistros', href: '/sinistros/' },
+  { nome: 'Simulação', href: '/simulacao/' },
+  ...((await guiasVisiveis()).length ? [{ nome: 'Guias', href: '/guias/' }] : []),
+  { nome: 'Sobre nós', href: '/sobre-nos/' },
+  { nome: 'Contactos', href: '/contactos/' },
+];
+const ano = new Date().getFullYear();
 ---
 <footer class="footer">
-  <div class="container">
-    <div class="footer__grid">
-      <div class="footer__about">
-        <Logo inverse />
-        <p>Mediadora de seguros na Ericeira há mais de {company.years} anos. Trabalhamos com várias seguradoras e tratamos dos sinistros dos nossos clientes.</p>
-        <div class="footer__reg">
-          {company.legalName}<br />
-          Mediador de seguros inscrito na ASF com o n.º {company.asf} ·
-          <a href="https://www.asf.com.pt" target="_blank" rel="noopener">asf.com.pt</a><br />
-          NIF {company.nif}
-        </div>
+  <div class="wrap">
+    <div class="footer__cols">
+      <div class="footer__contacto">
+        <h2>Contactos</h2>
+        <p>{company.address.street}<br />{company.address.postalCode} {company.address.locality}, concelho de {company.address.municipality}<br /><a class="link link--light small" href={company.mapsHref} target="_blank" rel="noopener" style="font-size:15px">Ver no Google Maps</a></p>
+        <p><small>Telemóvel ({company.phoneNote})</small><a href={company.phoneHref}>{company.phone}</a></p>
+        <p><small>Email</small><a href={`mailto:${company.email}`}>{company.email}</a></p>
+        <p><small>Horário</small>{company.hours.rows.map((h) => <span style="display:block">{h.label}: {h.value}</span>)}</p>
       </div>
       <div>
-        <h3>Particulares</h3>
-        <ul>{ramosBySegment('particulares').map((r) => <li><a href={`/seguros/${r.slug}/`}>{r.name}</a></li>)}</ul>
-      </div>
-      <div>
-        <h3>Empresas</h3>
-        <ul>
-          {ramosBySegment('empresas').map((r) => <li><a href={`/seguros/${r.slug}/`}>{r.name}</a></li>)}
-          <li><a href="/seguros-empresas/#auditoria">Análise gratuita de apólices</a></li>
+        <h2>Ligações</h2>
+        <ul class="footer__links">
+          {links.map((l) => <li><a href={l.href}>{l.nome}</a></li>)}
+          {company.crmUrl && <li><a href={`${company.crmUrl}/portal`}>Área de cliente</a></li>}
         </ul>
       </div>
       <div>
-        <h3>Contactos</h3>
-        <ul class="footer__contact">
-          <li><a href={company.mapsHref} target="_blank" rel="noopener">{company.address.street}<br />{company.address.postalCode} {company.address.locality}</a></li>
-          <li><span><a href={company.phoneHref}>{company.phone}</a><br /><small>{company.phoneNote}</small></span></li>
-          <li><a href={`mailto:${company.email}`}>{company.email}</a></li>
-          <li><a href="/sinistros/">Participar um sinistro</a></li>
-        </ul>
+        <h2>Seguros</h2>
+        <ul class="footer__links">{ramos.map((r) => <li><a href={`/seguros/${r.slug}/`}>{r.label}</a></li>)}</ul>
+      </div>
+      <div>
+        <h2>Ligamos-lhe</h2>
+        <p class="footer__intro">Deixe o nome e o telemóvel. Ligamos-lhe no horário do escritório.</p>
+        <Formulario tipo="ligamos" id="rodape" compacto />
+      </div>
+    </div>
+    <div class="footer__meio">
+      <Logo />
+      <div class="redes">
+        <span>Siga-nos</span>
+        <a href={company.social.instagram} target="_blank" rel="noopener" aria-label="Instagram da ML Seguros"><Icon name="instagram" /></a>
+        <a href={company.social.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn da ML Seguros"><Icon name="linkedin" /></a>
+        <a href={company.whatsappHref} target="_blank" rel="noopener" aria-label="WhatsApp da ML Seguros"><Icon name="whatsapp" /></a>
       </div>
     </div>
     <div class="footer__legal">
-      <span>© {year} {company.name}. Todos os direitos reservados. · Desenvolvido por <a href="https://www.stackd-io.com/" target="_blank" rel="noopener">Stackd</a></span>
+      <p>© {ano} {company.legalName}<br />Mediador de seguros inscrito na ASF com o n.º {company.asf} · NIF {company.nif}</p>
       <ul>
         <li><a href="/politica-de-privacidade/">Informação legal e privacidade</a></li>
         <li><a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">Livro de Reclamações</a></li>
+        <li><a href="https://www.cimpas.pt" target="_blank" rel="noopener">CIMPAS (resolução de litígios)</a></li>
+        <li><a href="/mapa-do-site/">Mapa do site</a></li>
+        <li><button class="footer__botao" type="button" data-cookies-abrir>Definições de cookies</button></li>
+        <li><a href="/creditos/">Fotografias via Unsplash</a></li>
+        <li><a href="https://www.stackd-io.com/" target="_blank" rel="noopener">Desenvolvido por Stackd</a></li>
       </ul>
     </div>
   </div>
 </footer>
-
-<a class="wa-float" href={company.whatsappHref} target="_blank" rel="noopener" aria-label="Falar por WhatsApp">
-  <Icon name="whatsapp" size={26} />
-</a>
-<nav class="mobile-bar" aria-label="Contacto rápido">
-  <a href={company.phoneHref}>Ligar</a>
-  <a href={company.whatsappHref} target="_blank" rel="noopener">WhatsApp</a>
-  <a class="primary" href="/simulacao/">Pedir simulação</a>
-</nav>

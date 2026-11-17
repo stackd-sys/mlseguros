@@ -1,54 +1,132 @@
-# ML Seguros — site
+# ML Seguros: site
 
-Novo site da ML Seguros (mlseguros.pt). É um site estático feito em [Astro](https://astro.build), com a estrutura inspirada no template **Covar** (Awaiken) e um estilo sóbrio: títulos em serifa (Source Serif 4), texto em Source Sans 3, e o vermelho do logótipo só em botões e ligações.
+Site da ML Seguros (mlseguros.pt), mediadora de seguros na Ericeira. Site estático em [Astro](https://astro.build), alojado na Vercel, com duas funções da Vercel em `api/`.
 
-Resolve os pontos da auditoria de 24/09/2026:
+O desenho segue a estrutura do template Covar (Awaiken Themes), adaptada às cores da ML, com código próprio: nada do template foi copiado. O estilo está todo em `src/styles/global.css` e o JavaScript em `src/scripts/` (menu, entradas ao rolar, carrossel, formulários e avaliações).
 
-| Problema no site atual | No site novo |
-|---|---|
-| Home com 24 MB, 6 plugins, 5 famílias de fontes | Site estático, sem plugins. Duas fontes self-hosted, ícones SVG só onde ajudam (telefone, email, WhatsApp), fotos responsivas com lazy-load |
-| Só 2 páginas de serviço | 7 páginas, uma por ramo (`/seguros/<ramo>/`), cada uma com coberturas, público, FAQ e schema |
-| Formulário com prefixo +1 | +351 por defeito e validação de número PT |
-| SEO duplicado e genérico | Um título, descrição e H1 por página, canonical, Open Graph, `InsuranceAgency` + `LocalBusiness`, `FAQPage`, `BreadcrumbList` e sitemap automático |
-| Nada sobre sinistros | Página `/sinistros/` com passo-a-passo, documentos por tipo e seguradoras |
-| Conversão pouco guiada | Simulador em 3 passos (`/simulacao/`), barra fixa no mobile, auditoria PME em destaque |
-| Logótipo sem nome | Ícone + wordmark "ML Seguros" no header |
-| Animações que escondem conteúdo | Conteúdo visível à partida, só transições de hover, respeita `prefers-reduced-motion` |
-| Banner de cookies PT-BR | Sem cookies: o mapa Google só carrega se o visitante o pedir |
-| Botão WhatsApp tapa texto no mobile | Substituído por uma barra inferior (Ligar / WhatsApp / Simulação) |
+- Letra: Google Sans (licença OFL), servida pelo próprio site em `public/fonts/`, sem pedidos às Google Fonts.
+- Ícones: Lucide (ISC) e Simple Icons (CC0), lidos dos pacotes no build (`src/components/Icon.astro`).
+- Cores: vermelho da ML `#c2182d` e grafite `#1e1f23`.
 
-## Estrutura (13 páginas)
+## Páginas
 
-Home · Particulares · Empresas · 7 ramos (Automóvel e frota, Habitação, Saúde individual e de grupo, Vida, Acidentes de Trabalho, Multirriscos Empresarial, Responsabilidade Civil) · Sinistros · Simulação · Contactos · Sobre nós · Informação legal e privacidade.
-
-O header tem um botão **Área de Cliente**, reservado para o portal de cliente do CRM. Ainda não tem ligação: quando o portal estiver pronto, basta trocar o `<button>` por um `<a href="…">` em `src/components/Header.astro` (aparece duas vezes: desktop e menu mobile).
+| Endereço | O que é |
+|----------|---------|
+| `/` | Início: sobre nós, seguros, porquê um mediador, escritório, como trabalhamos, sinistros, pedido de proposta, perguntas, avaliações do Google |
+| `/seguros-particulares/`, `/seguros-empresas/` | Seguros por tipo de cliente. Empresas tem a análise das apólices |
+| `/seguros/<ramo>/` | Uma página por seguro (7), com coberturas, perguntas e pedido de proposta já com o seguro escolhido |
+| `/simulacao/` | Pedido de proposta (o "Pedir proposta" do menu leva aqui) |
+| `/sinistros/` | Passos, documentos e participação de sinistro |
+| `/contactos/` | Contactos, horário e mensagem |
+| `/sobre-nos/`, `/politica-de-privacidade/`, `/creditos/` | Sobre a ML, informação legal e privacidade, créditos das fotografias |
+| `/obrigado/<tipo>/` | Página de obrigado depois de cada formulário (proposta, sinistro, mensagem, ligamos, análise). Fica fora do sitemap e com `noindex` |
+| `/guias/`, `/guias/<guia>/` | Guias (blog), escritos em Markdown em `src/content/guias/` |
+| `/mapa-do-site/` | Mapa do site em HTML, ligado no rodapé |
+| `/llms.txt` | Resumo do negócio para assistentes e motores de IA, gerado de `src/data/site.js` |
 
 ## Comandos
 
 ```bash
 npm install
 npm run dev      # http://localhost:4321
-npm run build    # gera ./dist, pronto para Netlify, Cloudflare Pages, Vercel ou qualquer alojamento estático
+npm run build    # gera ./dist
 ```
 
-## Regras de estilo e texto
+## Formulários: por email agora, para o CRM depois
 
-Para o site não parecer feito por IA nem por template:
-- **Visual**: sem etiquetas por cima dos títulos, sem metade do título a vermelho, sem cartões a flutuar, gradientes, números decorativos ou animações. Cantos quase retos e listas com linhas simples.
-- **Texto**: frases diretas e concretas, sem slogans ("não somos um call center"), sem listas de três palavras para dar ritmo, sem travessões, e sem promessas que a empresa não confirmou (prazos de resposta, por exemplo).
+Todos os formulários (`src/components/Formulario.astro`) enviam para o endereço em `PUBLIC_FORM_ENDPOINT`. Há dois destinos, e muda-se só esta variável:
 
-## Onde alterar conteúdo
+- **Email (enquanto o CRM não está em produção):** `PUBLIC_FORM_ENDPOINT=/api/pedido`. A função `api/pedido.js` envia cada pedido para `EMAIL_PEDIDOS` (geral@mlseguros.pt). O assunto diz o tipo e quem pede (ex.: "Proposta (Seguro Automóvel): Ana Costa"); o email traz os campos, a página de onde veio e ligações para ligar e para o WhatsApp. Se a pessoa deixou email, responder ao email responde-lhe. O envio está numa camada trocável (`api/_lib/email.js`, hoje Resend; em local, Mailpit).
+- **CRM:** `PUBLIC_FORM_ENDPOINT=https://<domínio do CRM>/api/site/pedido`. Pedidos de proposta entram como **lead**; sinistros, mensagens e pedidos para ligarem como **tarefa por atribuir**, com a tarefa "Contactar". No CRM, `SITE_ORIGENS` tem de ter o endereço do site.
 
-Tudo está em `src/data/site.js`: contactos, seguradoras, fotografias, ramos (textos, coberturas e FAQ) e perguntas gerais.
+Depois de enviar, o visitante vai para `/obrigado/<tipo>/`, que o trata pelo primeiro nome. É o endereço a usar para medir conversões.
 
-## Por fazer antes de publicar
+Spam (as mesmas regras na função e no CRM): campo escondido `_gotcha` e, em `_t`, o tempo entre abrir a página e enviar. São ignorados, sem avisar, os envios com menos de 3 segundos, sem esse tempo, com HTML ou com várias ligações. A função só aceita pedidos vindos do próprio site (`PEDIDO_ORIGENS` acrescenta outras origens, para testes). O CRM limita também a 5 pedidos por hora do mesmo endereço de rede.
 
-- [ ] **Logótipo oficial**: `public/favicon.svg` é uma recriação aproximada. Substituir pelo ficheiro original em SVG.
-- [ ] **Formulários**: definir `PUBLIC_FORM_ENDPOINT` na Vercel com o endereço do CRM (`https://<domínio do CRM>/api/site/pedido`) e, no CRM, `SITE_ORIGENS` com o domínio do site. Os pedidos de simulação entram como leads e as outras mensagens como tarefas. Sem endpoint, os formulários abrem o email do visitante já preenchido.
-- [ ] **Fotografias**: são fotos do Pexels (licença gratuita) carregadas diretamente do CDN do Pexels, todas revistas: sem texto legível em inglês e com pessoas coerentes com um público português. Ao trocar uma foto, manter estas regras. O ideal é substituí-las por fotos reais da equipa e do escritório da Ericeira (ponto "pessoas reais" da auditoria).
-- [ ] **Equipa e avaliações**: a página "Sobre nós" não tem nomes nem citações, porque não se devem inventar. Acrescentar a equipa (nomes e funções) e 2 a 3 avaliações reais do Google, com autorização.
-- [ ] **Rever textos**: os textos de "Sobre nós" (história) e as FAQ de cada ramo devem ser validados pela ML Seguros.
-- [ ] **Política de privacidade** (versão em `privacy` no `site.js`; ao mudá-la, subir também `VERSAO_POLITICA` no CRM): a ML deve confirmar se os dados de saúde são tratados com consentimento explícito, se os clientes dos parceiros de mediação (Barymont, Sabseg, Vitorinos) têm dados partilhados com eles, se há encarregado de proteção de dados e se usa um contabilista externo.
-- [ ] **Alojamento**: fazer um único redirect `http://www` → `https://mlseguros.pt` e redirects 301 das páginas antigas (`/particulares/` → `/seguros-particulares/`, etc.).
-- [ ] **Área de Cliente**: ligar o botão ao portal do CRM.
-- [ ] Confirmar o link do Facebook antes de o voltar a incluir.
+Sem `PUBLIC_FORM_ENDPOINT`, os formulários abrem o email do visitante já preenchido para geral@mlseguros.pt.
+
+## Avaliações do Google
+
+`api/avaliacoes.js` lê a nota, o total e até cinco avaliações da ficha da ML no Google (Google Places API). O início mostra-as uma a uma, com setas, e a nota aparece junto aos formulários. O fornecedor está em `api/_lib/avaliacoes.js` e pode ser trocado.
+
+- Precisa de uma chave da Google Places API (New), num projecto Google Cloud em nome da ML, com faturação ativa e a chave restrita a esta API. O Place ID da ML já está no `.env.example`.
+- A resposta fica 1 hora em cache na Vercel. Com isso, os pedidos à Google ficam dentro da quota gratuita mensal.
+- As regras da Google obrigam a mostrar o autor de cada avaliação (fotografia, nome e ligação) e a indicação "Google Maps".
+- Sem chave, mostra-se o total de avaliações e as ligações para ler e escrever avaliações no Google, sem nota.
+
+## SEO, GEO e AEO
+
+- Título, descrição, imagem de partilha e (depois de publicado) `canonical` em todas as páginas.
+- Dados estruturados: `InsuranceAgency` com morada, horário, registo na ASF, contacto e catálogo dos seguros em todas as páginas; `WebSite` no início; `BreadcrumbList` nas páginas interiores; `Service` em cada seguro; `FAQPage` onde há perguntas frequentes.
+- `sitemap-index.xml` gerado no build (sem o 404 e as páginas de obrigado) e indicado no `robots.txt`, que autoriza também os robôs de IA.
+- `/llms.txt` com contactos, registo, seguros e perguntas frequentes, para os assistentes de IA citarem a ML com os dados certos.
+
+## Guias (blog)
+
+Cada guia é um ficheiro `.md` em `src/content/guias/`, com título, descrição, resumo (a resposta curta que aparece no topo e que o Google e os assistentes de IA usam), fotografias, seguro relacionado (para o formulário no fim) e perguntas frequentes.
+
+- Um guia novo a cada 15 dias, nos dias 1 e 15. A data em `publicado` decide quando aparece: o site publicado só gera os guias cuja data já chegou. Nas pré-visualizações (sem `PUBLIC_PUBLICADO`) aparecem todos, os futuros com a etiqueta "Agendado" e `noindex`.
+- `rascunho: true` segura um guia, mesmo com a data passada.
+- Publicação automática: nos dias 1 e 15, às 06:00 UTC, o GitHub Actions (`.github/workflows/publicar-guias.yml`) chama o Deploy Hook da Vercel, guardado no segredo `VERCEL_DEPLOY_HOOK` do repositório, e o site é reconstruído. Também se pode correr à mão em Actions, "Publicar guias". Qualquer deploy depois da data também publica o guia.
+- Escrita: português de Portugal, sem travessões, frases curtas, só factos confirmados (os prazos legais vêm da lei: Lei do Contrato de Seguro, seguro automóvel, alojamento local).
+- Ligação "Guias" só no rodapé. A página inicial mostra os três mais recentes.
+- 28 guias: um em cada dia 1 e 15 desde 1 de janeiro de 2026, e agendados até 15 de fevereiro de 2027. O lote seguinte tem de estar escrito antes disso.
+- A página `/guias/` tem filtros por tema (o `ramo` do guia; sem ramo, "Outros temas") e pesquisa no título, descrição e resumo, com o estado no endereço (`?tema=automovel&q=...`). Os temas e os nomes estão em `TEMAS`, em `src/data/guias.ts`.
+- Na página de cada guia, a barra lateral mostra seis guias, primeiro os do mesmo tema.
+- As fotografias são as do site, sem repetir a principal entre guias do mesmo tema sempre que possível.
+
+## Cookies e medição
+
+Com `PUBLIC_GTM_ID`, o site carrega o Google Tag Manager com o Consent Mode v2 (modo avançado) e mostra o aviso de cookies (Necessários, Estatística e Marketing). Sem a variável, não há aviso nem medição.
+
+- Tudo começa recusado. A escolha fica no cookie `ml_consent` durante 6 meses e é aplicada antes de o GTM carregar. "Definições de cookies", no rodapé, reabre as opções.
+- Quem recusa não fica com cookies da Google; as etiquetas da Google enviam só sinais sem cookies nem identificadores, que a Google usa para estimar estatísticas e conversões.
+- Eventos para o GTM (sem dados pessoais): `generate_lead` com `tipo_pedido` (proposta, sinistro, mensagem, ligamos, analise), na página de obrigado e só uma vez por envio; `contacto_clique` com `canal` (telefone, whatsapp, email) e `local`; `consentimento_atualizado`.
+- No GTM: as etiquetas da Google (GA4, Google Ads) respeitam o consentimento sozinhas. Etiquetas de outras plataformas (ex.: Meta) têm de exigir `ad_storage` em "Consentimento adicional".
+
+## Variáveis de ambiente (Vercel)
+
+| Variável | Para quê |
+|----------|----------|
+| `PUBLIC_FORM_ENDPOINT` | Para onde vão os formulários: `/api/pedido` (email) ou a rota do CRM (`https://<domínio do CRM>/api/site/pedido`) |
+| `EMAIL_PEDIDOS` | Quem recebe os pedidos por email (`geral@mlseguros.pt`) |
+| `EMAIL_REMETENTE` | Ex.: `Site ML Seguros <pedidos@site.mlseguros.pt>` (domínio verificado no Resend) |
+| `EMAIL_FORNECEDOR`, `RESEND_API_KEY` | `resend` e a chave da conta Resend em nome da ML |
+| `PUBLIC_CRM_URL` | Endereço do CRM, para o botão "Área de cliente". Sem ele, não há área de cliente no site nem na política de privacidade |
+| `PUBLIC_PUBLICADO` | `true` quando o site estiver no domínio da ML: tira o `noindex` e põe o `canonical` |
+| `PUBLIC_GTM_ID` | Contentor do Google Tag Manager (`GTM-MSFNHBZX`): aviso de cookies, Consent Mode v2 e medição |
+| `GOOGLE_PLACES_API_KEY`, `GOOGLE_PLACE_ID`, `AVALIACOES_FORNECEDOR` | Avaliações do Google |
+
+## Endereços do site antigo
+
+O `vercel.json` redireciona (301) as páginas do WordPress que mudaram: `/seguros-para-empresas/` → `/seguros-empresas/`, `/termos-e-condicoes/` e `/politica-de-cookies/` → `/politica-de-privacidade/`. As outras mantêm o endereço.
+
+## Conteúdo
+
+Dados da empresa, seguros, coberturas e perguntas: `src/data/site.js`. Fotografias: `src/data/fotos.js` (ficheiros em `public/fotos/`, em WebP de 800 a 2400 px).
+
+## Por confirmar com a ML antes de publicar
+
+- [ ] **Textos**: perguntas frequentes, coberturas e "Sobre nós" validados pela ML.
+- [ ] **Fotografias** do escritório e da fachada, de preferência sem caras, para substituir as do Unsplash em "Sobre nós" e "Contactos".
+- [ ] **Facebook**: o link do site antigo (`facebook.com/seguros_ml`) não foi confirmado e ficou de fora.
+- [ ] **Chave da Google Places API** em nome da ML (ver "Avaliações do Google").
+- [ ] **Cookies**: confirmar no GTM que as etiquetas estão configuradas com o Consent Mode e desligar o Complianz do WordPress quando o site novo entrar.
+
+## Antes de publicar no domínio (site sem o CRM)
+
+- [ ] Push de `site-novo` (pré-visualização na Vercel) e, depois de testar, para a branch de produção: `git push origin site-novo:claude/aml-seguros-redesign-dclczi`.
+- [ ] Resend em nome da ML, na região da UE, com o subdomínio `site.mlseguros.pt` verificado (um subdomínio, como o Resend recomenda: uma chave roubada não serve para enviar emails em nome de geral@mlseguros.pt). Os registos do Resend (`resend._domainkey.site` e `send.site`) acrescentam-se ao DNS no Microsoft 365, sem mexer nos MX, SPF e TXT da Microsoft. Chave só com permissão de envio e só para esse domínio.
+- [ ] Variáveis na Vercel: `PUBLIC_PUBLICADO=true`, `PUBLIC_FORM_ENDPOINT=/api/pedido`, `PUBLIC_GTM_ID`, `EMAIL_PEDIDOS`, `EMAIL_REMETENTE`, `EMAIL_FORNECEDOR=resend`, `RESEND_API_KEY`. Sem `PUBLIC_CRM_URL`.
+- [ ] Antes de mudar o DNS, testar cada formulário no endereço `.vercel.app` e confirmar que o email chega a geral@mlseguros.pt (e não ao spam).
+- [ ] DNS: só os registos do site (`@` e `www`) mudam para a Vercel. Os registos MX, SPF e de verificação da Microsoft ficam como estão, para o email continuar a funcionar.
+- [ ] Guias: na Vercel, em Settings, Git, Deploy Hooks, criar um hook para a branch de produção e guardá-lo no GitHub como segredo `VERCEL_DEPLOY_HOOK`. Testar com "Run workflow" em Actions.
+- [ ] Search Console: enviar `https://mlseguros.pt/sitemap-index.xml`.
+- [ ] Desligar o WordPress e o Complianz (guardar uma cópia do WordPress durante uns meses).
+- [ ] Endereço do site na ficha do Google.
+- [ ] Na caixa geral@mlseguros.pt, uma pasta para os pedidos do site, e apagar os que não deram contrato ao fim de 12 meses, como diz a política de privacidade.
+
+## Quando o CRM entrar em produção
+
+- [ ] `PUBLIC_FORM_ENDPOINT` com a rota do CRM e `PUBLIC_CRM_URL` com o endereço do CRM (volta a "Área de cliente" no site e na política de privacidade).
+- [ ] No CRM, `SITE_ORIGENS` com o domínio do site.

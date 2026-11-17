@@ -1,12 +1,12 @@
 ---
-interface Props { items: [string, string][] }
-const { items } = Astro.props;
+interface Props { perguntas: [string, string][]; nome?: string; escuro?: boolean; numerar?: boolean }
+const { perguntas, nome = 'faq', escuro = false, numerar = false } = Astro.props;
 ---
-<div class="faq">
-  {items.map(([q, a]) => (
-    <details>
-      <summary>{q}</summary>
-      <div><p>{a}</p></div>
+<div class={escuro ? 'acc acc--dark' : 'acc'}>
+  {perguntas.map(([q, a], i) => (
+    <details name={nome} open={i === 0}>
+      <summary>{numerar ? `${i + 1}. ${q}` : q}<span class="acc__sinal" aria-hidden="true"></span></summary>
+      <div class="acc__body"><div><p>{a}</p></div></div>
     </details>
   ))}
 </div>

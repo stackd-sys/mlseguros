@@ -1,46 +1,67 @@
 // Dados da empresa e conteúdo dos ramos de seguro.
 // Tudo o que aparece no site vem daqui: altere aqui e o site inteiro atualiza.
 
+const semBarra = (u) => (u ?? '').trim().replace(/\/+$/, '');
+
+export const site = {
+  // Antes de publicar no domínio da ML: PUBLIC_PUBLICADO=true (tira o noindex, põe o canonical).
+  publicado: import.meta.env.PUBLIC_PUBLICADO === 'true',
+  // Google Tag Manager (GA4, Google Ads e o resto da medição), com o Consent Mode v2.
+  gtm: (import.meta.env.PUBLIC_GTM_ID ?? '').trim(),
+};
+
 export const company = {
   name: 'ML Seguros',
   legalName: 'M. L. Seguros – Sociedade de Mediação de Seguros, Lda.',
-  tagline: 'Mediação de seguros na Ericeira',
-  phone: '+351 919 400 228',
+  phone: '919 400 228',
   phoneHref: 'tel:+351919400228',
-  phoneNote: 'Chamada para rede móvel nacional',
+  phoneNote: 'chamada para rede móvel nacional',
   whatsappHref: 'https://wa.me/351919400228',
   email: 'geral@mlseguros.pt',
   address: {
-    street: 'Rua Dr. Eduardo Burnay, 20-B',
+    street: 'Rua Dr. Eduardo Burnay, 26B',
     postalCode: '2655-369',
     locality: 'Ericeira',
     municipality: 'Mafra',
     country: 'PT',
   },
-  mapsHref: 'https://www.google.com/maps/search/?api=1&query=ML+Seguros+Rua+Dr.+Eduardo+Burnay+20-B+Ericeira',
-  mapsEmbed: 'https://www.google.com/maps?q=Rua+Dr.+Eduardo+Burnay+20-B,+2655-369+Ericeira&output=embed',
+  mapsHref: 'https://www.google.com/maps/place/?q=place_id:ChIJk4sSUXQnHw0Rx610-IWEwb4',
+  // Horário da ficha do Google.
+  hours: {
+    tz: 'Europe/Lisbon',
+    rows: [
+      { days: 'mon-fri', label: 'Segunda a sexta', value: '10:00–13:00 e 14:30–18:00' },
+      { days: 'sat,sun', label: 'Sábado e domingo', value: 'Encerrado' },
+    ],
+    schema: [{ dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: ['10:00', '14:30'], closes: ['13:00', '18:00'] }],
+  },
   asf: '407255064/3',
   nif: '507430409',
   years: 25,
   google: {
-    rating: '5,0',
+    placeId: 'ChIJk4sSUXQnHw0Rx610-IWEwb4',
     count: 25,
-    href: 'https://www.google.com/maps/search/?api=1&query=ML+Seguros+Ericeira',
+    href: 'https://www.google.com/maps/place/?q=place_id:ChIJk4sSUXQnHw0Rx610-IWEwb4',
+    write: 'https://search.google.com/local/writereview?placeid=ChIJk4sSUXQnHw0Rx610-IWEwb4',
+  },
+  social: {
+    instagram: 'https://www.instagram.com/seguros_ml/',
+    linkedin: 'https://www.linkedin.com/company/ml-seguros-ericeira/',
   },
   areaServed: ['Ericeira', 'Mafra', 'Sintra', 'Torres Vedras', 'Lisboa'],
-  // Endereço que recebe os formulários (o CRM da ML: <domínio do CRM>/api/site/pedido),
-  // definido em PUBLIC_FORM_ENDPOINT. Sem ele, os formulários abrem o email do visitante já preenchido.
-  formEndpoint: import.meta.env.PUBLIC_FORM_ENDPOINT ?? '',
+  // O CRM da ML: recebe os formulários (PUBLIC_FORM_ENDPOINT) e tem o portal do cliente (PUBLIC_CRM_URL).
+  formEndpoint: (import.meta.env.PUBLIC_FORM_ENDPOINT ?? '').trim(),
+  crmUrl: semBarra(import.meta.env.PUBLIC_CRM_URL),
 };
 
 // Versão da política de privacidade. Ao alterá-la, subir também VERSAO_POLITICA
 // no CRM (lib/rgpd.ts), para a área de cliente pedir de novo a confirmação.
 export const privacy = {
   version: '2026-11',
-  updated: '13 de novembro de 2026',
+  updated: '17 de novembro de 2026',
 };
 
-// Seguradoras parceiras (texto; substituir por logótipos oficiais em /public/parceiros/ se autorizados).
+// Seguradoras com que a ML trabalha (texto; logótipos só com autorização das marcas).
 export const insurers = [
   { name: 'Fidelidade', href: 'https://www.fidelidade.pt' },
   { name: 'Allianz', href: 'https://www.allianz.pt' },
@@ -48,44 +69,22 @@ export const insurers = [
   { name: 'Ageas', href: 'https://www.ageas.pt' },
 ];
 
-// Fotografias do Pexels (licença livre, sem atribuição obrigatória).
-export const photos = {
-  heroAdvisor: 8441861, // mediador com casal sénior, sorridentes
-  couple: 7647387, // casal a assinar com o mediador
-  elderly: 8441780,
-  advisorCouple: 8292884, // mediador a mostrar proposta a um casal
-  homeVisit: 8439647,
-  familyHome: 3875141,
-  familyPark: 5290308, // família a passear no parque
-  ericeiraAerial: 20414673,
-  ericeiraHouses: 23856802,
-  ericeiraBeach: 24350498,
-  ericeiraBoats: 32473806,
-  driving: 1051071,
-  worker: 3772616, // trabalhador com capacete
-  handshake: 7691709, // aperto de mão em reunião de escritório
-  doctor: 7579831,
-};
-// Regra: sem texto legível em inglês e pessoas coerentes com um público português.
-
-export const pexels = (id, w = 1200) =>
-  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
-
-export const pexelsSrcset = (id, widths = [480, 800, 1200, 1600]) =>
-  widths.map((w) => `${pexels(id, w)} ${w}w`).join(', ');
-
 // Ramos de seguro. Cada um gera uma página em /seguros/<slug>/.
 export const ramos = [
   // ---------- Particulares ----------
   {
     slug: 'automovel',
+    label: 'Seguro automóvel',
+    menu: 'Carro, mota ou frota',
+    pista: 'Diga-nos a marca, o modelo e o ano do carro, e a idade de quem o conduz. Se já tem seguro, a data de renovação ajuda.',
     segment: 'particulares',
     icon: 'car',
     name: 'Seguro Automóvel',
     short: 'Para o seu carro ou para as viaturas da empresa, da responsabilidade civil obrigatória aos danos próprios.',
     seoTitle: 'Seguro Automóvel e Frota na Ericeira e Mafra',
-    seoDescription: 'Seguro automóvel para particulares e frotas de empresa. Compare a Fidelidade, Allianz, Generali Tranquilidade e Ageas com um mediador local na Ericeira. Simulação gratuita e apoio em caso de acidente.',
-    image: 'driving',
+    seoDescription: 'Seguro automóvel para particulares e frotas. Propostas de várias seguradoras, simulação sem custo e apoio em caso de acidente, com um mediador na Ericeira.',
+    image: 'automovel',
+    image2: 'automovel2',
     intro: 'O seguro de responsabilidade civil automóvel é obrigatório, mas as diferenças entre apólices estão nos pormenores: franquias, veículo de substituição, assistência e quem o ajuda quando há um acidente. Comparamos as opções das seguradoras com quem trabalhamos e explicamos o que muda de uma para outra.',
     coverages: [
       ['Responsabilidade civil obrigatória', 'Danos causados a terceiros, dentro dos capitais mínimos legais ou superiores.'],
@@ -105,13 +104,17 @@ export const ramos = [
   },
   {
     slug: 'habitacao',
+    label: 'Seguro de habitação',
+    menu: 'Casa própria ou arrendada',
+    pista: 'Diga-nos se é apartamento ou moradia, onde fica e se tem crédito à habitação.',
     segment: 'particulares',
     icon: 'home',
     name: 'Seguro Habitação',
     short: 'Multirriscos para casa própria, arrendada ou de férias, com edifício, recheio e danos por água.',
     seoTitle: 'Seguro Multirriscos Habitação na Ericeira',
     seoDescription: 'Seguro multirriscos habitação para casa própria, arrendada ou de férias na Ericeira e Mafra. Edifício, recheio, fenómenos sísmicos e assistência 24h.',
-    image: 'familyHome',
+    image: 'habitacao',
+    image2: 'habitacao2',
     intro: 'Um multirriscos bem feito protege o edifício e o recheio pelos valores certos, o que evita a regra proporcional num sinistro. Ajudamos a calcular os capitais e a escolher as coberturas que fazem sentido para a sua casa.',
     coverages: [
       ['Incêndio, raio e explosão', 'Obrigatório em frações de propriedade horizontal.'],
@@ -130,13 +133,17 @@ export const ramos = [
   },
   {
     slug: 'saude',
+    label: 'Seguro de saúde',
+    menu: 'Individual ou para a família',
+    pista: 'Diga-nos quantas pessoas quer segurar e a idade de cada uma.',
     segment: 'particulares',
     icon: 'heart',
     name: 'Seguro de Saúde',
     short: 'Planos individuais, familiares ou de grupo, com consultas, exames e internamento na rede privada.',
     seoTitle: 'Seguro de Saúde Individual, Familiar e de Grupo',
     seoDescription: 'Compare seguros de saúde individuais, familiares e de grupo para empresas. Consultas, exames, internamento e estomatologia com o apoio de um mediador na Ericeira.',
-    image: 'doctor',
+    image: 'saude',
+    image2: 'saude2',
     intro: 'Entre seguros de saúde, o que muda é o plafond, o copagamento, o período de carência e a rede de prestadores. Comparamos planos e dizemos que clínicas e hospitais da zona cada um inclui.',
     coverages: [
       ['Internamento e cirurgia', 'Com plafonds anuais adequados a situações graves.'],
@@ -156,13 +163,17 @@ export const ramos = [
   },
   {
     slug: 'vida',
+    label: 'Seguro de vida',
+    menu: 'Crédito à habitação e família',
+    pista: 'Diga-nos o capital em dívida, o prazo do crédito e a idade de quem fica seguro. A última declaração do banco tem estes valores.',
     segment: 'particulares',
     icon: 'shield',
     name: 'Seguro de Vida',
     short: 'Para o crédito à habitação ou para deixar a família protegida em caso de morte ou invalidez.',
     seoTitle: 'Seguro de Vida e Crédito Habitação',
     seoDescription: 'Seguro de vida para crédito habitação ou proteção familiar. Poupe ao transferir o seguro do banco para outra seguradora, com apoio de um mediador na Ericeira.',
-    image: 'familyPark',
+    image: 'vida',
+    image2: 'vida2',
     intro: 'No crédito à habitação, o banco exige seguro de vida, mas não obriga a que seja o dele. Contratado noutra seguradora, costuma sair mais barato ao longo do empréstimo. Fazemos as contas consigo e tratamos da transferência.',
     coverages: [
       ['Morte', 'Pagamento do capital seguro aos beneficiários ou ao banco.'],
@@ -182,13 +193,17 @@ export const ramos = [
   // ---------- Empresas ----------
   {
     slug: 'acidentes-de-trabalho',
+    label: 'Acidentes de trabalho',
+    menu: 'Obrigatório para quem emprega',
+    pista: 'Diga-nos a atividade da empresa, quantas pessoas trabalham consigo e, se a tiver à mão, a massa salarial anual.',
     segment: 'empresas',
     icon: 'hardhat',
     name: 'Acidentes de Trabalho',
     short: 'Seguro obrigatório para quem tem trabalhadores e para trabalhadores independentes. Tratamos também das folhas de férias.',
     seoTitle: 'Seguro de Acidentes de Trabalho em Mafra e Ericeira',
     seoDescription: 'Seguro de acidentes de trabalho obrigatório para empresas e independentes em Mafra e Ericeira. Enquadramento correto da atividade e apoio na gestão de sinistros.',
-    image: 'worker',
+    image: 'acidentes',
+    image2: 'acidentes2',
     intro: 'O seguro de acidentes de trabalho é obrigatório para todas as entidades empregadoras e para os trabalhadores independentes. Um enquadramento errado da atividade ou da massa salarial pode levar a recusas ou a acertos elevados no fim do ano. Tratamos da apólice, das folhas de férias e dos sinistros.',
     coverages: [
       ['Trabalhadores por conta de outrem', 'Cobertura obrigatória por lei para todos os trabalhadores.'],
@@ -207,13 +222,17 @@ export const ramos = [
   },
   {
     slug: 'multirriscos-empresarial',
+    label: 'Multirriscos para empresas',
+    menu: 'Loja, restaurante ou armazém',
+    pista: 'Diga-nos a atividade, onde fica o espaço e o valor aproximado do recheio e das mercadorias.',
     segment: 'empresas',
     icon: 'building',
     name: 'Multirriscos Empresarial',
     short: 'Instalações, equipamentos, mercadorias e perdas de exploração para lojas, restaurantes, escritórios e armazéns.',
     seoTitle: 'Seguro Multirriscos Empresarial e Comércio',
     seoDescription: 'Seguro multirriscos para lojas, restaurantes, escritórios e armazéns na Ericeira e Mafra. Edifício, recheio, mercadorias e perdas de exploração.',
-    image: 'ericeiraHouses',
+    image: 'empresas',
+    image2: 'empresas2',
     intro: 'Um incêndio, uma inundação ou um assalto podem parar um negócio durante semanas. O multirriscos empresarial protege as instalações e os bens e, com a cobertura de perdas de exploração, ajuda a pagar as despesas fixas enquanto a atividade está parada.',
     coverages: [
       ['Edifício e recheio', 'Instalações, mobiliário, equipamentos e obras de adaptação.'],
@@ -232,13 +251,17 @@ export const ramos = [
   },
   {
     slug: 'responsabilidade-civil',
+    label: 'Responsabilidade civil',
+    menu: 'Danos a clientes e terceiros',
+    pista: 'Diga-nos a atividade e se algum cliente ou contrato exige um capital mínimo.',
     segment: 'empresas',
     icon: 'scale',
     name: 'Responsabilidade Civil',
     short: 'Seguros de responsabilidade civil de exploração, profissional e de produtos, para reclamações de clientes e terceiros.',
-    seoTitle: 'Seguro de Responsabilidade Civil Profissional e de Exploração',
+    seoTitle: 'Seguro de Responsabilidade Civil para empresas',
     seoDescription: 'Seguros de responsabilidade civil de exploração, profissional e de produtos para empresas e profissionais liberais. Análise gratuita do risco.',
-    image: 'advisorCouple',
+    image: 'empresas2',
+    image2: 'empresas',
     intro: 'Um erro, um acidente com um cliente ou um produto defeituoso podem dar origem a pedidos de indemnização elevados. Algumas atividades têm seguro de responsabilidade civil obrigatório; noutras é simplesmente prudente. Ajudamos a perceber o que precisa e com que capitais.',
     coverages: [
       ['RC de exploração', 'Danos a terceiros resultantes da atividade da empresa.'],
@@ -265,5 +288,5 @@ export const generalFaq = [
   ['Pagar através de um mediador fica mais caro?', 'Não. O preço da apólice é o mesmo da seguradora. A diferença é que tem alguém que compara várias companhias por si e que o ajuda quando precisa de participar um sinistro.'],
   ['Com que seguradoras trabalham?', 'Trabalhamos com Fidelidade, Allianz, Generali Tranquilidade e Ageas, entre outras. Isso permite-nos comparar condições e escolher a que melhor se ajusta a cada caso.'],
   ['Posso transferir os meus seguros atuais para a ML Seguros?', 'Sim. Analisamos as apólices que já tem e, se decidir mudar, tratamos da transferência na data de renovação para não ficar sem cobertura.'],
-  ['Onde estão localizados?', 'Estamos na Rua Dr. Eduardo Burnay, 20-B, na Ericeira. Atendemos clientes de todo o concelho de Mafra e, à distância, de qualquer ponto do país.'],
+  ['Onde estão localizados?', 'Estamos na Rua Dr. Eduardo Burnay, 26B, na Ericeira. Atendemos clientes de todo o concelho de Mafra e, à distância, de qualquer ponto do país.'],
 ];

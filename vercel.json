@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "trailingSlash": true,
+  "redirects": [
+    { "source": "/seguros-para-empresas", "destination": "/seguros-empresas/", "permanent": true },
+    { "source": "/termos-e-condicoes", "destination": "/politica-de-privacidade/", "permanent": true },
+    { "source": "/politica-de-cookies", "destination": "/politica-de-privacidade/#cookies", "permanent": true }
+  ]
+}

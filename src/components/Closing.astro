@@ -1,0 +1,58 @@
+---
+import { company } from '../data/site.js';
+
+interface Props { proposta: string; title?: string; line?: string }
+const {
+  proposta,
+  title = 'Proposta sem custo',
+  line = `Sem compromisso. Também pode ligar para o ${company.phone}.`,
+} = Astro.props;
+const ano = new Date().getFullYear();
+const portal = company.crmUrl ? `${company.crmUrl}/portal` : '';
+---
+<footer class="footer closing footer--visit" id="contact" aria-labelledby="close-h">
+  <div class="wrap">
+    <div class="closing__cta close--type">
+      <div class="section-head">
+        <h2 id="close-h">{title}</h2>
+        <p class="t-small muted">{line}</p>
+      </div>
+      <a class="btn btn--primary btn--xl btn--wide" href={proposta}>Pedir proposta<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+    </div>
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-6 stack-4">
+          <address class="footer__address">{company.address.street}<br />{company.address.locality}</address>
+          <p>Concelho de {company.address.municipality} · <a class="link" href={company.mapsHref} target="_blank" rel="noopener">Ver no Google Maps</a></p>
+          <p><a href={company.phoneHref}>{company.phone}</a> <span class="t-small muted">({company.phoneNote})</span> · <a href={company.whatsappHref} target="_blank" rel="noopener">WhatsApp</a> · <a href={`mailto:${company.email}`}>{company.email}</a></p>
+        </div>
+        <div class="span-6 start-7 stack-4">
+          <h3>Horário</h3>
+          <dl class="hours" data-tz={company.hours.tz}>
+            {company.hours.rows.map((h) => <><dt data-days={h.days}>{h.label}</dt><dd>{h.value}</dd></>)}
+          </dl>
+        </div>
+      </div>
+      <nav class="footer__nav" aria-label="Rodapé">
+        <a href="/seguros-particulares/">Particulares</a>
+        <a href="/seguros-empresas/">Empresas</a>
+        <a href="/sinistros/">Sinistros</a>
+        <a href="/sobre-nos/">Sobre nós</a>
+        <a href="/contactos/">Contactos</a>
+        {portal && <a href={portal}>Área de cliente</a>}
+        <a href={company.social.instagram} target="_blank" rel="noopener">Instagram</a>
+        <a href={company.social.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+      </nav>
+      <div class="footer__legal">
+        <span>© {ano} {company.legalName} · Mediador de seguros inscrito na ASF com o n.º {company.asf} (<a href="https://www.asf.com.pt" target="_blank" rel="noopener">asf.com.pt</a>) · NIF {company.nif}</span>
+        <span>
+          <a href="/politica-de-privacidade/">Privacidade e informação legal</a>{' · '}
+          <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">Livro de Reclamações</a>{' · '}
+          <a href="https://www.cimpas.pt" target="_blank" rel="noopener">Resolução de litígios: CIMPAS</a>{' · '}
+          <a class="credits" href="/creditos/">Fotografias via Unsplash</a>{' · '}
+          Desenvolvido por <a href="https://www.stackd-io.com/" target="_blank" rel="noopener">Stackd</a>
+        </span>
+      </div>
+    </div>
+  </div>
+</footer>

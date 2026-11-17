@@ -1,0 +1,22 @@
+---
+import { site } from '../data/site.js';
+---
+{site.gtm && (
+  <div class="cookies" data-cookies hidden>
+    <div class="cookies__caixa" role="dialog" aria-labelledby="cookies-h" aria-describedby="cookies-t">
+      <h2 id="cookies-h">Cookies</h2>
+      <p id="cookies-t">Usamos cookies para perceber como o site é usado e medir o resultado das campanhas. Pode aceitar, recusar ou escolher. <a href="/politica-de-privacidade/#cookies">Saiba mais</a>.</p>
+      <div class="cookies__opcoes" data-cookies-opcoes hidden>
+        <label class="cookies__op"><input type="checkbox" checked disabled /><span><strong>Necessários</strong>Guardam esta escolha. Estão sempre ativos.</span></label>
+        <label class="cookies__op"><input type="checkbox" data-cookies-estatistica /><span><strong>Estatística</strong>Google Analytics: visitas e páginas vistas.</span></label>
+        <label class="cookies__op"><input type="checkbox" data-cookies-marketing /><span><strong>Marketing</strong>Google Ads: resultado dos anúncios e publicidade personalizada.</span></label>
+      </div>
+      <div class="cookies__botoes">
+        <button class="cbtn cbtn--sim" type="button" data-cookies-aceitar>Aceitar todos</button>
+        <button class="cbtn cbtn--nao" type="button" data-cookies-recusar>Recusar</button>
+        <button class="cbtn cbtn--sim" type="button" data-cookies-guardar hidden>Guardar escolhas</button>
+        <button class="cbtn cbtn--link" type="button" data-cookies-personalizar>Personalizar</button>
+      </div>
+    </div>
+  </div>
+)}

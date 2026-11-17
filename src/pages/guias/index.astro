@@ -1,0 +1,61 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Tag from '../../components/Tag.astro';
+import Icon from '../../components/Icon.astro';
+import CartaoGuia from '../../components/CartaoGuia.astro';
+import SeccaoProposta from '../../components/SeccaoProposta.astro';
+import { guiasVisiveis, TEMAS, temaDe } from '../../data/guias';
+
+const guias = await guiasVisiveis();
+const temas = TEMAS.map(([slug, nome]) => ({ slug, nome, n: guias.filter((g) => temaDe(g) === slug).length })).filter((t) => t.n > 0);
+const contar = (n: number) => (n === 1 ? '1 guia' : `${n} guias`);
+---
+<Base
+  title="Guias de seguros"
+  description="Guias da ML Seguros para tratar dos seus seguros: o que fazer num acidente, como mudar o seguro de vida do banco, o que a empresa tem de saber e mais."
+  image="sobre2"
+  heroImage="sobre2"
+  indexar={guias.length > 0}
+>
+  <PageHero titulo="Guias de seguros" foto="sobre2" lead="Respostas às perguntas que mais nos fazem no escritório, explicadas sem letra miudinha." migalhas={[{ nome: 'Guias' }]} />
+
+  <section class="sec" aria-labelledby="guias-h">
+    <div class="wrap">
+      <div class="head head--center reveal">
+        <Tag>Guias</Tag>
+        <h2 id="guias-h">Para tratar dos seus seguros</h2>
+        <p>Quando o guia não chega, ligue-nos: explicamos o seu caso.</p>
+      </div>
+      {guias.length > 0 ? (
+        <>
+          <div class="filtros" data-filtros>
+            <div class="filtros__temas" role="group" aria-label="Filtrar por tema">
+              <button type="button" class="chip is-on" data-tema="" aria-pressed="true">Todos<span>{guias.length}</span></button>
+              {temas.length > 1 && temas.map((t) => <button type="button" class="chip" data-tema={t.slug} aria-pressed="false">{t.nome}<span>{t.n}</span></button>)}
+            </div>
+            <label class="filtros__busca">
+              <Icon name="search" />
+              <input type="search" placeholder="Procurar nos guias" aria-label="Procurar nos guias" autocomplete="off" data-busca />
+            </label>
+          </div>
+          <p class="filtros__conta" aria-live="polite" data-contagem>{contar(guias.length)}</p>
+          <div class="guias-grid guias-grid--filtros" data-guias>{guias.map((g) => <CartaoGuia guia={g} class="reveal" />)}</div>
+          <p class="filtros__vazio" data-vazio hidden>Não há guias com estes filtros. <button type="button" class="link" data-limpar>Ver todos os guias</button></p>
+        </>
+      ) : (
+        <p class="lead" style="text-align:center;margin-top:40px">Os primeiros guias estão a ser preparados.</p>
+      )}
+    </div>
+  </section>
+
+  <SeccaoProposta
+    titulo="Proposta sem custo, de várias seguradoras"
+    texto="Diga-nos que seguro procura e como o podemos contactar. Pedimos as propostas e ligamos-lhe com os valores."
+    formId="guias"
+  />
+</Base>
+
+<script>
+  import '../../scripts/guias';
+</script>

@@ -1,16 +1,15 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Btn from '../components/Btn.astro';
+import { company } from '../data/site.js';
 ---
-<Base title="Página não encontrada" description="A página que procura não existe.">
-  <section class="section">
-    <div class="container narrow">
-      <h1>Página não encontrada</h1>
-      <p class="lead">Com o site novo, alguns endereços mudaram. Pode seguir por aqui:</p>
-      <div class="actions">
-        <a class="btn" href="/">Página inicial</a>
-        <a class="btn btn--outline" href="/simulacao/">Pedir simulação</a>
-        <a class="btn btn--outline" href="/contactos/">Contactos</a>
-      </div>
+<Base title="Página não encontrada" description="A página que procura não existe no site da ML Seguros.">
+  <PageHero titulo="Esta página não existe" foto="sobre2" lead={`O site mudou e alguns endereços também. Siga pela página inicial ou ligue para o ${company.phone}.`} migalhas={[{ nome: 'Página não encontrada' }]} />
+  <section class="sec">
+    <div class="wrap btns" style="justify-content:center">
+      <Btn href="/">Ir para a página inicial</Btn>
+      <Btn href="/simulacao/" variante="dark">Pedir proposta</Btn>
     </div>
   </section>
 </Base>

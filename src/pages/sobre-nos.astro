@@ -1,34 +1,72 @@
 ---
 import Base from '../layouts/Base.astro';
-import Photo from '../components/Photo.astro';
 import PageHero from '../components/PageHero.astro';
-import CtaBand from '../components/CtaBand.astro';
+import Tag from '../components/Tag.astro';
+import Btn from '../components/Btn.astro';
+import Icon from '../components/Icon.astro';
+import Selo from '../components/Selo.astro';
 import { company, insurers } from '../data/site.js';
-const insurerNames = insurers.map((i) => i.name).join(', ').replace(/, ([^,]*)$/, ' e $1');
+import { fotos, fotoSrc, fotoSrcset } from '../data/fotos.js';
+
+const img = (k: string, sizes: string) => ({ src: fotoSrc(k, 1200), srcset: fotoSrcset(k), sizes, alt: fotos[k].alt, width: fotos[k].largura, height: fotos[k].altura, loading: 'lazy' as const, decoding: 'async' as const });
 ---
 <Base
-  title="Sobre Nós"
-  description="A ML Seguros é uma mediadora de seguros independente na Ericeira, com mais de 25 anos de experiência com famílias e empresas do concelho de Mafra."
-  image="ericeiraHouses"
+  title="Sobre a ML Seguros"
+  description={`A ML Seguros é uma mediadora de seguros com escritório na Ericeira há mais de ${company.years} anos, com clientes particulares e empresas do concelho de Mafra.`}
+  image="sobre"
+  heroImage="sobre"
 >
-  <PageHero
-    title="Sobre a ML Seguros"
-    lead={`Mediadora de seguros na Ericeira há mais de ${company.years} anos.`}
-    crumbs={[{ label: 'Sobre nós' }]}
-  />
+  <PageHero titulo="Sobre a ML Seguros" foto="sobre" lead={`Mediadora de seguros com escritório na Ericeira há mais de ${company.years} anos.`} migalhas={[{ nome: 'Sobre nós' }]} />
 
-  <section class="section">
-    <div class="container feature feature--top">
-      <div class="prose">
-        <p class="lead">Somos uma mediadora de seguros independente, com escritório na {company.address.street}, na Ericeira. A maior parte dos nossos clientes vive ou trabalha no concelho de Mafra.</p>
-        <p>Trabalhamos com seguradoras como a {insurerNames}. Para cada pedido, comparamos o que elas oferecem e recomendamos a que faz mais sentido para o cliente.</p>
-        <p>Tratamos de seguros de particulares (carro, casa, saúde e vida) e de empresas da zona, da restauração à construção. Quando um cliente tem um sinistro, ajudamos a participar e acompanhamos o processo com a seguradora.</p>
-        <h2>Registo</h2>
-        <p>A {company.legalName} está inscrita na Autoridade de Supervisão de Seguros e Fundos de Pensões (ASF) com o n.º {company.asf}. Pode confirmar o registo no <a href="https://www.asf.com.pt" target="_blank" rel="noopener">site da ASF</a>. A restante informação legal está na página de <a href="/politica-de-privacidade/">informação legal</a>.</p>
+  <section class="sec" id="trabalho" aria-labelledby="trabalho-h">
+    <div class="wrap grid-2">
+      <div class="about-media reveal">
+        <div class="about-media__a"><img {...img('sobre2', '(max-width: 991px) 80vw, 460px')} /></div>
+        <div class="about-media__b"><img {...img('passoDepois', '(max-width: 991px) 60vw, 360px')} /></div>
+        <Selo href="/simulacao/" />
       </div>
-      <Photo name="ericeiraHouses" alt="Rua de casas brancas na Ericeira" sizes="(max-width: 860px) 100vw, 540px" />
+      <div class="reveal" data-d="1">
+        <Tag>Quem somos</Tag>
+        <h2 id="trabalho-h" style="margin-top:16px">Quem liga fala com quem conhece o processo</h2>
+        <p class="lead" style="margin-top:20px">A maior parte dos nossos clientes vive ou trabalha no concelho de Mafra. Tratamos dos seguros da casa, do carro, da saúde e da empresa, e dos sinistros quando acontecem.</p>
+        <p style="margin-top:16px">Conhecemos os clientes pelo nome. Quando liga por causa de um sinistro ou de uma renovação, do outro lado está quem acompanha o seu seguro.</p>
+        <div class="stats" style="grid-template-columns:1fr 1fr">
+          <div class="stat"><strong data-conta={company.years} data-sufixo="+">{company.years}+</strong><span>anos de escritório na Ericeira</span></div>
+          <div class="stat"><strong data-conta={company.google.count}>{company.google.count}</strong><span>avaliações de clientes no Google</span></div>
+        </div>
+        <div class="btns" style="margin-top:36px"><Btn href="/simulacao/">Pedir proposta</Btn><a class="link" href="/contactos/">Ver os contactos</a></div>
+      </div>
     </div>
   </section>
 
-  <CtaBand title="Visite-nos na Ericeira" />
+  <section class="sec sec--soft" id="seguradoras" aria-labelledby="seguradoras-h">
+    <div class="wrap">
+      <div class="head head--center reveal">
+        <Tag>Seguradoras</Tag>
+        <h2 id="seguradoras-h">Trabalhamos com várias seguradoras</h2>
+        <p>Por isso podemos pedir mais do que uma proposta para o mesmo seguro e mostrar o que muda de uma para a outra. Entre elas:</p>
+      </div>
+      <div class="seguradoras">
+        {insurers.map((i, n) => <a class="reveal" data-d={String(n)} href={i.href} target="_blank" rel="noopener">{i.name}<Icon name="arrow-up-right" /></a>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="registo" aria-labelledby="registo-h">
+    <div class="wrap grid-2 grid-2--top">
+      <div class="reveal">
+        <Tag>Informação legal</Tag>
+        <h2 id="registo-h" style="margin-top:16px">Registo na ASF e informação legal</h2>
+        <p class="lead" style="margin-top:20px">Somos mediador de seguros registado na Autoridade de Supervisão de Seguros e Fundos de Pensões.</p>
+        <p style="margin-top:24px"><a class="link" href="/politica-de-privacidade/">Ler a informação legal e de privacidade</a></p>
+      </div>
+      <dl class="registo reveal" data-d="1">
+        <div><dt>Empresa</dt><dd>{company.legalName}</dd></div>
+        <div><dt>Registo</dt><dd>Mediador de seguros inscrito na ASF com o n.º {company.asf}</dd></div>
+        <div><dt>NIF</dt><dd>{company.nif}</dd></div>
+        <div><dt>Morada</dt><dd>{company.address.street}, {company.address.postalCode} {company.address.locality}</dd></div>
+        <div><dt>Reclamações</dt><dd><a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">Livro de Reclamações Eletrónico</a> ou <a href="https://www.cimpas.pt" target="_blank" rel="noopener">CIMPAS</a>, o centro de arbitragem de seguros</dd></div>
+      </dl>
+    </div>
+  </section>
 </Base>

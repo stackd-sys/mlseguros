@@ -1,37 +1,77 @@
 ---
 import Base from '../layouts/Base.astro';
-import SegmentPage from '../components/SegmentPage.astro';
-import Photo from '../components/Photo.astro';
+import PageHero from '../components/PageHero.astro';
+import Tag from '../components/Tag.astro';
+import Icon from '../components/Icon.astro';
+import Foto from '../components/Foto.astro';
+import Formulario from '../components/Formulario.astro';
+import CartaoSeguro from '../components/CartaoSeguro.astro';
+import SeccaoFaq from '../components/SeccaoFaq.astro';
+import { ramosBySegment, ramos } from '../data/site.js';
+
+const daEmpresa = ramosBySegment('empresas');
+const saude = ramos.find((r) => r.slug === 'saude')!;
+const auto = ramos.find((r) => r.slug === 'automovel')!;
+const lista = [
+  ...daEmpresa.map((r) => ({ href: `/seguros/${r.slug}/`, nome: r.label, linha: r.short, foto: r.image })),
+  { href: '/seguros/automovel/', nome: 'Frota automóvel', linha: 'As viaturas da empresa numa só apólice. Para juntar ou tirar um carro, basta a matrícula.', foto: auto.image2 },
+  { href: '/seguros/saude/', nome: 'Saúde de grupo', linha: 'Um seguro de saúde para a equipa, muitas vezes sem questionário médico e com os familiares.', foto: saude.image2 },
+];
+const perguntas: [string, string][] = [
+  ['O seguro de acidentes de trabalho é obrigatório?', 'Sim, para todas as empresas com trabalhadores e para os trabalhadores independentes, que têm de ter apólice própria.'],
+  ['Tratam das folhas de férias?', 'Ajudamos no envio mensal e na atualização dos salários, para não haver acertos grandes no fim do ano.'],
+  ['A partir de quantas viaturas compensa um seguro de frota?', 'Normalmente a partir de três. Cada viatura pode ter as suas coberturas.'],
+  ['Um trabalhador teve um acidente. O que faço?', 'Primeiro a assistência médica. Depois ligue-nos logo: a participação à seguradora tem prazos curtos.'],
+];
 ---
 <Base
-  title="Seguros para Empresas em Mafra e Ericeira"
-  description="Seguros para PME: acidentes de trabalho, multirriscos empresarial, responsabilidade civil, frota automóvel e saúde de grupo. Análise gratuita das apólices da empresa."
-  image="worker"
+  title="Seguros para empresas em Mafra e na Ericeira"
+  description="Acidentes de trabalho, multirriscos, responsabilidade civil, frota e saúde de grupo para empresas do concelho de Mafra. Análise das apólices sem custo."
+  image="empresas"
+  heroImage="empresasHero"
+  proposta="#analise"
 >
-  <SegmentPage
-    segment="empresas"
-    title="Seguros para empresas"
-    lead="Acidentes de trabalho, instalações, responsabilidade civil, viaturas e saúde da equipa, com um só contacto para todos os seguros da empresa."
-    crumb="Empresas"
-    introTitle="Como ajudamos"
-    introImage="handshake"
-    introAlt="Aperto de mão numa reunião de escritório"
-  >
-    <Fragment slot="intro">
-      <p>Tratamos das apólices, das folhas de férias e das renovações. Declarar bem a atividade e a massa salarial evita recusas e acertos no fim do ano.</p>
-      <p>Quando há um acidente de trabalho ou um sinistro nas instalações, ajudamos a participar dentro dos prazos e acompanhamos o processo com a seguradora.</p>
-    </Fragment>
+  <PageHero titulo="Seguros para empresas em Mafra e na Ericeira" foto="empresasHero" lead="Acidentes de trabalho, instalações, responsabilidade civil, viaturas e saúde da equipa, com um só contacto para os seguros e os sinistros da empresa." migalhas={[{ nome: 'Empresas' }]} />
 
-    <section class="section" id="auditoria">
-      <div class="container feature">
-        <div>
-          <h2>Análise gratuita às apólices da empresa</h2>
-          <p>Envie-nos as apólices atuais. Vemos se há coberturas em falta ou repetidas, se o seguro de acidentes de trabalho está bem enquadrado e se há condições melhores noutras seguradoras. Depois explicamos o que encontrámos.</p>
-          <p>A análise não tem custo e não fica obrigado a mudar.</p>
-          <a class="btn" href="/simulacao/?tipo=auditoria-empresas">Pedir análise</a>
-        </div>
-        <Photo name="elderly" alt="Mediador a rever documentos com um cliente" sizes="(max-width: 860px) 100vw, 540px" />
+  <section class="sec sec--soft" id="seguros" aria-labelledby="seguros-h">
+    <div class="wrap">
+      <div class="head head--split reveal">
+        <div><Tag>Para a empresa</Tag><h2 id="seguros-h">Seguros para a empresa e a equipa</h2></div>
+        <p>Declarar bem a atividade e a massa salarial evita recusas e acertos no fim do ano. Começamos sempre por aí.</p>
       </div>
-    </section>
-  </SegmentPage>
+      <div class="grid-svc">
+        {lista.map((l) => <CartaoSeguro class="reveal" href={l.href} nome={l.nome} linha={l.linha} foto={l.foto} />)}
+        <div class="svc svc--cta reveal">
+          <div>
+            <span class="ico"><Icon name="file-search" /></span>
+            <h3>Análise das apólices da empresa</h3>
+            <p>Sem custo e sem obrigação de mudar.</p>
+          </div>
+          <a class="link link--light" href="#analise">Pedir a análise</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="analise" aria-labelledby="analise-h">
+    <div class="wrap grid-2 grid-2--top">
+      <div class="reveal">
+        <Tag>Análise sem custo</Tag>
+        <h2 id="analise-h" style="margin-top:16px">Análise das apólices da empresa</h2>
+        <p class="lead" style="margin-top:20px">Envie-nos os seguros que a empresa tem hoje. Vemos se há coberturas em falta ou repetidas, se os acidentes de trabalho estão bem enquadrados e se há melhores condições noutra seguradora.</p>
+        <ul class="checks">
+          <li><Icon name="check" />A análise não tem custo e não fica obrigado a mudar.</li>
+          <li><Icon name="check" />Depois explicamos o que encontrámos, por telefone ou no escritório.</li>
+        </ul>
+        <div class="foto-card" style="min-height:340px;margin-top:40px"><Foto k="passoPropostas" class="" sizes="(max-width: 991px) 100vw, 620px" /></div>
+      </div>
+      <div class="form-card reveal" data-d="1">
+        <h3>Pedir a análise</h3>
+        <p>Deixe os dados da empresa. Ligamos-lhe para combinar o envio das apólices.</p>
+        <Formulario tipo="analise" id="ana" />
+      </div>
+    </div>
+  </section>
+
+  <SeccaoFaq titulo="Perguntas das empresas" perguntas={perguntas} soft />
 </Base>

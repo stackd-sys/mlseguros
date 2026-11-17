@@ -1,0 +1,5 @@
+---
+interface Props { claro?: boolean }
+const { claro = false } = Astro.props;
+---
+<p class={claro ? 'tag tag--light' : 'tag'}><img src="/logo-ml-64.png" alt="" width="16" height="16" /><slot /></p>

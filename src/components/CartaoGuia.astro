@@ -1,0 +1,21 @@
+---
+import Icon from './Icon.astro';
+import { fotos, fotoSrc, fotoSrcset } from '../data/fotos.js';
+import { minutosDeLeitura, dataPT, etiqueta, temaDe, nomeTema, textoDePesquisa, type Guia } from '../data/guias';
+
+interface Props { guia: Guia; class?: string }
+const { guia, class: cls = '' } = Astro.props;
+const f = fotos[guia.data.foto];
+const marca = etiqueta(guia);
+const tema = temaDe(guia);
+---
+<article class={`guia ${cls}`.trim()} data-tema={tema} data-texto={textoDePesquisa(guia)}>
+  <a class="guia__foto" href={`/guias/${guia.id}/`} tabindex="-1" aria-hidden="true">
+    <img src={fotoSrc(guia.data.foto, 800)} srcset={fotoSrcset(guia.data.foto)} sizes="(max-width: 767px) 100vw, 420px" alt="" width={f.largura} height={f.altura} loading="lazy" decoding="async" />
+  </a>
+  <div class="guia__corpo">
+    <p class="guia__meta"><span class="guia__tema">{nomeTema(tema)}</span>{marca && <span class="rascunho">{marca}</span>}<time datetime={guia.data.publicado.toISOString().slice(0, 10)}>{dataPT(guia.data.publicado)}</time> · {minutosDeLeitura(guia)} min de leitura</p>
+    <h3><a href={`/guias/${guia.id}/`}>{guia.data.titulo}</a></h3>
+    <a class="guia__ler" href={`/guias/${guia.id}/`}>Ler o guia<span><Icon name="arrow-up-right" /></span></a>
+  </div>
+</article>

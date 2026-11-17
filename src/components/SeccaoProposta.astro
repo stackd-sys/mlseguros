@@ -1,0 +1,48 @@
+---
+import Tag from './Tag.astro';
+import Icon from './Icon.astro';
+import Formulario from './Formulario.astro';
+import Avaliacoes from './Avaliacoes.astro';
+import { company } from '../data/site.js';
+import { fotos, fotoSrc, fotoSrcset } from '../data/fotos.js';
+
+interface Props {
+  id?: string;
+  titulo: string;
+  texto: string;
+  tipo?: 'proposta' | 'ramo' | 'sinistro' | 'contacto' | 'analise' | 'ligamos';
+  ramo?: string;
+  formId: string;
+  formTitulo?: string;
+  foto?: string;
+  etiqueta?: string;
+}
+const { id = 'proposta', titulo, texto, tipo = 'proposta', ramo, formId, formTitulo = 'Pedir proposta', foto = 'contactos', etiqueta = 'Pedido de proposta' } = Astro.props;
+const f = fotos[foto];
+---
+<section class="split" id={id} aria-labelledby={`${id}-h`}>
+  <div class="split__media">
+    <img src={fotoSrc(foto, 1200)} srcset={fotoSrcset(foto)} sizes="(max-width: 1199px) 100vw, 50vw" alt="" width={f.largura} height={f.altura} loading="lazy" decoding="async" style={f.pos ? `object-position:${f.pos}` : undefined} />
+    <div class="reveal">
+      <Tag claro>{etiqueta}</Tag>
+      <h2 id={`${id}-h`}>{titulo}</h2>
+      <p class="lead">{texto}</p>
+    </div>
+    <div class="contact-card reveal" data-d="1">
+      <h3>Prefere falar já?</h3>
+      <div class="contact-card__row">
+        <span class="ico"><Icon name="phone-call" /></span>
+        <div><small>Telemóvel, {company.phoneNote}</small><a href={company.phoneHref}>{company.phone}</a></div>
+      </div>
+      <div class="contact-card__row">
+        <span class="ico"><Icon name="whatsapp" /></span>
+        <div><small>Fotografias e documentos também por aqui</small><a href={company.whatsappHref} target="_blank" rel="noopener">WhatsApp</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="split__form">
+    <h2 class="reveal">{formTitulo}</h2>
+    <div class="reveal" data-d="1"><Formulario tipo={tipo} ramo={ramo} id={formId} /></div>
+    <div class="reveal"><Avaliacoes modo="resumo" /></div>
+  </div>
+</section>

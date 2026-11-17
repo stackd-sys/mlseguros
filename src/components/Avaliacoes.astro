@@ -1,0 +1,58 @@
+---
+// Avaliações do Google, lidas ao vivo de /api/avaliacoes (api/_lib/avaliacoes.js).
+// Sem a chave configurada, mostra o total e as ligações para o Google, sem nota.
+import Icon from './Icon.astro';
+import Btn from './Btn.astro';
+import GoogleG from './GoogleG.astro';
+import Estrelas from './Estrelas.astro';
+import { company } from '../data/site.js';
+
+interface Props { modo: 'resumo' | 'cartao' | 'destaque' }
+const { modo } = Astro.props;
+const total = `${company.google.count} avaliações de clientes no Google`;
+---
+{modo === 'resumo' && (
+  <div class="av-resumo" data-av>
+    <GoogleG class="av-resumo__g" />
+    <div>
+      <p><strong data-av-nota hidden></strong> <Estrelas /></p>
+      <p data-av-total>{total}</p>
+      <p><a class="link small" href={company.google.href} target="_blank" rel="noopener" data-av-link>Ler as avaliações no Google</a></p>
+    </div>
+  </div>
+)}
+
+{modo === 'cartao' && (
+  <div data-av>
+    <h3>Avaliações no Google</h3>
+    <div class="av-resumo">
+      <GoogleG class="av-resumo__g" />
+      <div>
+        <p><strong data-av-nota hidden></strong> <Estrelas /></p>
+        <p data-av-total>{total}</p>
+      </div>
+    </div>
+    <p class="av-links"><a class="link" href={company.google.href} target="_blank" rel="noopener" data-av-link>Ler as avaliações</a><a class="link" href={company.google.write} target="_blank" rel="noopener">Escrever uma avaliação</a></p>
+  </div>
+)}
+
+{modo === 'destaque' && (
+  <div class="testemunho__corpo" data-av data-av-carrossel>
+    <div data-av-fallback>
+      <p class="lead" style="color:var(--ink)">A ML Seguros tem {company.google.count} avaliações de clientes na ficha do Google Maps. Leia-as no Google ou deixe a sua, se já é cliente.</p>
+      <div class="btns" style="margin-top:28px">
+        <Btn href={company.google.href} externo>Ler as avaliações</Btn>
+        <a class="link" href={company.google.write} target="_blank" rel="noopener">Escrever uma avaliação</a>
+      </div>
+    </div>
+    <div data-av-slides hidden></div>
+    <div class="testemunho__pe" data-av-pe hidden>
+      <div class="autor" data-av-autor></div>
+      <div class="testemunho__setas">
+        <button class="arrow-btn" type="button" aria-label="Avaliação anterior" data-av-ant><Icon name="arrow-left" /></button>
+        <button class="arrow-btn" type="button" aria-label="Avaliação seguinte" data-av-seg><Icon name="arrow-right" /></button>
+      </div>
+    </div>
+    <p class="fonte-google" data-av-fonte hidden><GoogleG />Avaliações publicadas no Google Maps. <a class="link small" href={company.google.href} target="_blank" rel="noopener" data-av-link>Ver todas</a></p>
+  </div>
+)}

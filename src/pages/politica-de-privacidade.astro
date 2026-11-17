@@ -3,8 +3,10 @@ import Base from '../layouts/Base.astro';
 import LegalPage from '../components/LegalPage.astro';
 import { company, privacy } from '../data/site.js';
 const mail = `mailto:${company.email}`;
+// Sem o CRM (PUBLIC_CRM_URL) não há área de cliente, e a política não fala dela.
+const area = Boolean(company.crmUrl);
 ---
-<Base title="Informação Legal e Privacidade" description="Informação legal sobre a ML Seguros, mediador registado na ASF, meios de reclamação e como tratamos os dados pessoais de quem nos contacta e dos nossos clientes, incluindo na área de cliente.">
+<Base title="Informação legal e privacidade" image="sobre3" description="Informação legal da ML Seguros, mediador registado na ASF, meios de reclamação e como tratamos os dados de quem nos contacta e dos clientes.">
   <LegalPage title="Informação legal e privacidade">
     <h2>Identificação</h2>
     <p>{company.legalName}<br />NIF {company.nif}<br />{company.address.street}, {company.address.postalCode} {company.address.locality}<br />{company.phone} ({company.phoneNote.toLowerCase()}) · <a href={mail}>{company.email}</a></p>
@@ -17,7 +19,7 @@ const mail = `mailto:${company.email}`;
 
     <h2 id="privacidade">Política de privacidade</h2>
     <p class="muted small">Versão {privacy.version}, atualizada a {privacy.updated}.</p>
-    <p>Esta política explica como a {company.legalName} trata os dados pessoais de quem nos contacta pelo site, de quem nos pede uma proposta e dos nossos clientes, incluindo na área de cliente.</p>
+    <p>Esta política explica como a {company.legalName} trata os dados pessoais de quem nos contacta pelo site, de quem nos pede uma proposta e dos nossos clientes{area && ', incluindo na área de cliente'}.</p>
 
     <h3>Responsável pelo tratamento</h3>
     <p>{company.legalName}, NIF {company.nif}, {company.address.street}, {company.address.postalCode} {company.address.locality}. Para qualquer questão sobre os seus dados, escreva para <a href={mail}>{company.email}</a>.</p>
@@ -28,18 +30,19 @@ const mail = `mailto:${company.email}`;
       <li><strong>Clientes:</strong> nome, NIF, data de nascimento, profissão, contactos, morada, IBAN para o pagamento dos prémios e, se o indicar, um contacto de emergência.</li>
       <li><strong>Os seus seguros:</strong> propostas, apólices, recibos, sinistros, dados sobre o que segura (por exemplo, a matrícula do veículo ou a morada da casa) e os documentos que nos entrega.</li>
       <li><strong>Dados de saúde:</strong> nos seguros de vida, de saúde e de acidentes, e em alguns sinistros, só os necessários para a proposta, o contrato ou a participação, com o seu consentimento explícito.</li>
-      <li><strong>Contactos connosco:</strong> as notas dos telefonemas, emails e reuniões, e os pedidos que faz na área de cliente.</li>
-      <li><strong>Área de cliente:</strong> o email com que entra, a data do convite e do último acesso, e as suas escolhas sobre privacidade e marketing, com a data e a forma como as fez. A palavra-passe é guardada de forma que nem nós a conseguimos ver.</li>
-      <li><strong>Outras pessoas:</strong> se nos der dados de outras pessoas (segurados, beneficiários, condutores, familiares), informe-as de que o fez. Se recomendar alguém na área de cliente, guardamos o nome, o contacto e o seguro que procura, e a sua indicação de que essa pessoa autorizou o contacto.</li>
+      <li><strong>Contactos connosco:</strong> as notas dos telefonemas, emails e reuniões{area && ', e os pedidos que faz na área de cliente'}.</li>
+      {area && <li><strong>Área de cliente:</strong> o email com que entra, a data do convite e do último acesso, e as suas escolhas sobre privacidade e marketing, com a data e a forma como as fez. A palavra-passe é guardada de forma que nem nós a conseguimos ver.</li>}
+      <li><strong>Outras pessoas:</strong> se nos der dados de outras pessoas (segurados, beneficiários, condutores, familiares), informe-as de que o fez.{area && ' Se recomendar alguém na área de cliente, guardamos o nome, o contacto e o seguro que procura, e a sua indicação de que essa pessoa autorizou o contacto.'}</li>
     </ul>
 
     <h3>Para que os usamos</h3>
     <ul>
       <li><strong>Responder ao seu pedido e preparar propostas.</strong> Base legal: as diligências pré-contratuais que nos pede e o consentimento que dá no formulário (artigo 6.º, n.º 1, alíneas a) e b), do RGPD).</li>
       <li><strong>Mediar e gerir os seus seguros:</strong> colocar o contrato numa seguradora, tratar das renovações, dos recibos e das alterações, e acompanhá-lo nos sinistros. Base legal: a execução do contrato (alínea b).</li>
-      <li><strong>Área de cliente:</strong> mostrar-lhe os seus seguros e documentos e receber os seus pedidos. Base legal: a execução do contrato (alínea b).</li>
+      {area && <li><strong>Área de cliente:</strong> mostrar-lhe os seus seguros e documentos e receber os seus pedidos. Base legal: a execução do contrato (alínea b).</li>}
       <li><strong>Cumprir obrigações legais:</strong> os deveres de um mediador de seguros perante a ASF, a faturação e as obrigações fiscais, a prevenção do branqueamento de capitais nos seguros de vida e os pedidos de autoridades. Base legal: obrigação legal (alínea c).</li>
       <li><strong>Novidades, campanhas e propostas de novos seguros</strong>, por email, SMS ou telefone. Base legal: o seu consentimento (alínea a), que pode retirar quando quiser. Sem ele, não lhe enviamos campanhas, mas continua a receber tudo o que diz respeito aos seus seguros: renovações, recibos e sinistros.</li>
+      <li><strong>Medir as visitas ao site e o resultado das campanhas</strong>, com o Google Analytics e o Google Ads. Base legal: o seu consentimento (alínea a), dado no aviso de cookies, que pode mudar quando quiser.</li>
       <li><strong>Demonstrar as suas escolhas e defender direitos:</strong> guardamos quando e como deu ou retirou o consentimento, e um registo das alterações feitas aos seus dados. Base legal: o nosso interesse legítimo em provar o cumprimento da lei e em nos defendermos num litígio (alínea f).</li>
     </ul>
 
@@ -48,7 +51,8 @@ const mail = `mailto:${company.email}`;
       <li><strong>Seguradoras:</strong> as que consultamos para lhe fazer uma proposta e a do seu contrato. Cada seguradora é responsável pelo tratamento que faz dos seus dados e tem a sua própria política de privacidade.</li>
       <li><strong>Outros mediadores com quem trabalhamos</strong>, quando o seu seguro é colocado através deles, só com os dados necessários para isso.</li>
       <li><strong>Autoridades:</strong> a ASF, a Autoridade Tributária, os tribunais e outras entidades públicas, quando a lei o exige.</li>
-      <li><strong>Prestadores de serviços</strong> que nos ajudam a funcionar (alojamento do site e da área de cliente, base de dados, envio de email, informática e contabilidade). Tratam os dados só por nossa conta, com um contrato que os obriga a protegê-los.</li>
+      <li><strong>Google</strong> (Google Tag Manager, Google Analytics e Google Ads), nos termos descritos em «Cookies».</li>
+      <li><strong>Prestadores de serviços</strong> que nos ajudam a funcionar (alojamento do site{area && ' e da área de cliente'}, base de dados, envio de email, informática e contabilidade). Tratam os dados só por nossa conta, com um contrato que os obriga a protegê-los.</li>
     </ul>
     <p>Não vendemos dados a ninguém.</p>
 
@@ -60,24 +64,31 @@ const mail = `mailto:${company.email}`;
       <li><strong>Pedidos que não resultem em contrato:</strong> são apagados ao fim de 12 meses.</li>
       <li><strong>Clientes:</strong> enquanto tiver seguros connosco. Depois, só o que a lei obriga a guardar: 10 anos para a faturação e os documentos contabilísticos, 7 anos depois do fim da relação para os documentos de prevenção do branqueamento de capitais e 5 anos depois do fim do contrato, o prazo para fazer valer direitos de um contrato de seguro.</li>
       <li><strong>Marketing:</strong> até retirar o consentimento. Guardamos o registo das suas escolhas enquanto for preciso para as demonstrar.</li>
-      <li><strong>Área de cliente:</strong> o acesso é desativado quando deixa de ser nosso cliente.</li>
+      {area && <li><strong>Área de cliente:</strong> o acesso é desativado quando deixa de ser nosso cliente.</li>}
     </ul>
 
     <h3>Os seus direitos</h3>
-    <p>Pode pedir acesso aos seus dados, a sua correção, apagamento, limitação ou portabilidade, opor-se ao seu tratamento e retirar o consentimento a qualquer momento, sem que isso afete o que foi feito antes. Na área de cliente, pode ver os seus dados, pedir alterações e mudar a sua escolha sobre marketing no perfil. Para o resto, escreva para <a href={mail}>{company.email}</a>.</p>
+    <p>Pode pedir acesso aos seus dados, a sua correção, apagamento, limitação ou portabilidade, opor-se ao seu tratamento e retirar o consentimento a qualquer momento, sem que isso afete o que foi feito antes.{area ? ' Na área de cliente, pode ver os seus dados, pedir alterações e mudar a sua escolha sobre marketing no perfil. Para o resto, escreva para ' : ' Para isso, escreva para '} <a href={mail}>{company.email}</a>.</p>
     <p>Respondemos no prazo de um mês, que pode ser prolongado por mais dois nos pedidos complexos, e sem custos. Podemos pedir-lhe que confirme a sua identidade. Pode também apresentar reclamação à Comissão Nacional de Proteção de Dados (<a href="https://www.cnpd.pt" target="_blank" rel="noopener">cnpd.pt</a>).</p>
 
     <h3>Decisões automáticas</h3>
     <p>Não tomamos decisões sobre si baseadas apenas em tratamento automatizado. A aceitação e o preço de cada seguro são decididos pela seguradora, segundo as suas regras.</p>
 
     <h3>Segurança</h3>
-    <p>Só a equipa da {company.name} acede aos dados dos clientes, cada pessoa com a sua conta. Na área de cliente, cada cliente vê apenas os seus seguros e os das pessoas que lhe estão associadas (por exemplo, os filhos menores ou a sua empresa). As ligações são cifradas e as alterações ficam registadas. Se houver uma violação de dados que o possa afetar, avisamos nos termos da lei.</p>
+    <p>Só a equipa da {company.name} acede aos dados dos clientes, cada pessoa com a sua conta.{area && ' Na área de cliente, cada cliente vê apenas os seus seguros e os das pessoas que lhe estão associadas (por exemplo, os filhos menores ou a sua empresa).'} As ligações são cifradas e as alterações ficam registadas. Se houver uma violação de dados que o possa afetar, avisamos nos termos da lei.</p>
 
-    <h3>Cookies</h3>
-    <p>Este site não usa cookies de publicidade nem de estatística. O mapa do Google só é carregado se carregar em «Mostrar mapa» na página de contactos; nesse momento a Google pode instalar os seus próprios cookies, de acordo com a política de privacidade da Google.</p>
-    <p>A área de cliente usa apenas os cookies necessários para manter a sessão iniciada e guarda no seu browser preferências de visualização. Também não usa cookies de publicidade nem de estatística.</p>
+    <h3 id="cookies">Cookies</h3>
+    <p>Só usamos cookies de estatística e de marketing se os aceitar. Pode mudar a escolha a qualquer momento em «Definições de cookies», no fundo de cada página.</p>
+    <ul>
+      <li><strong>Necessários</strong> (sempre ativos): <code>ml_consent</code>, da ML Seguros, guarda a sua escolha sobre cookies durante 6 meses.</li>
+      <li><strong>Estatística</strong> (Google Analytics 4): <code>_ga</code> e <code>_ga_*</code>, da Google, distinguem visitas e sessões, para sabermos que páginas são vistas e de onde vêm os visitantes. Duram até 2 anos.</li>
+      <li><strong>Marketing</strong> (Google Ads): <code>_gcl_au</code> e <code>_gcl_aw</code>, da Google, medem os pedidos que chegam através de anúncios e permitem mostrar anúncios a quem já visitou o site. Duram até 90 dias. A Google pode usar também cookies nos seus próprios domínios.</li>
+    </ul>
+    <p>Usamos o modo de consentimento da Google (Consent Mode). O Google Tag Manager é carregado em todas as visitas para aplicar a sua escolha. Se recusar, as ferramentas da Google não guardam nem leem cookies no seu browser, mas recebem sinais sem cookies nem identificadores, por exemplo que uma página foi vista ou que foi enviado um pedido. A Google usa esses sinais para estimar estatísticas e conversões de forma agregada, sem o identificar. A Google LLC pode tratar estes dados nos Estados Unidos, ao abrigo do Quadro de Privacidade de Dados UE-EUA.</p>
+    <p>As ligações para o Google Maps abrem o site da Google, que tem a sua própria política de privacidade. A secção de avaliações mostra avaliações publicadas no Google Maps: o texto e as fotografias dos autores vêm dos servidores da Google, que recebem o endereço de rede de quem vê a página.</p>
+    {area && <p>A área de cliente usa apenas os cookies necessários para manter a sessão iniciada e guarda no seu browser preferências de visualização. Também não usa cookies de publicidade nem de estatística.</p>}
 
     <h3>Alterações a esta política</h3>
-    <p>Se alterarmos esta política de forma relevante, publicamos aqui a nova versão e pedimos-lhe que tome conhecimento dela na próxima entrada na área de cliente.</p>
+    <p>Se alterarmos esta política de forma relevante, publicamos aqui a nova versão{area && ' e pedimos-lhe que tome conhecimento dela na próxima entrada na área de cliente'}.</p>
   </LegalPage>
 </Base>

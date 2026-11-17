@@ -1,12 +1,4 @@
----
-// Logótipo horizontal: ícone + nome da marca (a auditoria pedia o wordmark no header).
-interface Props { inverse?: boolean }
-const { inverse = false } = Astro.props;
----
-<a href="/" class:list={['logo', { 'logo--inverse': inverse }]} aria-label="ML Seguros, página inicial">
-  <img src="/favicon.svg" width="44" height="44" alt="" />
-  <span class="logo__text">
-    <strong>ML Seguros</strong>
-    <small>Mediação de Seguros</small>
-  </span>
+<a class="logo" href="/" aria-label="ML Seguros, página inicial">
+  <img src="/logo-ml-64.png" alt="" width="48" height="48" />
+  <span><b>ML</b> Seguros</span>
 </a>

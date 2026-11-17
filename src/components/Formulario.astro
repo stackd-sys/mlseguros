@@ -1,0 +1,161 @@
+---
+// Todos os formulários do site seguem para o CRM da ML (PUBLIC_FORM_ENDPOINT):
+// com "tipo_de_seguro" entram como lead; com "assunto_pedido" ficam como tarefa.
+import Btn from './Btn.astro';
+import { company, ramos } from '../data/site.js';
+
+type Tipo = 'proposta' | 'ramo' | 'sinistro' | 'contacto' | 'analise' | 'ligamos';
+interface Props { tipo: Tipo; ramo?: string; id?: string; compacto?: boolean }
+const { tipo, ramo, id = 'f', compacto = false } = Astro.props;
+const r = ramo ? ramos.find((x) => x.slug === ramo) : undefined;
+
+const enviado = {
+  proposta: ['Pedido de proposta enviado', 'Vamos pedir as propostas e ligar-lhe para falar dos valores.'],
+  ramo: ['Pedido de proposta enviado', 'Vamos pedir as propostas e ligar-lhe para falar dos valores.'],
+  sinistro: ['Participação enviada', 'Vamos ligar-lhe para tratar do processo.'],
+  contacto: ['Mensagem enviada', 'Respondemos pelo contacto que deixou.'],
+  analise: ['Pedido de análise enviado', 'Vamos ligar-lhe para combinar o envio das apólices.'],
+  ligamos: ['Pedido enviado', 'Vamos ligar-lhe para o número que deixou.'],
+}[tipo];
+const rotulo = {
+  proposta: 'Pedir proposta', ramo: 'Pedir proposta', sinistro: 'Participar o sinistro',
+  contacto: 'Enviar a mensagem', analise: 'Pedir a análise', ligamos: 'Pedir que liguem',
+}[tipo];
+const mensagem = {
+  proposta: ['Pormenores', false, ''],
+  ramo: ['Pormenores', false, ''],
+  sinistro: ['O que aconteceu', true, 'Conte em poucas palavras o que aconteceu e quando.'],
+  contacto: ['Mensagem', true, 'Escreva a sua mensagem.'],
+}[tipo as 'proposta'] as [string, boolean, string] | undefined;
+const endpoint = company.formEndpoint;
+const obrigado = { proposta: "proposta", ramo: "proposta", sinistro: "sinistro", contacto: "mensagem", ligamos: "ligamos", analise: "analise" }[tipo];
+const f = (n: string) => `${id}-${n}`;
+---
+<form
+  class="form"
+  action={endpoint ? undefined : `mailto:${company.email}`}
+  method="post"
+  enctype={endpoint ? undefined : 'text/plain'}
+  data-form
+  data-endpoint={endpoint || undefined}
+  data-obrigado={`/obrigado/${obrigado}/`}
+  data-sent-title={enviado[0]}
+  data-sent={enviado[1]}
+  data-sending="A enviar…"
+  data-fix="Há {n} campo(s) por corrigir."
+  data-failed={`Não foi possível enviar. O que escreveu continua aqui: tente de novo ou ligue para o ${company.phone}.`}
+  novalidate
+>
+  {tipo === 'ramo' && r && <input type="hidden" name="tipo_de_seguro" value={r.name} />}
+  {tipo === 'analise' && <input type="hidden" name="tipo_de_seguro" value="Análise de apólices (empresa)" />}
+  {tipo === 'sinistro' && <input type="hidden" name="assunto_pedido" value="Participar um sinistro" />}
+  {tipo === 'ligamos' && <input type="hidden" name="assunto_pedido" value="Pedido de contacto" />}
+  <input type="hidden" name="origem" value={Astro.url.pathname} />
+  {endpoint && <input type="hidden" name="_t" value="" />}
+
+  {tipo === 'proposta' && (
+    <div class="field field--full">
+      <label for={f('seguro')}>Seguro</label>
+      <select id={f('seguro')} name="tipo_de_seguro" required aria-describedby={f('seguro-err')}>
+        <option value="">Escolha um</option>
+        {ramos.map((x) => <option value={x.name}>{x.label}</option>)}
+        <option value="Outro seguro">Outro seguro</option>
+      </select>
+      <p class="field__error" id={f('seguro-err')} hidden>Escolha o seguro de que precisa.</p>
+    </div>
+  )}
+
+  {tipo === 'contacto' && (
+    <div class="field field--full">
+      <label for={f('assunto')}>Assunto</label>
+      <select id={f('assunto')} name="assunto_pedido">
+        <option>Pedido de informação</option>
+        <option>Alteração a uma apólice</option>
+        <option>Participar um sinistro</option>
+        <option>Outro assunto</option>
+      </select>
+    </div>
+  )}
+
+  {tipo === 'analise' && (
+    <div class="field">
+      <label for={f('empresa')}>Empresa</label>
+      <input id={f('empresa')} name="empresa" type="text" autocomplete="organization" required aria-describedby={f('empresa-err')} />
+      <p class="field__error" id={f('empresa-err')} hidden>Escreva o nome da empresa.</p>
+    </div>
+  )}
+
+  <div class={tipo === 'analise' ? 'field' : 'field field--full'}>
+    <label for={f('nome')}>{tipo === 'analise' ? 'Pessoa de contacto' : 'Nome'}</label>
+    <input id={f('nome')} name="nome" type="text" autocomplete="name" required minlength="2" aria-describedby={f('nome-err')} />
+    <p class="field__error" id={f('nome-err')} hidden>Escreva o seu nome.</p>
+  </div>
+
+  <div class={compacto ? 'field field--full' : 'field'}>
+    <label for={f('tel')}>Telemóvel</label>
+    <input id={f('tel')} name="telemovel" type="tel" autocomplete="tel" inputmode="tel" required pattern="\+?[0-9][0-9 ]{7,17}" aria-describedby={f('tel-err')} />
+    <p class="field__error" id={f('tel-err')} hidden>Escreva um número com 9 dígitos, por exemplo 912 345 678.</p>
+  </div>
+
+  {!compacto && (tipo === 'ligamos' ? (
+    <div class="field">
+      <label for={f('hora')}>Melhor altura</label>
+      <select id={f('hora')} name="melhor_altura">
+        <option>Manhã</option>
+        <option>Hora de almoço</option>
+        <option>Tarde</option>
+      </select>
+    </div>
+  ) : (
+    <div class="field">
+      <label for={f('email')}>Email <span class="opc">(opcional)</span></label>
+      <input id={f('email')} name="email" type="email" autocomplete="email" inputmode="email" aria-describedby={f('email-err')} />
+      <p class="field__error" id={f('email-err')} hidden>Escreva um email com @, por exemplo nome@gmail.com.</p>
+    </div>
+  ))}
+
+  {tipo === 'sinistro' && (
+    <div class="field field--full">
+      <label for={f('apolice')}>Apólice ou matrícula <span class="opc">(opcional)</span></label>
+      <input id={f('apolice')} name="apolice_ou_matricula" type="text" autocomplete="off" />
+    </div>
+  )}
+
+  {tipo === 'analise' && (
+    <>
+      <div class="field">
+        <label for={f('atividade')}>Atividade</label>
+        <input id={f('atividade')} name="atividade" type="text" autocomplete="off" required aria-describedby={f('atividade-err')} />
+        <p class="field__error" id={f('atividade-err')} hidden>Escreva o que a empresa faz, por exemplo restauração.</p>
+      </div>
+      <div class="field">
+        <label for={f('trab')}>Trabalhadores</label>
+        <select id={f('trab')} name="trabalhadores">
+          <option>Só eu (independente)</option>
+          <option>2 a 9</option>
+          <option>10 a 49</option>
+          <option>50 ou mais</option>
+        </select>
+      </div>
+    </>
+  )}
+
+  {mensagem && (
+    <div class="field field--full">
+      <label for={f('msg')}>{mensagem[0]} {!mensagem[1] && <span class="opc">(opcional)</span>}</label>
+      <textarea id={f('msg')} name="mensagem" rows="4" required={mensagem[1]} aria-describedby={f('msg-err')}></textarea>
+      <p class="field__error" id={f('msg-err')} hidden>{mensagem[2]}</p>
+    </div>
+  )}
+
+  <div class="field field--full field--check">
+    <input id={f('ok')} name="consentimento" type="checkbox" value="sim" required aria-describedby={f('ok-err')} />
+    <label for={f('ok')}>Autorizo a ML Seguros a usar estes dados para responder a este pedido, como explica a <a href="/politica-de-privacidade/#privacidade">política de privacidade</a>.</label>
+    <p class="field__error" id={f('ok-err')} hidden>Sem esta autorização não podemos responder.</p>
+  </div>
+
+  <div class="hp" aria-hidden="true"><label for={f('hp')}>Não preencher</label><input id={f('hp')} name="_gotcha" type="text" tabindex="-1" autocomplete="off" /></div>
+
+  <div class="form__submit"><Btn tipo="submit">{rotulo}</Btn></div>
+  <p class="form__status" role="status" data-form-status></p>
+</form>

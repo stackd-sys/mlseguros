@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import LegalPage from '../components/LegalPage.astro';
+import { fotos } from '../data/fotos.js';
+const lista = [...new Map(Object.values(fotos).map((f) => [f.ficheiro, f])).values()];
+---
+<Base title="Créditos das fotografias" description="Autores e licenças das fotografias do Unsplash usadas no site da ML Seguros, mediadora de seguros na Ericeira.">
+  <LegalPage title="Créditos das fotografias" lead="As fotografias do site vêm do Unsplash, com a licença do Unsplash, que permite o uso comercial.">
+    <ul>
+      {lista.map((f) => <li>{f.alt}: <a href={f.pagina} target="_blank" rel="noopener">{f.autor}</a>, no Unsplash</li>)}
+    </ul>
+  </LegalPage>
+</Base>

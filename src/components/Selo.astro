@@ -1,0 +1,12 @@
+---
+interface Props { href?: string; texto?: string; class?: string }
+const { href = '#proposta', texto = 'Pedir proposta · Sem custo · ', class: cls = '' } = Astro.props;
+const id = `selo-${Math.random().toString(36).slice(2, 8)}`;
+---
+<a class={`selo ${cls}`.trim()} href={href} aria-label="Pedir proposta">
+  <svg class="selo__texto" viewBox="0 0 140 140" aria-hidden="true">
+    <defs><path id={id} d="M70,70 m-52,0 a52,52 0 1,1 104,0 a52,52 0 1,1 -104,0" /></defs>
+    <text><textPath href={`#${id}`} textLength="326">{texto}</textPath></text>
+  </svg>
+  <span class="selo__centro"><img src="/logo-ml-64.png" alt="" width="34" height="34" /></span>
+</a>

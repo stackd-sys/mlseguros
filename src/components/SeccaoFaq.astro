@@ -1,0 +1,32 @@
+---
+import Tag from './Tag.astro';
+import Btn from './Btn.astro';
+import Faq from './Faq.astro';
+import Icon from './Icon.astro';
+import { company } from '../data/site.js';
+
+interface Props { titulo: string; perguntas: [string, string][]; etiqueta?: string; texto?: string; soft?: boolean }
+const { titulo, perguntas, etiqueta = 'Perguntas frequentes', texto, soft = false } = Astro.props;
+const h = company.hours.rows[0];
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: perguntas.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+};
+---
+<section class={soft ? 'sec sec--soft' : 'sec'} id="perguntas" aria-labelledby="perguntas-h">
+  <div class="wrap grid-2 grid-2--top">
+    <div class="reveal">
+      <Tag>{etiqueta}</Tag>
+      <h2 id="perguntas-h" style="margin-top:16px">{titulo}</h2>
+      <p class="lead" style="margin-top:20px">{texto ?? <>Outra dúvida? Ligue para o <a href={company.phoneHref}>{company.phone}</a> ou escreva pelo <a href={company.whatsappHref} target="_blank" rel="noopener">WhatsApp</a>.</>}</p>
+      <div class="btns" style="margin-top:32px"><Btn href="/contactos/">Ver os contactos</Btn></div>
+      <ul class="checks" style="margin-top:40px;padding-top:32px;border-top:1px solid var(--line)">
+        <li><Icon name="check" />Atendemos por telefone, WhatsApp, email ou no escritório da Ericeira.</li>
+        <li><Icon name="check" />{h.label}, {h.value}.</li>
+      </ul>
+    </div>
+    <div class="reveal" data-d="1"><Faq perguntas={perguntas} /></div>
+  </div>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+</section>

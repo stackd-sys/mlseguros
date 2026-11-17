@@ -1,0 +1,103 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import Faq from '../../components/Faq.astro';
+import Foto from '../../components/Foto.astro';
+import SeccaoProposta from '../../components/SeccaoProposta.astro';
+import { company, ramos } from '../../data/site.js';
+import { fotos, fotoSrc } from '../../data/fotos.js';
+import { guiasVisiveis, minutosDeLeitura, dataPT, jaPublicado, etiqueta, type Guia } from '../../data/guias';
+
+export async function getStaticPaths() {
+  const guias = await guiasVisiveis();
+  return guias.map((guia) => {
+    const outros = guias.filter((o) => o.id !== guia.id);
+    const doTema = outros.filter((o) => o.data.ramo && o.data.ramo === guia.data.ramo);
+    return { params: { slug: guia.id }, props: { guia, outros: [...doTema, ...outros.filter((o) => !doTema.includes(o))].slice(0, 6) } };
+  });
+}
+const { guia, outros } = Astro.props as { guia: Guia; outros: Guia[] };
+const g = guia.data;
+const { Content } = await render(guia);
+const ramo = g.ramo ? ramos.find((r) => r.slug === g.ramo) : undefined;
+const url = new URL(Astro.url.pathname, Astro.site).href;
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+
+const schema: object[] = [{
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: g.titulo,
+  description: g.descricao,
+  image: new URL(fotoSrc(g.foto, 1200), Astro.site).href,
+  datePublished: iso(g.publicado),
+  dateModified: iso(g.atualizado ?? g.publicado),
+  inLanguage: 'pt-PT',
+  author: { '@id': `${Astro.site}#agency` },
+  publisher: { '@id': `${Astro.site}#agency` },
+  mainEntityOfPage: url,
+}];
+if (g.perguntas.length) {
+  schema.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: g.perguntas.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  });
+}
+---
+<Base title={g.tituloSeo ?? g.titulo} description={g.descricao} image={g.foto} schema={schema} heroImage={g.foto} indexar={jaPublicado(guia)} proposta="#proposta">
+  <PageHero titulo={g.titulo} foto={g.foto} migalhas={[{ nome: 'Guias', href: '/guias/' }, { nome: g.titulo }]} />
+
+  <section class="sec" aria-label={g.titulo}>
+    <div class="wrap ramo">
+      <aside class="lado">
+        {outros.length > 0 && (
+          <nav class="lista-lado" aria-labelledby="outros-h">
+            <h2 id="outros-h">Outros guias</h2>
+            <ul>
+              {outros.map((o) => <li><a href={`/guias/${o.id}/`}>{o.data.titulo}<Icon name="arrow-up-right" /></a></li>)}
+              <li><a href="/guias/">Ver todos os guias<Icon name="arrow-up-right" /></a></li>
+            </ul>
+          </nav>
+        )}
+        <div class="ajuda">
+          <img src={fotoSrc('contactos', 800)} alt="" width={fotos.contactos.largura} height={fotos.contactos.altura} loading="lazy" />
+          <h2>O seu caso é diferente?</h2>
+          <p>Ligue-nos ou escreva pelo WhatsApp. Explicamos sem compromisso.</p>
+          <span class="ico"><Icon name="phone-call" /></span>
+          <a class="ajuda__tel" href={company.phoneHref}>{company.phone}</a>
+          <a class="ajuda__wa" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" />Escrever pelo WhatsApp</a>
+        </div>
+      </aside>
+
+      <article class="conteudo artigo">
+        <p class="guia__meta">
+          {etiqueta(guia) && <span class="rascunho">{etiqueta(guia)}</span>}
+          <span>Equipa ML Seguros</span> · <time datetime={iso(g.atualizado ?? g.publicado)}>{g.atualizado ? 'Atualizado a ' : ''}{dataPT(g.atualizado ?? g.publicado)}</time> · {minutosDeLeitura(guia)} min de leitura
+        </p>
+        <div class="resumo">
+          <h2>Em resumo</h2>
+          <p>{g.resumo}</p>
+        </div>
+        {g.foto2 && <div class="conteudo__foto"><Foto k={g.foto2} sizes="(max-width: 1199px) 100vw, 820px" eager /></div>}
+        <div class="texto texto--artigo"><Content /></div>
+        {g.perguntas.length > 0 && (
+          <>
+            <h2 id="perguntas">Perguntas frequentes</h2>
+            <Faq perguntas={g.perguntas} />
+          </>
+        )}
+        <p class="aviso-legal">Este guia é informação geral e não substitui as condições da sua apólice. Para o seu caso, fale connosco.</p>
+      </article>
+    </div>
+  </section>
+
+  <SeccaoProposta
+    titulo={ramo ? `Proposta para o ${ramo.label.toLowerCase().startsWith('seguro') ? ramo.label.toLowerCase() : `seguro de ${ramo.label.toLowerCase()}`}` : 'Proposta sem custo, de várias seguradoras'}
+    texto={ramo ? ramo.pista : 'Diga-nos que seguro procura e como o podemos contactar. Pedimos as propostas e ligamos-lhe com os valores.'}
+    tipo={ramo ? 'ramo' : 'proposta'}
+    ramo={ramo?.slug}
+    formId={`guia-${guia.id}`}
+  />
+</Base>

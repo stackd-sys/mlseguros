@@ -1,0 +1,29 @@
+---
+import { fotos, fotoSrc, fotoSrcset } from '../data/fotos.js';
+
+interface Props {
+  k: string;
+  class?: string;
+  sizes?: string;
+  eager?: boolean;
+  hidden?: boolean;
+  [attr: string]: unknown;
+}
+const { k, class: cls = 'frame__img', sizes = '(max-width: 639px) 250vw, (max-width: 1023px) 150vw, 100vw', eager = false, hidden, ...rest } = Astro.props;
+const f = fotos[k];
+if (!f) throw new Error(`Fotografia desconhecida: ${k}`);
+---
+<img
+  class={cls}
+  src={fotoSrc(k, 1200)}
+  srcset={fotoSrcset(k)}
+  sizes={sizes}
+  alt={f.alt}
+  width={f.largura}
+  height={f.altura}
+  loading={eager ? undefined : 'lazy'}
+  decoding="async"
+  hidden={hidden}
+  style={f.pos ? `object-position: ${f.pos}` : undefined}
+  {...rest}
+/>

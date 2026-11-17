@@ -1,0 +1,125 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Tag from '../../components/Tag.astro';
+import Btn from '../../components/Btn.astro';
+import Icon from '../../components/Icon.astro';
+import { company } from '../../data/site.js';
+
+const h = company.hours.rows[0];
+const horario = `${h.label}, das ${h.value.replace('–', ' às ').replace(' e ', ' e das ').replace('–', ' às ')}`;
+
+const tipos = {
+  proposta: {
+    titulo: 'Obrigado pelo pedido de proposta',
+    lead: 'Já recebemos o seu pedido. Vamos pedir propostas às seguradoras e ligar-lhe com os valores.',
+    foto: 'sobre',
+    passos: [
+      ['phone-call', 'Ligamos-lhe', 'Para confirmar o que precisa. Se já tem seguro, pedimos-lhe uma cópia da apólice.'],
+      ['files', 'Pedimos as propostas', 'A várias seguradoras, com as mesmas coberturas, para os preços se poderem comparar.'],
+      ['scale', 'Explicamos as diferenças', 'Preço, franquias e o que fica de fora. A escolha é sua e a proposta não tem custo.'],
+    ],
+    extra: { texto: 'Ver os nossos seguros', href: '/seguros-particulares/' },
+  },
+  sinistro: {
+    titulo: 'Recebemos a participação do sinistro',
+    lead: 'Vamos ligar-lhe para tratar do processo com a seguradora.',
+    foto: 'sinistros2',
+    aviso: 'Para um reboque ou um canalizador com urgência, ligue para a assistência 24 horas da sua apólice. Se houver feridos ou perigo, ligue 112.',
+    passos: [
+      ['phone-call', 'Ligamos-lhe', 'Para perceber o que aconteceu e dizer-lhe que documentos juntar.'],
+      ['clipboard-list', 'Participamos à seguradora', 'Tratamos da participação consigo e enviamos os documentos.'],
+      ['life-buoy', 'Acompanhamos até ao fim', 'Peritagem, reparação e indemnização: falamos com a seguradora e vamos dando notícias.'],
+    ],
+    extra: { texto: 'Ver os documentos a ter à mão', href: '/sinistros/#documentos' },
+  },
+  mensagem: {
+    titulo: 'Recebemos a sua mensagem',
+    lead: 'A mensagem chegou à equipa. Respondemos pelo contacto que deixou.',
+    foto: 'contactos',
+    passos: [
+      ['mail', 'A mensagem chega à equipa', 'Fica registada para quem trata do assunto.'],
+      ['message-circle-more', 'Respondemos', `Pelo telefone ou email que deixou. ${horario}.`],
+      ['phone-call', 'Se for urgente', `Ligue para o ${company.phone} ou escreva pelo WhatsApp.`],
+    ],
+    extra: { texto: 'Ver os contactos', href: '/contactos/' },
+  },
+  ligamos: {
+    titulo: 'Vamos ligar-lhe',
+    lead: 'Recebemos o seu pedido. Ligamos-lhe para o número que deixou, no horário do escritório.',
+    foto: 'contactos',
+    passos: [
+      ['calendar-clock', 'No horário do escritório', `${horario}.`],
+      ['phone-call', 'Ligamos-lhe', 'Para saber o que precisa e falar dos seus seguros.'],
+      ['message-circle-more', 'Se preferir escrever', 'Também nos encontra no WhatsApp, pelo mesmo número.'],
+    ],
+    extra: { texto: 'Ver os nossos seguros', href: '/seguros-particulares/' },
+  },
+  analise: {
+    titulo: 'Obrigado pelo pedido de análise',
+    lead: 'Vamos ligar-lhe para combinar o envio das apólices da empresa.',
+    foto: 'empresasHero',
+    passos: [
+      ['phone-call', 'Ligamos-lhe', 'Para combinar o envio das apólices que a empresa tem hoje.'],
+      ['file-search', 'Analisamos as apólices', 'Coberturas em falta ou repetidas, o enquadramento dos acidentes de trabalho e as condições noutras seguradoras.'],
+      ['handshake', 'Explicamos o que encontrámos', 'Por telefone ou no escritório. A análise não tem custo e não fica obrigado a mudar.'],
+    ],
+    extra: { texto: 'Ver os seguros para empresas', href: '/seguros-empresas/' },
+  },
+} as const;
+
+export function getStaticPaths() {
+  return ['proposta', 'sinistro', 'mensagem', 'ligamos', 'analise'].map((tipo) => ({ params: { tipo } }));
+}
+const { tipo } = Astro.params as { tipo: keyof typeof tipos };
+const t = tipos[tipo];
+---
+<Base title={t.titulo} description={t.lead} image={t.foto} heroImage={t.foto} indexar={false}>
+  <PageHero titulo={t.titulo} foto={t.foto} lead={t.lead} migalhas={[{ nome: 'Obrigado' }]} />
+
+  <section class="sec" aria-labelledby="passos-h" data-pedido-tipo={tipo}>
+    <div class="wrap grid-2 grid-2--top">
+      <div class="reveal">
+        <p class="ola" data-ola hidden>Obrigado, <span></span>.</p>
+        <Tag>O que acontece agora</Tag>
+        <h2 id="passos-h" style="margin-top:16px">Os próximos passos</h2>
+        <ol class="passos">
+          {t.passos.map(([icone, titulo, texto]) => <li class="passo"><span class="ico ico--soft"><Icon name={icone} /></span><div><h3>{titulo}</h3><p>{texto}</p></div></li>)}
+        </ol>
+        <div class="btns" style="margin-top:40px">
+          <Btn href="/">Voltar à página inicial</Btn>
+          <a class="link" href={t.extra.href}>{t.extra.texto}</a>
+        </div>
+      </div>
+      <div class="form-card reveal" data-d="1">
+        <h3>Precisa de falar já?</h3>
+        <p>{horario}.</p>
+        {'aviso' in t && <p class="aviso"><Icon name="siren" />{t.aviso}</p>}
+        <div class="contact-card__row escuro">
+          <span class="ico"><Icon name="phone-call" /></span>
+          <div><small>Telemóvel, {company.phoneNote}</small><a href={company.phoneHref}>{company.phone}</a></div>
+        </div>
+        <div class="contact-card__row escuro">
+          <span class="ico"><Icon name="whatsapp" /></span>
+          <div><small>Fotografias e documentos também por aqui</small><a href={company.whatsappHref} target="_blank" rel="noopener">WhatsApp</a></div>
+        </div>
+        <div class="contact-card__row escuro">
+          <span class="ico"><Icon name="mail" /></span>
+          <div><small>Email</small><a href={`mailto:${company.email}`}>{company.email}</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  try {
+    const nome = sessionStorage.getItem('ml-obrigado-nome');
+    const ola = document.querySelector<HTMLElement>('[data-ola]');
+    if (nome && ola) {
+      ola.querySelector('span')!.textContent = nome;
+      ola.hidden = false;
+      sessionStorage.removeItem('ml-obrigado-nome');
+    }
+  } catch {}
+</script>

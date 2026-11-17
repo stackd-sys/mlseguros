@@ -1,69 +1,47 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
-import PhoneField from '../components/PhoneField.astro';
-import Consent from '../components/Consent.astro';
+import Tag from '../components/Tag.astro';
+import Icon from '../components/Icon.astro';
+import Btn from '../components/Btn.astro';
+import Formulario from '../components/Formulario.astro';
 import { company } from '../data/site.js';
 ---
 <Base
-  title="Contactos"
-  description="Contacte a ML Seguros na Ericeira: Rua Dr. Eduardo Burnay, 20-B. Telefone +351 919 400 228, WhatsApp e geral@mlseguros.pt."
-  image="ericeiraAerial"
+  title="Contactos da ML Seguros na Ericeira"
+  description="Telefone, WhatsApp, email e morada do escritório da ML Seguros na Ericeira. Deixe uma mensagem ou peça que lhe liguemos."
+  image="contactos"
+  heroImage="contactos"
+  proposta="/simulacao/"
 >
-  <PageHero
-    title="Contactos"
-    lead="Pode ligar, escrever ou passar no escritório na Ericeira."
-    crumbs={[{ label: 'Contactos' }]}
-  />
+  <PageHero titulo="Contactos da ML Seguros" foto="contactos" lead={`Ligue, escreva pelo WhatsApp ou passe no escritório da ${company.address.street}, na Ericeira.`} migalhas={[{ nome: 'Contactos' }]} />
 
-  <section class="section">
-    <div class="container feature feature--top">
-      <div>
-        <dl class="contact-list">
-          <div><dt>Telefone</dt><dd><a href={company.phoneHref}>{company.phone}</a><br /><span class="muted small">{company.phoneNote}</span></dd></div>
-          <div><dt>WhatsApp</dt><dd><a href={company.whatsappHref} target="_blank" rel="noopener">{company.phone}</a></dd></div>
-          <div><dt>Email</dt><dd><a href={`mailto:${company.email}`}>{company.email}</a></dd></div>
-          <div><dt>Morada</dt><dd>{company.address.street}<br />{company.address.postalCode} {company.address.locality}<br /><a class="link" href={company.mapsHref} target="_blank" rel="noopener">Ver no Google Maps</a></dd></div>
-        </dl>
+  <section class="sec" aria-label="Telefone, email e morada">
+    <div class="wrap">
+      <div class="info reveal">
+        <div class="info__item"><span class="ico"><Icon name="phone-call" /></span><div><h3>Telemóvel</h3><a href={company.phoneHref}>{company.phone}</a><p class="small">{company.phoneNote}</p></div></div>
+        <div class="info__item"><span class="ico"><Icon name="mail" /></span><div><h3>Email</h3><a href={`mailto:${company.email}`}>{company.email}</a><p class="small"><a href={company.whatsappHref} target="_blank" rel="noopener">Ou escreva pelo WhatsApp</a></p></div></div>
+        <div class="info__item"><span class="ico"><Icon name="map-pin" /></span><div><h3>Escritório</h3><p>{company.address.street}, {company.address.postalCode} {company.address.locality}</p><p class="small"><a href={company.mapsHref} target="_blank" rel="noopener">Ver no Google Maps</a></p></div></div>
       </div>
-      <form class="panel form" id="contact-form" novalidate>
-        <h2 style="font-size:1.4rem;margin:0">Enviar mensagem</h2>
-        <div class="form-row">
-          <div class="field"><label for="nome">Nome</label><input id="nome" name="nome" autocomplete="name" required /></div>
-          <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required /></div>
-        </div>
-        <PhoneField />
-        <div class="field"><label for="assunto">Assunto</label>
-          <select id="assunto" name="assunto_pedido"><option>Pedido de proposta</option><option>Participar um sinistro</option><option>Alteração a uma apólice</option><option>Outro assunto</option></select>
-        </div>
-        <div class="field"><label for="mensagem">Mensagem</label><textarea id="mensagem" name="mensagem" required></textarea></div>
-        <Consent />
-        <div><button class="btn" type="submit">Enviar</button></div>
-      </form>
-    </div>
-  </section>
 
-  <section class="section" style="padding-top:0">
-    <div class="container">
-      <div class="map" id="map">
-        <div style="padding:2rem">
-          <p>O mapa é carregado do Google Maps só se carregar no botão.</p>
-          <button class="btn btn--outline" type="button" id="load-map">Mostrar mapa</button>
+      <div class="grid-2 grid-2--top" style="margin-top:100px">
+        <div class="reveal">
+          <Tag>Mensagem</Tag>
+          <h2 style="margin-top:16px">Mensagem para a equipa</h2>
+          <p class="lead" style="margin-top:20px">Uma dúvida, uma alteração à apólice ou outro assunto. A mensagem chega à equipa e respondemos pelo contacto que deixar.</p>
+          <p style="margin-top:14px">Para um sinistro, use a <a href="/sinistros/#participar">participação de sinistro</a>.</p>
+          <h3 style="margin-top:40px">Horário do escritório</h3>
+          <table class="horario" data-horario>
+            <tbody>{company.hours.rows.map((h) => <tr data-dias={h.days}><th scope="row">{h.label}</th><td>{h.value}</td></tr>)}</tbody>
+          </table>
+          <div class="btns" style="margin-top:32px"><Btn href={company.mapsHref} externo>Ver no Google Maps</Btn></div>
+        </div>
+        <div class="form-card reveal" data-d="1">
+          <h3>Enviar uma mensagem</h3>
+          <p>Respondemos no horário do escritório.</p>
+          <Formulario tipo="contacto" id="msg" />
         </div>
       </div>
     </div>
   </section>
 </Base>
-
-<script define:vars={{ endpoint: company.formEndpoint, email: company.email, embed: company.mapsEmbed }}>
-  window.__form = { endpoint, email, embed };
-</script>
-<script>
-  import { setupForm } from '../scripts/forms';
-  const cfg = (window as any).__form;
-  setupForm(document.getElementById('contact-form') as HTMLFormElement, { endpoint: cfg.endpoint, email: cfg.email, subject: 'Contacto (site)' });
-  document.getElementById('load-map')?.addEventListener('click', () => {
-    const map = document.getElementById('map')!;
-    map.innerHTML = `<iframe src="${cfg.embed}" title="Mapa: ML Seguros na Ericeira" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
-  });
-</script>

@@ -1,24 +1,62 @@
 ---
 import Base from '../layouts/Base.astro';
-import SegmentPage from '../components/SegmentPage.astro';
+import PageHero from '../components/PageHero.astro';
+import Tag from '../components/Tag.astro';
+import Btn from '../components/Btn.astro';
+import Icon from '../components/Icon.astro';
+import Foto from '../components/Foto.astro';
+import CartaoSeguro from '../components/CartaoSeguro.astro';
+import SeccaoFaq from '../components/SeccaoFaq.astro';
+import SeccaoProposta from '../components/SeccaoProposta.astro';
+import { ramosBySegment, generalFaq } from '../data/site.js';
+
+const ramos = ramosBySegment('particulares');
 ---
 <Base
-  title="Seguros para Particulares na Ericeira"
-  description="Seguros automóvel, habitação, saúde e vida para famílias da Ericeira e Mafra. Compare seguradoras com um mediador local."
-  image="familyHome"
+  title="Seguros para particulares na Ericeira"
+  description="Seguro automóvel, de habitação, de saúde e de vida para famílias da Ericeira e do concelho de Mafra, com propostas de várias seguradoras."
+  image="habitacao"
+  heroImage="particulares"
+  proposta="#proposta"
 >
-  <SegmentPage
-    segment="particulares"
-    title="Seguros para particulares"
-    lead="Carro, casa, saúde e vida. Comparamos as seguradoras com quem trabalhamos e explicamos cada apólice antes de assinar."
-    crumb="Particulares"
-    introTitle="Como ajudamos"
-    introImage="homeVisit"
-    introAlt="Mediador a conversar com um casal sénior em casa"
-  >
-    <Fragment slot="intro">
-      <p>Muitas famílias têm coberturas repetidas entre o seguro da casa, o do carro e os cartões bancários, ou um seguro de vida do banco mais caro do que precisa de ser. Começamos por ver o que já tem.</p>
-      <p>Depois pedimos propostas a várias seguradoras e mostramos-lhe as diferenças. Se um dia tiver um sinistro, liga-nos a nós e tratamos da participação e da peritagem.</p>
-    </Fragment>
-  </SegmentPage>
+  <PageHero titulo="Seguros para particulares na Ericeira" foto="particulares" lead="Carro, casa, saúde e vida. Vemos os seguros que já tem, pedimos propostas a várias seguradoras e explicamos o que muda de uma para a outra." migalhas={[{ nome: 'Particulares' }]} />
+
+  <section class="sec sec--soft" id="seguros" aria-labelledby="seguros-h">
+    <div class="wrap">
+      <div class="head head--split reveal">
+        <div><Tag>Para a família</Tag><h2 id="seguros-h">Os seguros da casa, do carro e da família</h2></div>
+        <p>Cada seguro tem as coberturas, as perguntas que mais nos fazem e um pedido de proposta.</p>
+      </div>
+      <div class="grid-svc grid-svc--4">
+        {ramos.map((r, i) => <CartaoSeguro class="reveal" href={`/seguros/${r.slug}/`} nome={r.label} linha={r.short} foto={r.image} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="rever" aria-labelledby="rever-h">
+    <div class="wrap grid-2">
+      <div class="foto-card reveal" style="min-height:560px">
+        <Foto k="passoConversa" class="" sizes="(max-width: 991px) 100vw, 620px" />
+      </div>
+      <div class="reveal" data-d="1">
+        <Tag>Revisão dos seguros</Tag>
+        <h2 id="rever-h" style="margin-top:16px">Traga as apólices que já tem</h2>
+        <p class="lead" style="margin-top:20px">Muitas famílias pagam coberturas repetidas entre a casa, o carro e os cartões do banco, ou um seguro de vida do banco mais caro do que precisa de ser.</p>
+        <ul class="checks">
+          <li><Icon name="check" />Dizemos-lhe o que cada apólice cobre e o que falta.</li>
+          <li><Icon name="check" />Mostramos quanto paga hoje e quanto pagaria noutra seguradora.</li>
+          <li><Icon name="check" />Decide depois, sem pressa e sem custo.</li>
+        </ul>
+        <div class="btns" style="margin-top:34px"><Btn href="#proposta">Pedir proposta</Btn></div>
+      </div>
+    </div>
+  </section>
+
+  <SeccaoFaq titulo="Perguntas de quem procura um seguro" perguntas={generalFaq.slice(0, 4) as [string, string][]} soft />
+
+  <SeccaoProposta
+    titulo="Proposta para os seguros da família"
+    texto="Diga-nos que seguro procura e como o podemos contactar. Ligamos-lhe com os valores de várias seguradoras."
+    formId="part"
+  />
 </Base>

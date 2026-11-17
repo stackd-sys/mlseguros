@@ -1,11 +1,11 @@
 ---
 import PageHero from './PageHero.astro';
-interface Props { title: string }
-const { title } = Astro.props;
+interface Props { title: string; lead?: string; foto?: string }
+const { title, lead, foto = 'sobre3' } = Astro.props;
 ---
-<PageHero title={title} crumbs={[{ label: title }]} />
-<section class="section">
-  <div class="container prose" style="max-width:820px">
-    <slot />
+<PageHero titulo={title} foto={foto} lead={lead} migalhas={[{ nome: title }]} />
+<section class="sec">
+  <div class="wrap">
+    <div class="texto"><slot /></div>
   </div>
 </section>

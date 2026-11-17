@@ -1,0 +1,15 @@
+---
+import Icon from './Icon.astro';
+import { fotos, fotoSrc, fotoSrcset } from '../data/fotos.js';
+
+interface Props { href: string; nome: string; linha: string; foto: string; class?: string }
+const { href, nome, linha, foto, class: cls = '' } = Astro.props;
+const f = fotos[foto];
+---
+<a class={`svc ${cls}`.trim()} href={href}>
+  <img src={fotoSrc(foto, 800)} srcset={fotoSrcset(foto)} sizes="(max-width: 767px) 86vw, (max-width: 1199px) 50vw, 420px" alt={f.alt} width={f.largura} height={f.altura} loading="lazy" decoding="async" style={f.pos ? `object-position:${f.pos}` : undefined} />
+  <div class="svc__body">
+    <h3>{nome}<Icon name="arrow-up-right" /></h3>
+    <p>{linha}</p>
+  </div>
+</a>

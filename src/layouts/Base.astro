@@ -2,31 +2,51 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { company, photos, pexels } from '../data/site.js';
+import Icon from '../components/Icon.astro';
+import Analitica from '../components/Analitica.astro';
+import Cookies from '../components/Cookies.astro';
+import { company, site, ramos } from '../data/site.js';
+import { fotos, fotoSrc, fotoSrcset } from '../data/fotos.js';
 
 interface Props {
   title: string;
   description: string;
   image?: string;
   schema?: object[];
+  proposta?: string;
+  heroImage?: string;
+  heroSizes?: string;
+  indexar?: boolean;
 }
-const { title, description, image = 'heroAdvisor', schema = [] } = Astro.props;
-const fullTitle = Astro.url.pathname === '/' ? title : `${title} | ML Seguros`;
+const { title, description, image = 'hero', schema = [], proposta = '/simulacao/', heroImage, heroSizes = '100vw', indexar = true } = Astro.props;
+const fullTitle = Astro.url.pathname === '/' ? title : `${title} · ML Seguros`;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = pexels((photos as Record<string, number>)[image], 1200);
+const ogImage = new URL(fotoSrc(image, 1200), Astro.site).href;
+const ogAltura = Math.round((1200 * fotos[image].altura) / fotos[image].largura);
+const telefone = company.phoneHref.replace('tel:', '');
+const inicio = Astro.url.pathname === '/';
 
 const agency = {
   '@context': 'https://schema.org',
-  '@type': ['InsuranceAgency', 'LocalBusiness'],
-  '@id': 'https://mlseguros.pt/#agency',
+  '@type': 'InsuranceAgency',
+  '@id': `${Astro.site}#agency`,
   name: company.name,
   legalName: company.legalName,
-  url: 'https://mlseguros.pt/',
-  logo: 'https://mlseguros.pt/favicon.svg',
+  url: Astro.site?.href,
+  logo: new URL('/logo-ml-512.png', Astro.site).href,
   image: ogImage,
-  telephone: company.phone.replace(/\s/g, ''),
+  telephone: telefone,
   email: company.email,
   taxID: company.nif,
+  identifier: { '@type': 'PropertyValue', propertyID: 'Registo de mediador na ASF', value: company.asf },
+  hasMap: company.mapsHref,
+  contactPoint: [{ '@type': 'ContactPoint', telephone: telefone, email: company.email, contactType: 'customer service', areaServed: 'PT', availableLanguage: ['Portuguese'] }],
+  knowsAbout: ramos.map((r) => r.label),
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Seguros',
+    itemListElement: ramos.map((r) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: r.label, description: r.short, url: new URL(`/seguros/${r.slug}/`, Astro.site).href } })),
+  },
   address: {
     '@type': 'PostalAddress',
     streetAddress: company.address.street,
@@ -36,43 +56,68 @@ const agency = {
     addressCountry: company.address.country,
   },
   areaServed: company.areaServed.map((name) => ({ '@type': 'City', name })),
-  aggregateRating: { '@type': 'AggregateRating', ratingValue: '5', reviewCount: company.google.count },
-  hasMap: company.mapsHref,
+  sameAs: Object.values(company.social),
+  openingHoursSpecification: company.hours.schema.flatMap((h) => h.opens.map((opens, i) => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: h.dayOfWeek, opens, closes: h.closes[i] }))),
+};
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${Astro.site}#website`,
+  url: Astro.site?.href,
+  name: company.name,
+  inLanguage: 'pt-PT',
+  publisher: { '@id': `${Astro.site}#agency` },
 };
 ---
 <!doctype html>
 <html lang="pt-PT">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <Analitica />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#15171c" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href="/fonts/source-sans-3.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preconnect" href="https://images.pexels.com" />
+    {site.publicado && indexar ? <link rel="canonical" href={canonical} /> : <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#1e1f23" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pt_PT" />
     <meta property="og:site_name" content="ML Seguros" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {site.publicado && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content={String(ogAltura)} />
+    <meta property="og:image:alt" content={fotos[image].alt} />
     <meta name="twitter:card" content="summary_large_image" />
-
+    <link rel="preload" href="/fonts/google-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    {heroImage && <link rel="preload" as="image" href={fotoSrc(heroImage, 1600)} imagesrcset={fotoSrcset(heroImage)} imagesizes={heroSizes} fetchpriority="high" />}
+    <script is:inline>document.documentElement.classList.add('js')</script>
     <script type="application/ld+json" set:html={JSON.stringify(agency)} />
+    {inicio && <script type="application/ld+json" set:html={JSON.stringify(website)} />}
     {schema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
   </head>
   <body>
-    <a class="skip" href="#conteudo">Saltar para o conteúdo</a>
-    <Header />
+    {site.gtm && <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${site.gtm}`} height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>}
+    <Header proposta={proposta} />
     <main id="conteudo">
       <slot />
     </main>
     <Footer />
+    <a class="wa-float" href={company.whatsappHref} target="_blank" rel="noopener" aria-label="Falar connosco pelo WhatsApp">
+      <Icon name="whatsapp" />
+      <span class="wa-float__dica" aria-hidden="true">Fale connosco pelo WhatsApp</span>
+    </a>
+    <Cookies />
+    <script>
+      import '../scripts/site.ts';
+      import '../scripts/formularios.ts';
+      import '../scripts/avaliacoes.ts';
+      import '../scripts/cookies.ts';
+      import '../scripts/medicao.ts';
+    </script>
   </body>
 </html>

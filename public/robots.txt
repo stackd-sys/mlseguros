@@ -1,4 +1,15 @@
 User-agent: *
 Allow: /
 
+# Assistentes e motores de IA: autorizados a ler o site (resumo em /llms.txt)
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+Allow: /
+
 Sitemap: https://mlseguros.pt/sitemap-index.xml

@@ -1,0 +1,10 @@
+---
+import Icon from './Icon.astro';
+interface Props { nota?: number }
+const { nota } = Astro.props;
+const largura = nota ? `${Math.max(0, Math.min(5, nota)) * 20}%` : '100%';
+---
+<span class="estrelas" data-av-estrelas style={`--on:${largura}`} hidden={!nota}>
+  {[1, 2, 3, 4, 5].map(() => <Icon name="star" />)}
+  <span class="estrelas__on">{[1, 2, 3, 4, 5].map(() => <Icon name="star" />)}</span>
+</span>

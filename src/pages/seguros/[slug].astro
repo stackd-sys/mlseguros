@@ -1,11 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Icon from '../../components/Icon.astro';
-import Photo from '../../components/Photo.astro';
 import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
 import Faq from '../../components/Faq.astro';
-import CtaBand from '../../components/CtaBand.astro';
-import { company, ramos, ramosBySegment } from '../../data/site.js';
+import Foto from '../../components/Foto.astro';
+import SeccaoProposta from '../../components/SeccaoProposta.astro';
+import { company, ramos } from '../../data/site.js';
+import { fotos, fotoSrc } from '../../data/fotos.js';
 
 export function getStaticPaths() {
   return ramos.map((ramo) => ({ params: { slug: ramo.slug }, props: { ramo } }));
@@ -14,18 +15,19 @@ const { ramo } = Astro.props;
 const hub = ramo.segment === 'particulares'
   ? { label: 'Particulares', href: '/seguros-particulares/' }
   : { label: 'Empresas', href: '/seguros-empresas/' };
-const related = ramosBySegment(ramo.segment).filter((r) => r.slug !== ramo.slug).slice(0, 3);
 const url = new URL(Astro.url.pathname, Astro.site).href;
+const sobre = ramo.label.toLowerCase().startsWith('seguro') ? `o ${ramo.label.toLowerCase()}` : `o seguro de ${ramo.label.toLowerCase()}`;
+const ICONES = ['shield-check', 'circle-check', 'umbrella', 'life-buoy', 'badge-check', 'file-check'];
 
 const schema = [
   {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    name: ramo.name,
-    serviceType: ramo.name,
+    name: ramo.label,
+    serviceType: ramo.label,
     description: ramo.seoDescription,
     url,
-    provider: { '@id': 'https://mlseguros.pt/#agency' },
+    provider: { '@id': `${Astro.site}#agency` },
     areaServed: company.areaServed.map((name) => ({ '@type': 'City', name })),
   },
   {
@@ -33,76 +35,65 @@ const schema = [
     '@type': 'FAQPage',
     mainEntity: ramo.faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
   },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Início', item: 'https://mlseguros.pt/' },
-      { '@type': 'ListItem', position: 2, name: hub.label, item: new URL(hub.href, Astro.site).href },
-      { '@type': 'ListItem', position: 3, name: ramo.name, item: url },
-    ],
-  },
 ];
 ---
-<Base title={ramo.seoTitle} description={ramo.seoDescription} image={ramo.image} schema={schema}>
-  <PageHero title={ramo.name} lead={ramo.short} crumbs={[hub, { label: ramo.name }]}>
-    <div class="actions">
-      <a class="btn" href={`/simulacao/?tipo=${ramo.slug}`}>Pedir simulação</a>
-      <a class="btn btn--outline" href={company.phoneHref}>Ligar {company.phone}</a>
-    </div>
-  </PageHero>
+<Base title={ramo.seoTitle} description={ramo.seoDescription} image={ramo.image} schema={schema} proposta="#proposta" heroImage={ramo.image}>
+  <PageHero titulo={`${ramo.label} na Ericeira`} foto={ramo.image} lead={ramo.short} migalhas={[{ nome: hub.label, href: hub.href }, { nome: ramo.label }]} />
 
-  <section class="section">
-    <div class="container layout-aside">
-      <div class="prose">
-        <figure><Photo name={ramo.image} alt="" sizes="(max-width: 960px) 100vw, 760px" /></figure>
-        <p class="lead">{ramo.intro}</p>
-
-        <h2>Coberturas principais</h2>
-        <dl class="cover-list">
-          {ramo.coverages.map(([t, d]) => (
-            <div><dt>{t}</dt><dd>{d}</dd></div>
-          ))}
-        </dl>
-        <p class="muted small" style="margin-top:1rem">Coberturas, capitais e exclusões variam entre seguradoras. Antes de contratar, enviamos tudo por escrito.</p>
-
-        <h2>Para quem é</h2>
-        <ul class="plain-list">{ramo.audience.map((a) => <li>{a}</li>)}</ul>
-
-        <h2>Perguntas frequentes</h2>
-        <Faq items={ramo.faq} />
-      </div>
-
-      <aside class="box" aria-label="Pedir proposta">
-        <h2>Pedir proposta</h2>
-        <p>Pedimos condições à Fidelidade, Allianz, Generali Tranquilidade e Ageas e mostramos-lhe as diferenças.</p>
-        <a class="btn btn--block" href={`/simulacao/?tipo=${ramo.slug}`}>Pedir simulação</a>
-        <ul>
-          <li><a href={company.phoneHref}><Icon name="phone" size={18} /> {company.phone}</a></li>
-          <li><a href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> WhatsApp</a></li>
-          <li><a href={`mailto:${company.email}?subject=${encodeURIComponent(ramo.name)}`}><Icon name="mail" size={18} /> {company.email}</a></li>
-          <li><a href="/sinistros/">Já é cliente? Participar um sinistro</a></li>
-        </ul>
+  <section class="sec" aria-label={ramo.label}>
+    <div class="wrap ramo">
+      <aside class="lado">
+        <nav class="lista-lado" aria-labelledby="lado-h">
+          <h2 id="lado-h">Os nossos seguros</h2>
+          <ul>
+            {ramos.map((r) => <li><a href={`/seguros/${r.slug}/`} aria-current={r.slug === ramo.slug ? 'page' : undefined}>{r.label}<Icon name="arrow-up-right" /></a></li>)}
+          </ul>
+        </nav>
+        <div class="ajuda">
+          <img src={fotoSrc('contactos', 800)} alt="" width={fotos.contactos.largura} height={fotos.contactos.altura} loading="lazy" />
+          <h2>Dúvidas sobre {sobre}?</h2>
+          <p>Ligue-nos ou escreva pelo WhatsApp. Explicamos as coberturas sem compromisso.</p>
+          <span class="ico"><Icon name="phone-call" /></span>
+          <a class="ajuda__tel" href={company.phoneHref}>{company.phone}</a>
+          <a class="ajuda__wa" href={company.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" />Escrever pelo WhatsApp</a>
+        </div>
       </aside>
-    </div>
-  </section>
 
-  <section class="section section--alt">
-    <div class="container">
-      <div class="section-intro">
-        <h2>Outros seguros para {hub.label.toLowerCase()}</h2>
+      <div class="conteudo">
+        <div class="conteudo__foto reveal"><Foto k={ramo.image2} sizes="(max-width: 1199px) 100vw, 820px" eager /></div>
+        <p class="lead reveal">{ramo.intro}</p>
+
+        <h2 id="coberturas" class="reveal">O que o seguro pode cobrir</h2>
+        <div class="cobs">
+          {ramo.coverages.map(([n, d], i) => (
+            <div class="cob reveal"><span class="ico ico--sq"><Icon name={ICONES[i % ICONES.length]} /></span><div><h3>{n}</h3><p>{d}</p></div></div>
+          ))}
+        </div>
+
+        <h2 class="reveal">Para quem é</h2>
+        <div class="par">
+          <div class="par__foto reveal"><Foto k={ramo.segment === "particulares" ? "passoConversa" : "passoPropostas"} sizes="(max-width: 767px) 100vw, 400px" class="" /></div>
+          <div class="par__texto reveal" data-d="1">
+            <span class="ico"><Icon name="users-round" /></span>
+            <h3>Quem nos pede este seguro</h3>
+            <ul class="par__lista">
+              {ramo.audience.map((a) => <li><span class="ico ico--soft"><Icon name="check" /></span>{a}</li>)}
+            </ul>
+          </div>
+        </div>
+
+        <h2 id="perguntas" class="reveal">Perguntas sobre {sobre}</h2>
+        <div class="reveal"><Faq perguntas={ramo.faq} /></div>
       </div>
-      <ul class="ramo-list">
-        {related.map((r) => (
-          <li>
-            <h3><a href={`/seguros/${r.slug}/`}>{r.name}</a></h3>
-            <p>{r.short}</p>
-          </li>
-        ))}
-      </ul>
-      <p style="margin-top:1.5rem"><a class="more" href={hub.href}>Ver todos</a></p>
     </div>
   </section>
 
-  <CtaBand title={`Pedir proposta de ${ramo.name.toLowerCase()}`} tipo={ramo.slug} />
+  <SeccaoProposta
+    titulo={`Proposta para ${sobre}`}
+    texto={ramo.pista}
+    tipo="ramo"
+    ramo={ramo.slug}
+    formId={ramo.slug}
+    formTitulo="Pedir proposta"
+  />
 </Base>
