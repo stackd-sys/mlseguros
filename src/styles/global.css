@@ -504,6 +504,14 @@ body.menu-aberto { overflow: hidden; }
 
 /* Passos e documentos dos sinistros */
 .cartoes-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 60px; }
+.cartoes-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 60px; }
+.assist dl { display: grid; margin: 0; }
+.assist dl div { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.assist dt { font-size: 14px; color: var(--text); }
+.assist dd { margin: 2px 0 0; font-size: 20px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+.assist dd a:hover { color: var(--red); }
+.assist dd small { display: block; font-size: 13px; font-weight: 400; color: var(--text); letter-spacing: 0; }
+.assist .link { margin-top: auto; padding-top: 6px; align-self: flex-start; }
 .cartao { padding: 34px 30px; border-radius: var(--radius); background: #fff; display: flex; flex-direction: column; gap: 14px; }
 .sec--soft .cartao { background: #fff; }
 .sec:not(.sec--soft) .cartao { background: var(--soft); }
@@ -514,7 +522,7 @@ body.menu-aberto { overflow: hidden; }
 .cartao li::before { content: ''; flex: none; width: 6px; height: 6px; margin-top: 9px; border-radius: 50%; background: var(--red); }
 
 /* Seguradoras */
-.seguradoras { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 50px; }
+.seguradoras { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 50px; }
 .seguradoras a { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 28px 30px; border-radius: 16px; background: #fff; font-size: 20px; font-weight: 600; color: var(--ink); letter-spacing: -0.015em; transition: 0.25s var(--ease); }
 .seguradoras a svg { width: 18px; height: 18px; color: var(--red); transition: transform 0.3s var(--ease); }
 .seguradoras a:hover { box-shadow: 0 14px 34px rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
@@ -606,7 +614,7 @@ body.menu-aberto { overflow: hidden; }
   .stats__cta { grid-column: 1 / -1; }
   .ramo { grid-template-columns: 1fr; }
   .lado { position: static; grid-template-columns: 1fr 1fr; order: 2; }
-  .cartoes-4, .seguradoras { grid-template-columns: repeat(2, 1fr); }
+  .cartoes-4, .cartoes-3, .seguradoras { grid-template-columns: repeat(2, 1fr); }
   .footer__cols { grid-template-columns: 1fr 1fr; }
   .split { grid-template-columns: 1fr; }
   .split__media { padding: var(--sec) var(--gutter); min-height: 0; }
@@ -697,8 +705,8 @@ body.menu-aberto { overflow: hidden; }
   .lado { grid-template-columns: 1fr; }
   .cobs, .par { grid-template-columns: 1fr; }
   .par__foto { min-height: 280px; }
-  .cartoes-4, .seguradoras { grid-template-columns: 1fr; }
-  .cartoes-4 { margin-top: 40px; }
+  .cartoes-4, .cartoes-3, .seguradoras { grid-template-columns: 1fr; }
+  .cartoes-4, .cartoes-3 { margin-top: 40px; }
   .registo div { grid-template-columns: 1fr; gap: 4px; }
   .footer { padding-top: 70px; }
   .footer__cols { grid-template-columns: 1fr; gap: 44px; padding-bottom: 50px; }

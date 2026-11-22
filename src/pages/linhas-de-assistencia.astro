@@ -1,0 +1,84 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Tag from '../components/Tag.astro';
+import Btn from '../components/Btn.astro';
+import Icon from '../components/Icon.astro';
+import SeccaoFaq from '../components/SeccaoFaq.astro';
+import { company } from '../data/site.js';
+import { assistencia } from '../data/assistencia.js';
+
+const antes = [
+  'O número da apólice ou a matrícula do carro.',
+  'Onde está, com a morada ou o ponto de referência.',
+  'O que aconteceu e se há feridos. Com feridos, ligue primeiro para o 112.',
+  'Não chame um reboque nem um técnico por sua conta: em regra, a assistência só paga o que for pedido através dela.',
+];
+
+const perguntas: [string, string][] = [
+  ['Não sei qual é a minha seguradora. O que faço?', `Ligue-nos para o ${company.phone} ou escreva pelo WhatsApp. Dizemos-lhe a seguradora e o número da assistência da sua apólice.`],
+  ['Onde está o número da assistência na minha apólice?', 'Nas condições particulares, no cartão de assistência e, no carro, no certificado internacional de seguro. O número que lá estiver é o que vale para a sua apólice.'],
+  ['Depois de ligar para a assistência, tenho de participar o sinistro?', 'Sim, se houver danos a pagar. A assistência trata do reboque ou da reparação urgente, mas a participação é outro passo. Avise-nos e tratamos dela consigo.'],
+  ['A assistência do carro funciona no estrangeiro?', 'Na maior parte das apólices, sim, nos países indicados no certificado internacional de seguro. Use o número para o estrangeiro, se a seguradora tiver um.'],
+];
+---
+<Base
+  title="Linhas de assistência das seguradoras"
+  description="Números de assistência 24 horas no carro e em casa das seguradoras com quem a ML Seguros trabalha: Fidelidade, Victoria, Lusitania, Generali e Allianz."
+  image="sinistros2"
+  heroImage="sinistros2"
+>
+  <PageHero titulo="Linhas de assistência das seguradoras" foto="sinistros2" lead="Avaria, acidente ou uma emergência em casa? Ligue para a assistência da sua seguradora, que atende 24 horas. Depois avise-nos, para tratarmos da participação." migalhas={[{ nome: 'Sinistros', href: '/sinistros/' }, { nome: 'Linhas de assistência' }]} />
+
+  <section class="sec" id="linhas" aria-labelledby="linhas-h">
+    <div class="wrap">
+      <div class="head head--center reveal">
+        <Tag>Assistência 24 horas</Tag>
+        <h2 id="linhas-h">Os números de cada seguradora</h2>
+        <p>São os números que cada seguradora publica no seu site, confirmados a {assistencia.confirmado}. Se a sua apólice indicar outro número, use o da apólice.</p>
+      </div>
+      <ul class="cartoes-3">
+        {assistencia.seguradoras.map((s, n) => (
+          <li class="cartao assist reveal" data-d={String(n % 3)}>
+            <h3>{s.nome}</h3>
+            {s.texto && <p>{s.texto}</p>}
+            <dl>
+              {s.linhas.map((l) => (
+                <div>
+                  <dt>{l.tipo}</dt>
+                  <dd>{l.tel ? <a href={`tel:${l.tel}`}>{l.numero}</a> : l.numero}{l.nota && <small>{l.nota}</small>}</dd>
+                </div>
+              ))}
+            </dl>
+            {s.aviso && <p class="small">{s.aviso}</p>}
+            <a class="link" href={s.site} target="_blank" rel="noopener">{s.siteTexto ?? `Site da ${s.nome}`}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="sec sec--soft" id="antes" aria-labelledby="antes-h">
+    <div class="wrap grid-2 grid-2--top">
+      <div class="reveal">
+        <Tag>Antes de ligar</Tag>
+        <h2 id="antes-h" style="margin-top:16px">Tenha isto à mão</h2>
+        <ul class="checks">
+          {antes.map((t) => <li><Icon name="check" />{t}</li>)}
+        </ul>
+      </div>
+      <div class="reveal" data-d="1">
+        <Tag>Depois</Tag>
+        <h2 style="margin-top:16px">Ligue-nos para participar o sinistro</h2>
+        <p class="lead" style="margin-top:20px">A assistência resolve a urgência. A participação, os documentos e a conversa com a seguradora ficam connosco.</p>
+        <div class="btns" style="margin-top:30px">
+          <Btn href="/sinistros/">Participar um sinistro</Btn>
+          <a class="link" href={company.phoneHref}>Ligar {company.phone}</a>
+        </div>
+        <p class="small" style="margin-top:14px">{company.phoneNote[0].toUpperCase() + company.phoneNote.slice(1)}. {company.hours.rows[0].label}, {company.hours.rows[0].value}.</p>
+      </div>
+    </div>
+  </section>
+
+  <SeccaoFaq titulo="Perguntas sobre a assistência" perguntas={perguntas} />
+</Base>

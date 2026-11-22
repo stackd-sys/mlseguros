@@ -47,7 +47,7 @@ const documentos = [
 
 const perguntas: [string, string][] = [
   ['Tenho de participar o sinistro à seguradora?', 'Não. Tratamos da participação por si e acompanhamos o processo. Para reboque ou um canalizador urgente, ligue também para a assistência que vem na apólice.'],
-  ['Onde está o número da assistência 24 horas?', 'Nas condições particulares da apólice, no cartão de assistência e, no carro, no certificado internacional de seguro. Se não o encontrar, ligue-nos.'],
+  ['Onde está o número da assistência 24 horas?', 'Nas condições particulares da apólice, no cartão de assistência e, no carro, no certificado internacional de seguro. Também os tem na página das linhas de assistência das seguradoras. Se não o encontrar, ligue-nos.'],
   ['Quanto tempo demora um processo?', 'Depende do tipo de sinistro e da peritagem. Os casos simples resolvem-se em poucas semanas.'],
   ['Não concordo com a decisão da seguradora. E agora?', 'Pedimos à seguradora que reveja o processo. Sem acordo, pode recorrer ao provedor do cliente da seguradora, à ASF ou ao CIMPAS, o centro de arbitragem de seguros.'],
 ];
@@ -65,7 +65,7 @@ const perguntas: [string, string][] = [
     <div class="wrap">
       <div class="head head--split reveal">
         <div><Tag>Passo a passo</Tag><h2 id="passos-h">Os passos num sinistro</h2></div>
-        <p>Fotografias e documentos também podem seguir pelo <a href={company.whatsappHref} target="_blank" rel="noopener">WhatsApp</a> para o {company.phone}.</p>
+        <p>Fotografias e documentos também podem seguir pelo <a href={company.whatsappHref} target="_blank" rel="noopener">WhatsApp</a> para o {company.phone}. Para um reboque ou uma urgência em casa, veja as <a href="/linhas-de-assistencia/">linhas de assistência das seguradoras</a>.</p>
       </div>
       <ol class="cartoes-4">
         {passos.map(([n, d], i) => <li class="cartao reveal" data-d={String(i % 4)}><span class="cartao__num">Passo {i + 1}</span><h3>{n}</h3><p>{d}</p></li>)}

@@ -35,6 +35,7 @@ export const GET: APIRoute = async ({ site }) => {
     '## Páginas',
     `- [Pedido de proposta](${u('/simulacao/')}): simulação sem custo, com propostas de várias seguradoras`,
     `- [Participar um sinistro](${u('/sinistros/')}): passos, documentos e formulário de participação`,
+    `- [Linhas de assistência das seguradoras](${u('/linhas-de-assistencia/')}): números de assistência 24 horas no carro e em casa`,
     `- [Seguros para particulares](${u('/seguros-particulares/')})`,
     `- [Seguros para empresas](${u('/seguros-empresas/')}): inclui a análise das apólices da empresa, sem custo`,
     `- [Sobre a ML Seguros](${u('/sobre-nos/')}): a equipa, as seguradoras e o registo na ASF`,

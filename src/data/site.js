@@ -73,8 +73,10 @@ export const privacy = {
 // Seguradoras com que a ML trabalha (texto; logótipos só com autorização das marcas).
 export const insurers = [
   { name: 'Fidelidade', href: 'https://www.fidelidade.pt' },
-  { name: 'Allianz', href: 'https://www.allianz.pt' },
+  { name: 'Victoria', href: 'https://www.victoria-seguros.pt' },
+  { name: 'Lusitania', href: 'https://www.lusitania.pt' },
   { name: 'Generali Tranquilidade', href: 'https://www.generalitranquilidade.pt' },
+  { name: 'Allianz', href: 'https://www.allianz.pt' },
   { name: 'Ageas', href: 'https://www.ageas.pt' },
 ];
 
@@ -418,7 +420,7 @@ export const ramosBySegment = (segment) => ramos.filter((r) => r.segment === seg
 export const generalFaq = [
   ['O que faz um mediador de seguros?', 'Um mediador trabalha com várias seguradoras, compara propostas e aconselha-o na escolha. Depois de contratar, trata das alterações à apólice e ajuda-o quando há um sinistro.'],
   ['Pagar através de um mediador fica mais caro?', 'Não. O preço da apólice é o mesmo da seguradora. A diferença é que tem alguém que compara várias companhias por si e que o ajuda quando precisa de participar um sinistro.'],
-  ['Com que seguradoras trabalham?', 'Trabalhamos com Fidelidade, Allianz, Generali Tranquilidade e Ageas, entre outras. Isso permite-nos comparar condições e escolher a que melhor se ajusta a cada caso.'],
+  ['Com que seguradoras trabalham?', 'Trabalhamos com Fidelidade, Victoria, Lusitania, Generali Tranquilidade, Allianz e Ageas, entre outras. Isso permite-nos comparar condições e escolher a que melhor se ajusta a cada caso.'],
   ['Posso transferir os meus seguros atuais para a ML Seguros?', 'Sim. Analisamos as apólices que já tem e, se decidir mudar, tratamos da transferência na data de renovação para não ficar sem cobertura.'],
   ['Onde estão localizados?', 'Estamos na Rua Dr. Eduardo Burnay, 26B, na Ericeira. Atendemos clientes de todo o concelho de Mafra e, à distância, de qualquer ponto do país.'],
 ];
