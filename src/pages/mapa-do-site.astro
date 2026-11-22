@@ -19,7 +19,7 @@ const grupos = [
   },
   {
     titulo: 'A ML Seguros', href: '/sobre-nos/',
-    itens: [...(guias.length ? [{ nome: 'Guias', href: '/guias/' }] : []), { nome: 'Página inicial', href: '/' }, { nome: 'Sobre nós', href: '/sobre-nos/' }, { nome: 'Informação legal e privacidade', href: '/politica-de-privacidade/' }, { nome: 'Créditos das fotografias', href: '/creditos/' }],
+    itens: [...(guias.length ? [{ nome: 'Guias', href: '/guias/' }] : []), { nome: 'Página inicial', href: '/' }, { nome: 'Sobre nós', href: '/sobre-nos/' }, { nome: 'Seguros no concelho de Mafra', href: '/seguros-em-mafra/' }, { nome: 'Informação legal e privacidade', href: '/politica-de-privacidade/' }, { nome: 'Créditos das fotografias', href: '/creditos/' }],
   },
   ...(guias.length ? [{ titulo: 'Guias', href: '/guias/', itens: guias.map((g) => ({ nome: g.data.titulo, href: `/guias/${g.id}/` })) }] : []),
 ];

@@ -6,7 +6,7 @@ import { join } from 'node:path';
 interface Props { name: string; class?: string; label?: string }
 const { name, class: cls = 'icon', label } = Astro.props;
 
-const MARCAS: Record<string, string> = { whatsapp: 'whatsapp', instagram: 'instagram' };
+const MARCAS: Record<string, string> = { whatsapp: 'whatsapp', instagram: 'instagram', facebook: 'facebook' };
 const LINKEDIN = '<path d="M4.98 3.5c0 1.38-1.11 2.5-2.48 2.5S.02 4.88.02 3.5 1.13 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4v16h-4V8zm7.5 0h3.83v2.19h.06c.53-1.01 1.84-2.07 3.8-2.07C19.73 8.12 20.5 10.8 20.5 14.3V24h-4v-8.6c0-2.05-.04-4.69-2.86-4.69-2.86 0-3.3 2.23-3.3 4.54V24H8V8z"/>';
 
 let interior = '';

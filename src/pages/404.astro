@@ -4,7 +4,7 @@ import PageHero from '../components/PageHero.astro';
 import Btn from '../components/Btn.astro';
 import { company } from '../data/site.js';
 ---
-<Base title="Página não encontrada" description="A página que procura não existe no site da ML Seguros.">
+<Base title="Página não encontrada" description="A página que procura não existe no site da ML Seguros." indexar={false}>
   <PageHero titulo="Esta página não existe" foto="sobre2" lead={`O site mudou e alguns endereços também. Siga pela página inicial ou ligue para o ${company.phone}.`} migalhas={[{ nome: 'Página não encontrada' }]} />
   <section class="sec">
     <div class="wrap btns" style="justify-content:center">

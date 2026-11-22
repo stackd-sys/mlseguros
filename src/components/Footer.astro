@@ -13,6 +13,7 @@ const links = [
   { nome: 'Simulação', href: '/simulacao/' },
   ...((await guiasVisiveis()).length ? [{ nome: 'Guias', href: '/guias/' }] : []),
   { nome: 'Sobre nós', href: '/sobre-nos/' },
+  { nome: 'Seguros em Mafra', href: '/seguros-em-mafra/' },
   { nome: 'Contactos', href: '/contactos/' },
 ];
 const ano = new Date().getFullYear();
@@ -49,6 +50,7 @@ const ano = new Date().getFullYear();
       <div class="redes">
         <span>Siga-nos</span>
         <a href={company.social.instagram} target="_blank" rel="noopener" aria-label="Instagram da ML Seguros"><Icon name="instagram" /></a>
+        <a href={company.social.facebook} target="_blank" rel="noopener" aria-label="Facebook da ML Seguros"><Icon name="facebook" /></a>
         <a href={company.social.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn da ML Seguros"><Icon name="linkedin" /></a>
         <a href={company.whatsappHref} target="_blank" rel="noopener" aria-label="WhatsApp da ML Seguros"><Icon name="whatsapp" /></a>
       </div>

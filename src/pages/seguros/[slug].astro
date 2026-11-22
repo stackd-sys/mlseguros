@@ -7,6 +7,7 @@ import Foto from '../../components/Foto.astro';
 import SeccaoProposta from '../../components/SeccaoProposta.astro';
 import { company, ramos } from '../../data/site.js';
 import { fotos, fotoSrc } from '../../data/fotos.js';
+import { guiasVisiveis } from '../../data/guias';
 
 export function getStaticPaths() {
   return ramos.map((ramo) => ({ params: { slug: ramo.slug }, props: { ramo } }));
@@ -16,7 +17,8 @@ const hub = ramo.segment === 'particulares'
   ? { label: 'Particulares', href: '/seguros-particulares/' }
   : { label: 'Empresas', href: '/seguros-empresas/' };
 const url = new URL(Astro.url.pathname, Astro.site).href;
-const sobre = ramo.label.toLowerCase().startsWith('seguro') ? `o ${ramo.label.toLowerCase()}` : `o seguro de ${ramo.label.toLowerCase()}`;
+const sobre = ramo.sobre ?? (ramo.label.toLowerCase().startsWith('seguro') ? `o ${ramo.label.toLowerCase()}` : `o seguro de ${ramo.label.toLowerCase()}`);
+const guias = (await guiasVisiveis()).filter((g) => g.data.ramo === ramo.slug).slice(0, 6);
 const ICONES = ['shield-check', 'circle-check', 'umbrella', 'life-buoy', 'badge-check', 'file-check'];
 
 const schema = [
@@ -49,6 +51,14 @@ const schema = [
             {ramos.map((r) => <li><a href={`/seguros/${r.slug}/`} aria-current={r.slug === ramo.slug ? 'page' : undefined}>{r.label}<Icon name="arrow-up-right" /></a></li>)}
           </ul>
         </nav>
+        {guias.length > 0 && (
+          <nav class="lista-lado" aria-labelledby="guias-h">
+            <h2 id="guias-h">Guias sobre {sobre}</h2>
+            <ul>
+              {guias.map((g) => <li><a href={`/guias/${g.id}/`}>{g.data.titulo}<Icon name="arrow-up-right" /></a></li>)}
+            </ul>
+          </nav>
+        )}
         <div class="ajuda">
           <img src={fotoSrc('contactos', 800)} alt="" width={fotos.contactos.largura} height={fotos.contactos.altura} loading="lazy" />
           <h2>Dúvidas sobre {sobre}?</h2>
@@ -63,7 +73,7 @@ const schema = [
         <div class="conteudo__foto reveal"><Foto k={ramo.image2} sizes="(max-width: 1199px) 100vw, 820px" eager /></div>
         <p class="lead reveal">{ramo.intro}</p>
 
-        <h2 id="coberturas" class="reveal">O que o seguro pode cobrir</h2>
+        <h2 id="coberturas" class="reveal">{ramo.coberturasTitulo ?? 'O que o seguro pode cobrir'}</h2>
         <div class="cobs">
           {ramo.coverages.map(([n, d], i) => (
             <div class="cob reveal"><span class="ico ico--sq"><Icon name={ICONES[i % ICONES.length]} /></span><div><h3>{n}</h3><p>{d}</p></div></div>

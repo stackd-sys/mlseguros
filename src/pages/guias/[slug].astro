@@ -46,12 +46,18 @@ if (g.perguntas.length) {
   });
 }
 ---
-<Base title={g.tituloSeo ?? g.titulo} description={g.descricao} image={g.foto} schema={schema} heroImage={g.foto} indexar={jaPublicado(guia)} proposta="#proposta">
+<Base title={g.tituloSeo ?? g.titulo} description={g.descricao} image={g.foto} schema={schema} heroImage={g.foto} indexar={jaPublicado(guia)} proposta="#proposta" artigo={{ publicado: g.publicado.toISOString(), atualizado: (g.atualizado ?? g.publicado).toISOString() }}>
   <PageHero titulo={g.titulo} foto={g.foto} migalhas={[{ nome: 'Guias', href: '/guias/' }, { nome: g.titulo }]} />
 
   <section class="sec" aria-label={g.titulo}>
     <div class="wrap ramo">
       <aside class="lado">
+        {ramo && (
+          <nav class="lista-lado" aria-labelledby="ramo-h">
+            <h2 id="ramo-h">O seguro deste guia</h2>
+            <ul><li><a href={`/seguros/${ramo.slug}/`}>{ramo.label}: coberturas e proposta<Icon name="arrow-up-right" /></a></li></ul>
+          </nav>
+        )}
         {outros.length > 0 && (
           <nav class="lista-lado" aria-labelledby="outros-h">
             <h2 id="outros-h">Outros guias</h2>

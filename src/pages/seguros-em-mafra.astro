@@ -1,0 +1,109 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Tag from '../components/Tag.astro';
+import Btn from '../components/Btn.astro';
+import Icon from '../components/Icon.astro';
+import Foto from '../components/Foto.astro';
+import CartaoSeguro from '../components/CartaoSeguro.astro';
+import SeccaoFaq from '../components/SeccaoFaq.astro';
+import SeccaoProposta from '../components/SeccaoProposta.astro';
+import { company, ramos, generalFaq } from '../data/site.js';
+
+const LOCALIDADES = ['Ericeira', 'Mafra', 'Malveira', 'Venda do Pinheiro', 'Carvoeira', 'Santo Isidoro', 'Encarnação', 'Gradil', 'Igreja Nova', 'Milharado', 'Sobral da Abelheira'];
+const DESTAQUE = ['saude', 'vida', 'poupanca', 'investimento', 'multirriscos-empresarial', 'acidentes-de-trabalho', 'automovel', 'habitacao'];
+const seguros = DESTAQUE.map((s) => ramos.find((r) => r.slug === s)).filter(Boolean);
+
+const CONCELHO = [
+  { icone: 'waves', titulo: 'Casas junto ao mar', texto: 'Na costa, as tempestades e a chuva forte pesam mais. Confirme se o seguro da casa inclui os fenómenos da natureza e os danos por água.', href: '/seguros/habitacao/', ligacao: 'Seguro de habitação' },
+  { icone: 'trees', titulo: 'Casas no campo', texto: 'Nas zonas rurais, a lei obriga a limpar o terreno à volta das casas. O seguro cobre o incêndio, mas o capital e os anexos têm de estar certos.', href: '/guias/incendios-seguro-da-casa/', ligacao: 'Ler o guia' },
+  { icone: 'store', titulo: 'Negócios do concelho', texto: 'Restauração, comércio, obras e agricultura. Quem tem trabalhadores precisa do seguro de acidentes de trabalho, e o multirriscos protege o espaço e a mercadoria.', href: '/guias/seguros-restaurantes-cafes/', ligacao: 'Ler o guia' },
+  { icone: 'activity', titulo: 'Mar e desporto', texto: 'Surf, bodyboard, BTT e outros desportos. Nem todas as apólices os cobrem, por isso convém confirmar antes de um acidente.', href: '/guias/surf-e-seguros/', ligacao: 'Ler o guia' },
+];
+
+const perguntas: [string, string][] = [
+  ['Têm escritório em Mafra?', `O escritório fica na Ericeira, que também é concelho de Mafra, na ${company.address.street}. Tratamos de quase tudo por telefone, WhatsApp e email, por isso não precisa de se deslocar.`],
+  ['Posso passar os meus seguros para a ML Seguros?', 'Sim. Vemos as apólices que já tem e, se decidir mudar, tratamos da transferência na data de renovação, para não ficar nenhum dia sem seguro.'],
+  generalFaq[2] as [string, string],
+  generalFaq[1] as [string, string],
+];
+
+const schema = [{
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Mediação de seguros no concelho de Mafra',
+  serviceType: 'Mediação de seguros',
+  url: new URL('/seguros-em-mafra/', Astro.site).href,
+  provider: { '@id': `${Astro.site}#agency` },
+  areaServed: [{ '@type': 'AdministrativeArea', name: 'Concelho de Mafra' }, ...LOCALIDADES.map((name) => ({ '@type': 'Place', name }))],
+}];
+---
+<Base
+  title="Mediador de seguros em Mafra"
+  description="Mediadora de seguros no concelho de Mafra, com escritório na Ericeira. Saúde, vida, PPR, carro, casa e empresas, com propostas de várias seguradoras."
+  image="sobre3"
+  heroImage="sobre3"
+  schema={schema}
+  proposta="#proposta"
+>
+  <PageHero titulo="Mediador de seguros no concelho de Mafra" foto="sobre3" lead="O escritório fica na Ericeira, a cerca de 10 km da vila de Mafra. Tratamos dos seguros de quem vive e trabalha em todo o concelho, por telefone, WhatsApp, email ou ao balcão." migalhas={[{ nome: 'Seguros em Mafra' }]} />
+
+  <section class="sec" id="concelho" aria-labelledby="concelho-h">
+    <div class="wrap grid-2">
+      <div class="foto-card reveal" style="min-height:520px">
+        <Foto k="passoConversa" class="" sizes="(max-width: 991px) 100vw, 620px" />
+      </div>
+      <div class="reveal" data-d="1">
+        <Tag>No concelho de Mafra</Tag>
+        <h2 id="concelho-h" style="margin-top:16px">Um mediador do concelho, com escritório na Ericeira</h2>
+        <p class="lead" style="margin-top:20px">Atendemos clientes de todo o concelho: {LOCALIDADES.slice(0, -1).join(', ')} e {LOCALIDADES.at(-1)}.</p>
+        <ul class="checks">
+          <li><Icon name="check" />Não precisa de vir ao escritório: tratamos de quase tudo por telefone, WhatsApp e email.</li>
+          <li><Icon name="check" />Se preferir falar ao balcão, estamos na {company.address.street}, na Ericeira.</li>
+          <li><Icon name="check" />Num sinistro, ligue-nos primeiro. Tratamos da participação consigo.</li>
+        </ul>
+        <div class="btns" style="margin-top:34px"><Btn href="#proposta">Pedir proposta</Btn><a class="link" href={company.mapsHref} target="_blank" rel="noopener">Ver no Google Maps</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec--soft" id="seguros" aria-labelledby="seguros-h">
+    <div class="wrap">
+      <div class="head head--split reveal">
+        <div><Tag>Os nossos seguros</Tag><h2 id="seguros-h">Seguros para quem vive e trabalha no concelho</h2></div>
+        <p>Pedimos propostas a várias seguradoras e explicamos o que muda de uma para a outra.</p>
+      </div>
+      <div class="grid-svc grid-svc--4">
+        {seguros.map((r) => <CartaoSeguro class="reveal" href={`/seguros/${r.slug}/`} nome={r.label} linha={r.short} foto={r.image} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="riscos" aria-labelledby="riscos-h">
+    <div class="wrap">
+      <div class="head head--center reveal">
+        <Tag>O que conta aqui</Tag>
+        <h2 id="riscos-h">Os seguros e a vida no concelho de Mafra</h2>
+        <p>Do mar às aldeias do interior, os riscos mudam. Estes são alguns pontos a rever nos seguros de quem vive no concelho.</p>
+      </div>
+      <ul class="cartoes-4">
+        {CONCELHO.map((c, n) => (
+          <li class="cartao reveal" data-d={String(n)}>
+            <span class="ico ico--sq"><Icon name={c.icone} /></span>
+            <h3>{c.titulo}</h3>
+            <p>{c.texto}</p>
+            <a class="link" href={c.href}>{c.ligacao}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <SeccaoFaq titulo="Perguntas de quem vive no concelho de Mafra" perguntas={perguntas} soft />
+
+  <SeccaoProposta
+    titulo="Proposta para os seus seguros"
+    texto="Diga-nos que seguro procura e onde vive no concelho. Ligamos-lhe com os valores de várias seguradoras."
+    formId="mafra"
+  />
+</Base>

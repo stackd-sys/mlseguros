@@ -39,6 +39,25 @@ const img = (k: string, sizes: string) => ({ src: fotoSrc(k, 1200), srcset: foto
     </div>
   </section>
 
+  <section class="sec" id="equipa" aria-labelledby="equipa-h">
+    <div class="wrap">
+      <div class="head head--center reveal">
+        <Tag>A equipa</Tag>
+        <h2 id="equipa-h">Quem trata dos seus seguros</h2>
+        <p>Uma equipa pequena, no escritório da Ericeira. Quem atende o telefone acompanha as suas apólices e os seus sinistros.</p>
+      </div>
+      <ul class="cartoes-4">
+        {company.equipa.map((p, n) => (
+          <li class="cartao reveal" data-d={String(n)}>
+            <span class="ico ico--sq"><Icon name="user-round" /></span>
+            <h3>{p.nome}</h3>
+            <p>{p.funcao}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
   <section class="sec sec--soft" id="seguradoras" aria-labelledby="seguradoras-h">
     <div class="wrap">
       <div class="head head--center reveal">
