@@ -1,0 +1,22 @@
+---
+import Icon from './Icon.astro';
+import { company } from '../data/site.js';
+
+const { inicio, fim, mensagem, mensagemCurta } = company.natal;
+---
+<div class="natal" id="natal" hidden>
+  <div class="wrap">
+    <p><Icon name="snowflake" /><strong>Boas Festas!</strong> <span class="natal__longo">{mensagem}</span><span class="natal__curto">{mensagemCurta}</span></p>
+  </div>
+</div>
+<script is:inline define:vars={{ inicio, fim }}>
+  (() => {
+    const barra = document.getElementById('natal');
+    const hoje = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Lisbon' });
+    if (!(hoje >= inicio && hoje <= fim) && !new URLSearchParams(location.search).has('natal')) return;
+    barra.hidden = false;
+    const ajustar = () => document.documentElement.style.setProperty('--natal-h', barra.offsetHeight + 'px');
+    ajustar();
+    addEventListener('resize', ajustar);
+  })();
+</script>

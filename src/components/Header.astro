@@ -2,6 +2,7 @@
 import Icon from './Icon.astro';
 import Logo from './Logo.astro';
 import Btn from './Btn.astro';
+import AvisoNatal from './AvisoNatal.astro';
 import { company, ramosBySegment } from '../data/site.js';
 
 interface Props { proposta: string }
@@ -37,6 +38,7 @@ const simples = [
 const horario = company.hours.rows[0];
 ---
 <a class="skip" href="#conteudo">Saltar para o conteúdo</a>
+<AvisoNatal />
 <div class="topbar">
   <div class="wrap">
     <p class="topbar__left"><Icon name="clock" />{horario.label}, {horario.value.replace(' e ', ' · ')} · {company.address.street}, {company.address.locality}</p>

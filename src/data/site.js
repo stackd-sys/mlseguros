@@ -27,6 +27,14 @@ export const company = {
     country: 'PT',
   },
   mapsHref: 'https://www.google.com/maps/place/?q=place_id:ChIJk4sSUXQnHw0Rx610-IWEwb4',
+  // Barra de Natal no topo do site: aparece sozinha entre as duas datas (hora de Lisboa).
+  // Para a ver fora das datas: acrescentar ?natal ao endereço.
+  natal: {
+    inicio: '2026-12-01',
+    fim: '2027-01-06',
+    mensagem: 'A equipa da ML Seguros deseja-lhe um Feliz Natal e um ótimo 2027.',
+    mensagemCurta: 'Feliz Natal e um ótimo 2027.',
+  },
   // Horário da ficha do Google.
   hours: {
     tz: 'Europe/Lisbon',
