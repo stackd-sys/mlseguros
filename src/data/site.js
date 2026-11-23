@@ -62,8 +62,8 @@ export const company = {
   // Equipa (sem fotografias por agora).
   equipa: [
     { nome: 'Vitor Marques', funcao: 'Diretor geral' },
-    { nome: 'Isabel Marques', funcao: 'Gestora de cliente' },
-    { nome: 'Margarida Vieira', funcao: 'Gestora de cliente' },
+    { nome: 'Isabel Marques', funcao: 'Gestora de clientes' },
+    { nome: 'Margarida Vieira', funcao: 'Gestora de clientes' },
     { nome: 'Rafael Marques', funcao: 'IT e marketing' },
   ],
   // O CRM da ML: recebe os formulários (PUBLIC_FORM_ENDPOINT) e tem o portal do cliente (PUBLIC_CRM_URL).
