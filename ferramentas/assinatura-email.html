@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Assinatura de email · ML Seguros</title>
+<style>
+  :root { --red: #c2182d; --red-hover: #a51424; --ink: #17171c; --text: #5d5f66; --line: #e7e5e1; --soft: #f5f4f2; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--soft); color: var(--ink); font: 15px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; }
+  main { max-width: 1040px; margin: 0 auto; padding: 40px 16px 64px; }
+  h1 { margin: 0; font-size: 26px; line-height: 1.2; }
+  h2 { margin: 0 0 12px; font-size: 17px; }
+  .lead { margin: 8px 0 28px; color: var(--text); max-width: 60ch; }
+  .grid { display: grid; grid-template-columns: 320px 1fr; gap: 20px; align-items: start; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 22px; }
+  .pessoas { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .pessoas button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 14px; cursor: pointer; }
+  .pessoas button[aria-pressed="true"] { border-color: var(--red); color: var(--red); font-weight: 600; }
+  label { display: block; font-size: 13px; color: var(--text); margin: 12px 0 4px; }
+  input { width: 100%; border: 1px solid #d9d6d0; border-radius: 8px; padding: 9px 11px; font: inherit; color: var(--ink); }
+  input:focus { outline: 2px solid var(--red); outline-offset: 1px; border-color: transparent; }
+  .aviso { margin: 10px 0 0; font-size: 13px; color: var(--text); }
+  .previa { padding: 28px; overflow-x: auto; }
+  .previa-topo { margin: 0 0 18px; padding-bottom: 14px; border-bottom: 1px dashed var(--line); font-size: 13px; color: var(--text); }
+  .acoes { display: flex; align-items: center; gap: 14px; margin-top: 18px; flex-wrap: wrap; }
+  .btn { background: var(--red); color: #fff; border: 0; border-radius: 8px; padding: 11px 18px; font: inherit; font-weight: 600; cursor: pointer; }
+  .btn:hover { background: var(--red-hover); }
+  .estado { font-size: 14px; color: var(--text); }
+  ol { margin: 0; padding-left: 20px; }
+  ol li { margin: 6px 0; }
+  .passos { margin-top: 20px; }
+  .passos p { margin: 14px 0 0; color: var(--text); font-size: 14px; }
+  kbd { font: inherit; font-size: 13px; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } .previa { padding: 18px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Assinatura de email da ML Seguros</h1>
+  <p class="lead">Escolha a pessoa, confirme o email e copie. A assinatura cola-se no Outlook já formatada.</p>
+
+  <div class="grid">
+    <section class="card" aria-labelledby="dados-h">
+      <h2 id="dados-h">Dados</h2>
+      <div class="pessoas" id="pessoas"></div>
+      <label for="nome">Nome</label>
+      <input id="nome" autocomplete="off">
+      <label for="funcao">Função</label>
+      <input id="funcao" autocomplete="off">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="off">
+      <p class="aviso">Se a pessoa tiver email próprio, escreva-o aqui.</p>
+    </section>
+
+    <section aria-labelledby="previa-h">
+      <div class="card previa">
+        <p class="previa-topo" id="previa-h">Pré-visualização, como chega a quem recebe</p>
+        <div id="assinatura"></div>
+      </div>
+      <div class="acoes">
+        <button class="btn" type="button" id="copiar">Copiar assinatura</button>
+        <span class="estado" id="estado" role="status"></span>
+      </div>
+
+      <div class="card passos">
+        <h2>Como pôr no Outlook</h2>
+        <ol>
+          <li><strong>Outlook na Web e novo Outlook:</strong> Definições (roda dentada) → Contas → Assinaturas → Nova assinatura. Dê-lhe o nome "ML Seguros", cole com <kbd>Cmd</kbd>+<kbd>V</kbd> (Mac) ou <kbd>Ctrl</kbd>+<kbd>V</kbd> (Windows) e guarde.</li>
+          <li>Na mesma página, escolha-a como predefinida para as mensagens novas e para as respostas e reencaminhamentos. Guarde outra vez.</li>
+          <li><strong>Outlook para Mac:</strong> menu Outlook → Definições → Assinaturas → +.</li>
+          <li><strong>Outlook clássico no Windows:</strong> Ficheiro → Opções → Correio → Assinaturas → Nova.</li>
+        </ol>
+        <p>O logótipo vem do site da ML (mlseguros.pt/email/logo-ml-112.png). Se o ficheiro mudar de sítio, as assinaturas ficam sem logótipo.</p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+  const ML = {
+    site: 'https://mlseguros.pt/',
+    logo: 'https://mlseguros.pt/email/logo-ml-112.png',
+    telefone: '919 400 228',
+    tel: 'tel:+351919400228',
+    notaTelefone: 'chamada para rede móvel nacional',
+    whatsapp: 'https://wa.me/351919400228',
+    morada: 'Rua Dr. Eduardo Burnay, 26B, 2655-369 Ericeira',
+    mapa: 'https://www.google.com/maps/place/?q=place_id:ChIJk4sSUXQnHw0Rx610-IWEwb4',
+    horario: 'Segunda a sexta, 10:00–13:00 e 14:30–18:00',
+    assistencia: 'https://mlseguros.pt/linhas-de-assistencia/',
+    privacidade: 'https://mlseguros.pt/politica-de-privacidade/',
+    legal: 'M. L. Seguros – Sociedade de Mediação de Seguros, Lda.',
+    asf: '407255064/3',
+    nif: '507430409',
+    redes: [
+      ['Instagram', 'https://www.instagram.com/seguros_ml/'],
+      ['Facebook', 'https://www.facebook.com/profile.php?id=61553790475733'],
+      ['LinkedIn', 'https://www.linkedin.com/company/ml-seguros-ericeira/'],
+    ],
+  };
+
+  const EMAIL_GERAL = 'geral@mlseguros.pt';
+  const PESSOAS = [
+    { nome: 'Vitor Marques', funcao: 'Diretor geral' },
+    { nome: 'Isabel Marques', funcao: 'Gestora de cliente' },
+    { nome: 'Margarida Vieira', funcao: 'Gestora de cliente' },
+    { nome: 'Rafael Marques', funcao: 'IT e marketing' },
+    { nome: 'ML Seguros', funcao: 'Mediador de seguros na Ericeira', botao: 'Caixa geral' },
+  ];
+
+  const LETRA = "font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;mso-line-height-rule:exactly;";
+  const COR = { marca: '#c2182d', texto: '#17171c', suave: '#5d5f66' };
+
+  const escapar = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  const ligacao = (href, texto, estilo = `color:${COR.texto}`) =>
+    `<a href="${escapar(href)}" style="${estilo}${estilo.includes('text-decoration') ? '' : ';text-decoration:none'}">${escapar(texto)}</a>`;
+  const ponto = ` <span style="color:${COR.suave}">&middot;</span> `;
+
+  function assinatura({ nome, funcao, email }) {
+    const daEmpresa = /ml seguros/i.test(nome);
+    const empresa = daEmpresa ? '' : `${ponto}<span style="color:${COR.marca};font-weight:600">ML Seguros</span>`;
+    const redes = ML.redes.map(([n, u]) => ligacao(u, n)).join(ponto);
+    return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse">
+<tr>
+<td width="56" valign="top" style="width:56px;padding:2px 14px 0 0;vertical-align:top"><a href="${ML.site}" style="text-decoration:none"><img src="${ML.logo}" width="56" height="56" alt="ML Seguros" style="display:block;width:56px;height:56px;border:0;outline:none;text-decoration:none"></a></td>
+<td valign="top" style="padding:0 0 0 14px;border-left:2px solid ${COR.marca};vertical-align:top">
+<p style="margin:0;${LETRA}font-size:16px;line-height:22px;font-weight:700;color:${COR.texto}">${escapar(nome)}</p>
+<p style="margin:0;${LETRA}font-size:13px;line-height:19px;color:${COR.suave}">${escapar(funcao)}${empresa}</p>
+<p style="margin:10px 0 0;${LETRA}font-size:13px;line-height:20px;color:${COR.texto}">${ligacao(ML.tel, ML.telefone, `color:${COR.texto};font-weight:600`)} <span style="font-size:11px;color:${COR.suave}">(${ML.notaTelefone})</span>${ponto}${ligacao(ML.whatsapp, 'WhatsApp', `color:${COR.marca};font-weight:600`)}<br>
+${ligacao('mailto:' + email, email)}<br>
+${ligacao(ML.site, 'mlseguros.pt')}${ponto}${redes}<br>
+${ligacao(ML.mapa, ML.morada, `color:${COR.suave}`)}<br>
+<span style="color:${COR.suave}">${ML.horario}</span></p>
+</td>
+</tr>
+<tr>
+<td colspan="2" style="padding:14px 0 0">
+<p style="margin:0;${LETRA}font-size:12px;line-height:18px;color:${COR.texto}"><span style="color:${COR.marca};font-weight:600">Assistência 24 horas:</span> ${ligacao(ML.assistencia, 'números de cada seguradora', `color:${COR.texto};text-decoration:underline`)}</p>
+<p style="margin:8px 0 0;${LETRA}font-size:11px;line-height:16px;color:${COR.suave}">${escapar(ML.legal)}<br>
+Mediador de seguros inscrito na ASF com o n.º&nbsp;${ML.asf}${ponto}NIF&nbsp;${ML.nif}<br>
+Esta mensagem pode conter informação confidencial. Se a recebeu por engano, avise-nos e apague-a. ${ligacao(ML.privacidade, 'Política\u00a0de\u00a0privacidade', `color:${COR.suave};text-decoration:underline`)}.</p>
+</td>
+</tr>
+</table>`;
+  }
+
+  const campos = { nome: document.getElementById('nome'), funcao: document.getElementById('funcao'), email: document.getElementById('email') };
+  const caixa = document.getElementById('assinatura');
+  const estado = document.getElementById('estado');
+  const botoes = document.getElementById('pessoas');
+
+  const dados = () => ({
+    nome: campos.nome.value.trim() || 'Nome',
+    funcao: campos.funcao.value.trim() || 'Função',
+    email: campos.email.value.trim() || EMAIL_GERAL,
+  });
+
+  function mostrar() {
+    caixa.innerHTML = assinatura(dados());
+    estado.textContent = '';
+  }
+
+  function escolher(i) {
+    const p = PESSOAS[i];
+    campos.nome.value = p.nome;
+    campos.funcao.value = p.funcao;
+    campos.email.value = EMAIL_GERAL;
+    [...botoes.children].forEach((b, n) => b.setAttribute('aria-pressed', String(n === i)));
+    mostrar();
+  }
+
+  PESSOAS.forEach((p, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = p.botao ?? p.nome.split(' ')[0];
+    b.addEventListener('click', () => escolher(i));
+    botoes.append(b);
+  });
+  Object.values(campos).forEach((c) => c.addEventListener('input', mostrar));
+
+  document.getElementById('copiar').addEventListener('click', async () => {
+    const html = assinatura(dados());
+    try {
+      await navigator.clipboard.write([new ClipboardItem({
+        'text/html': new Blob([html], { type: 'text/html' }),
+        'text/plain': new Blob([caixa.innerText], { type: 'text/plain' }),
+      })]);
+    } catch {
+      const r = document.createRange();
+      r.selectNodeContents(caixa);
+      const s = getSelection();
+      s.removeAllRanges();
+      s.addRange(r);
+      document.execCommand('copy');
+      s.removeAllRanges();
+    }
+    estado.textContent = 'Copiada. Cole-a no Outlook.';
+  });
+
+  escolher(0);
+</script>
+</body>
+</html>

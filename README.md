@@ -105,6 +105,10 @@ O `vercel.json` redireciona (301) as páginas do WordPress que mudaram: `/seguro
 
 Dados da empresa, seguros, coberturas e perguntas: `src/data/site.js`. Fotografias: `src/data/fotos.js` (ficheiros em `public/fotos/`, em WebP de 800 a 2400 px).
 
+## Assinatura de email
+
+Abrir `ferramentas/assinatura-email.html` no browser, escolher a pessoa, copiar e colar no Outlook (os passos estão na página). A pasta `ferramentas/` não é publicada. O logótipo vem de `public/email/logo-ml-112.png`: não mudar o nome nem o sítio, ou as assinaturas já feitas ficam sem logótipo. Os dados da empresa estão repetidos na página: se mudarem em `src/data/site.js`, mudar lá também.
+
 ## Por confirmar com a ML antes de publicar
 
 - [ ] **Textos**: perguntas frequentes, coberturas e "Sobre nós" validados pela ML.
