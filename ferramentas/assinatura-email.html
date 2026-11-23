@@ -22,8 +22,6 @@
   input { width: 100%; border: 1px solid #d9d6d0; border-radius: 8px; padding: 9px 11px; font: inherit; color: var(--ink); }
   input:focus { outline: 2px solid var(--red); outline-offset: 1px; border-color: transparent; }
   .aviso { margin: 10px 0 0; font-size: 13px; color: var(--text); }
-  textarea { width: 100%; border: 1px solid #d9d6d0; border-radius: 8px; padding: 9px 11px; font: inherit; color: var(--ink); resize: vertical; }
-  textarea:focus { outline: 2px solid var(--red); outline-offset: 1px; border-color: transparent; }
   .natal { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
   .natal .opcao { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 15px; color: var(--ink); cursor: pointer; }
   .natal .opcao input { width: 18px; height: 18px; accent-color: var(--red); }
@@ -58,10 +56,8 @@
       <input id="email" type="email" autocomplete="off">
       <p class="aviso">Se a pessoa tiver email próprio, escreva-o aqui.</p>
       <div class="natal">
-        <label class="opcao"><input type="checkbox" id="natal" checked> Mensagem de Natal</label>
-        <label for="mensagem-natal">Texto</label>
-        <textarea id="mensagem-natal" rows="3"></textarea>
-        <p class="aviso">Depois do Dia de Reis, desligue a mensagem, copie outra vez e substitua a assinatura no Outlook.</p>
+        <label class="opcao"><input type="checkbox" id="natal" checked> Postal de Natal</label>
+        <p class="aviso">Depois do Dia de Reis, desligue o postal, copie outra vez e substitua a assinatura no Outlook.</p>
       </div>
     </section>
 
@@ -83,7 +79,7 @@
           <li><strong>Outlook para Mac:</strong> menu Outlook → Definições → Assinaturas → +.</li>
           <li><strong>Outlook clássico no Windows:</strong> Ficheiro → Opções → Correio → Assinaturas → Nova.</li>
         </ol>
-        <p>O logótipo roda no Outlook na Web, no novo Outlook, no Outlook para Mac, no Gmail e no iPhone. No Outlook clássico do Windows fica parado. As imagens vêm do site da ML (mlseguros.pt/email/): se mudarem de sítio, as assinaturas ficam sem elas.</p>
+        <p>O logótipo e o postal mexem no Outlook na Web, no novo Outlook, no Outlook para Mac, no Gmail e no iPhone. No Outlook clássico do Windows ficam parados. As imagens vêm do site da ML (mlseguros.pt/email/): se mudarem de sítio, as assinaturas ficam sem elas.</p>
       </div>
     </section>
   </div>
@@ -113,7 +109,8 @@
   };
 
   const EMAIL_GERAL = 'geral@mlseguros.pt';
-  const MENSAGEM_NATAL = 'A equipa da ML Seguros deseja-lhe um Feliz Natal e um ótimo 2027.\nObrigado pela confiança.';
+  // O texto do postal está na imagem (public/email/natal-postal.gif). Para o mudar, é preciso gerar a imagem outra vez.
+  const NATAL_ALT = 'Boas Festas. A equipa da ML Seguros deseja-lhe um Feliz Natal e um ótimo 2027. Obrigado pela confiança.';
   const PESSOAS = [
     { nome: 'Vitor Marques', funcao: 'Diretor geral' },
     { nome: 'Isabel Marques', funcao: 'Gestora de cliente' },
@@ -133,25 +130,13 @@
   const imagem = (ficheiro, t, alt) =>
     `<img src="${ML.imagens}${ficheiro}" width="${t}" height="${t}" alt="${alt}" style="display:block;width:${t}px;height:${t}px;border:0;outline:none;text-decoration:none">`;
 
-  function faixaNatal(mensagem) {
+  function postalNatal() {
     return `<tr>
-<td colspan="2" style="padding:18px 0 0">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate">
-<tr><td bgcolor="${COR.marca}" style="background-color:${COR.marca};border-radius:10px;padding:14px 18px">
-<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse"><tr>
-<td width="28" valign="middle" style="width:28px;padding:0 14px 0 0;vertical-align:middle">${imagem('natal-floco.png', 28, '')}</td>
-<td valign="middle" style="vertical-align:middle">
-<p style="margin:0;font-family:Georgia,'Times New Roman',serif;mso-line-height-rule:exactly;font-size:20px;line-height:24px;font-style:italic;color:#ffffff">Boas Festas</p>
-<p style="margin:3px 0 0;${LETRA}font-size:13px;line-height:19px;color:#ffffff">${escapar(mensagem).replace(/\n+/g, '<br>')}</p>
-</td>
-</tr></table>
-</td></tr>
-</table>
-</td>
+<td colspan="2" style="padding:18px 0 0"><img src="${ML.imagens}natal-postal.gif" width="480" height="128" alt="${escapar(NATAL_ALT)}" style="display:block;width:480px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none"></td>
 </tr>`;
   }
 
-  function assinatura({ nome, funcao, email, natal, mensagemNatal }) {
+  function assinatura({ nome, funcao, email, natal }) {
     const daEmpresa = /ml seguros/i.test(nome);
     const empresa = daEmpresa ? '' : `${ponto}<span style="color:${COR.marca};font-weight:600">ML Seguros</span>`;
     const redes = ML.redes.map(([n, u]) => ligacao(u, n)).join(ponto);
@@ -168,7 +153,7 @@ ${ligacao(ML.mapa, ML.morada, `color:${COR.suave}`)}<br>
 <span style="color:${COR.suave}">${ML.horario}</span></p>
 </td>
 </tr>
-${natal && mensagemNatal ? faixaNatal(mensagemNatal) : ''}
+${natal ? postalNatal() : ''}
 <tr>
 <td colspan="2" style="padding:14px 0 0">
 <p style="margin:0;${LETRA}font-size:12px;line-height:18px;color:${COR.texto}"><span style="color:${COR.marca};font-weight:600">Assistência 24 horas:</span> ${ligacao(ML.assistencia, 'números de cada seguradora', `color:${COR.texto};text-decoration:underline`)}</p>
@@ -185,8 +170,6 @@ Esta mensagem pode conter informação confidencial. Se a recebeu por engano, av
 
   const campos = { nome: document.getElementById('nome'), funcao: document.getElementById('funcao'), email: document.getElementById('email') };
   const natal = document.getElementById('natal');
-  const mensagemNatal = document.getElementById('mensagem-natal');
-  mensagemNatal.value = MENSAGEM_NATAL;
   const caixa = document.getElementById('assinatura');
   const estado = document.getElementById('estado');
   const botoes = document.getElementById('pessoas');
@@ -196,7 +179,6 @@ Esta mensagem pode conter informação confidencial. Se a recebeu por engano, av
     funcao: campos.funcao.value.trim() || 'Função',
     email: campos.email.value.trim() || EMAIL_GERAL,
     natal: natal.checked,
-    mensagemNatal: mensagemNatal.value.trim(),
   });
 
   function mostrar() {
@@ -220,8 +202,8 @@ Esta mensagem pode conter informação confidencial. Se a recebeu por engano, av
     b.addEventListener('click', () => escolher(i));
     botoes.append(b);
   });
-  [...Object.values(campos), natal, mensagemNatal].forEach((c) => c.addEventListener('input', mostrar));
-  natal.addEventListener('change', () => { mensagemNatal.disabled = !natal.checked; mostrar(); });
+  Object.values(campos).forEach((c) => c.addEventListener('input', mostrar));
+  natal.addEventListener('change', mostrar);
 
   document.getElementById('copiar').addEventListener('click', async () => {
     const html = assinatura(dados());

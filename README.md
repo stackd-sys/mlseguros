@@ -107,7 +107,7 @@ Dados da empresa, seguros, coberturas e perguntas: `src/data/site.js`. Fotografi
 
 ## Assinatura de email
 
-Abrir `ferramentas/assinatura-email.html` no browser, escolher a pessoa, copiar e colar no Outlook (os passos estão na página). A pasta `ferramentas/` não é publicada. As imagens vêm de `public/email/` (logótipo animado e floco de neve da mensagem de Natal): não mudar os nomes nem o sítio, ou as assinaturas já feitas ficam sem elas. Os dados da empresa estão repetidos na página: se mudarem em `src/data/site.js`, mudar lá também.
+Abrir `ferramentas/assinatura-email.html` no browser, escolher a pessoa, copiar e colar no Outlook (os passos estão na página). A pasta `ferramentas/` não é publicada. As imagens vêm de `public/email/` (logótipo animado e postal de Natal; o texto do postal está na imagem): não mudar os nomes nem o sítio, ou as assinaturas já feitas ficam sem elas. Os dados da empresa estão repetidos na página: se mudarem em `src/data/site.js`, mudar lá também.
 
 ## Por confirmar com a ML antes de publicar
 
