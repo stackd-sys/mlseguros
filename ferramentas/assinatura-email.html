@@ -165,9 +165,6 @@ Esta mensagem pode conter informação confidencial. Se a recebeu por engano, av
 </table>`;
   }
 
-  // Aberta a partir do repositório, a pré-visualização usa as imagens locais (as do site podem ainda não estar publicadas).
-  const previa = (html) => location.protocol === 'file:' ? html.replaceAll(ML.imagens, '../public/email/') : html;
-
   const campos = { nome: document.getElementById('nome'), funcao: document.getElementById('funcao'), email: document.getElementById('email') };
   const natal = document.getElementById('natal');
   const caixa = document.getElementById('assinatura');
@@ -182,7 +179,7 @@ Esta mensagem pode conter informação confidencial. Se a recebeu por engano, av
   });
 
   function mostrar() {
-    caixa.innerHTML = previa(assinatura(dados()));
+    caixa.innerHTML = assinatura(dados());
     estado.textContent = '';
   }
 
@@ -213,7 +210,6 @@ Esta mensagem pode conter informação confidencial. Se a recebeu por engano, av
         'text/plain': new Blob([caixa.innerText], { type: 'text/plain' }),
       })]);
     } catch {
-      caixa.innerHTML = html;
       const r = document.createRange();
       r.selectNodeContents(caixa);
       const s = getSelection();
@@ -221,7 +217,6 @@ Esta mensagem pode conter informação confidencial. Se a recebeu por engano, av
       s.addRange(r);
       document.execCommand('copy');
       s.removeAllRanges();
-      caixa.innerHTML = previa(html);
     }
     estado.textContent = 'Copiada. Cole-a no Outlook.';
   });
