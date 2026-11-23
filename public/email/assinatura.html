@@ -35,6 +35,8 @@
   ol li { margin: 6px 0; }
   .passos { margin-top: 20px; }
   .passos p { margin: 14px 0 0; color: var(--text); font-size: 14px; }
+  .passos ul { margin: 6px 0 0; padding-left: 18px; }
+  .transferir { color: var(--red); font-weight: 600; }
   kbd { font: inherit; font-size: 13px; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
   @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } .previa { padding: 18px; } }
 </style>
@@ -74,12 +76,18 @@
       <div class="card passos">
         <h2>Como pôr no Outlook</h2>
         <ol>
-          <li><strong>Outlook na Web e novo Outlook:</strong> Definições (roda dentada) → Contas → Assinaturas → Nova assinatura. Dê-lhe o nome "ML Seguros", cole com <kbd>Cmd</kbd>+<kbd>V</kbd> (Mac) ou <kbd>Ctrl</kbd>+<kbd>V</kbd> (Windows) e guarde.</li>
-          <li>Na mesma página, escolha-a como predefinida para as mensagens novas e para as respostas e reencaminhamentos. Guarde outra vez.</li>
-          <li><strong>Outlook para Mac:</strong> menu Outlook → Definições → Assinaturas → +.</li>
-          <li><strong>Outlook clássico no Windows:</strong> Ficheiro → Opções → Correio → Assinaturas → Nova.</li>
+          <li><strong>Transfira as imagens</strong> para este computador: <a class="transferir" href="logo-ml.png" download="logo-ml.png">logótipo</a> e <a class="transferir" href="natal-postal.png" download="natal-postal.png">postal de Natal</a>. Ficam nas Transferências.</li>
+          <li><strong>Copie a assinatura</strong> com o botão acima e cole-a numa assinatura nova, com o nome "ML Seguros":
+            <ul>
+              <li>Outlook clássico no Windows: Ficheiro → Opções → Correio → Assinaturas → Nova.</li>
+              <li>Outlook na Web e novo Outlook: Definições (roda dentada) → Contas → Assinaturas → Nova assinatura.</li>
+              <li>Outlook para Mac: menu Outlook → Definições → Assinaturas → +.</li>
+            </ul>
+          </li>
+          <li><strong>Ponha as imagens dentro da assinatura:</strong> clique no logótipo e apague-o. No mesmo sítio, carregue no botão de imagem do editor e escolha o ficheiro <em>logo-ml.png</em>. Faça o mesmo com o postal (<em>natal-postal.png</em>). Assim as imagens seguem dentro de cada email e aparecem a quem recebe sem ter de as autorizar.</li>
+          <li>Escolha a assinatura como predefinida para as mensagens novas e para as respostas e reencaminhamentos. Guarde.</li>
         </ol>
-        <p>O logótipo e o postal mexem no Outlook na Web, no novo Outlook, no Outlook para Mac, no Gmail e no iPhone. No Outlook clássico do Windows ficam parados. As imagens vêm do site da ML (mlseguros.pt/email/): se mudarem de sítio, as assinaturas ficam sem elas.</p>
+        <p>Se saltar o passo 3, a assinatura funciona na mesma: as imagens vêm do site e aparecem no Gmail, no iPhone e no Outlook na Web, mas o Outlook clássico pede autorização para as mostrar.</p>
       </div>
     </section>
   </div>
@@ -109,7 +117,7 @@
   };
 
   const EMAIL_GERAL = 'geral@mlseguros.pt';
-  // O texto do postal está na imagem (public/email/natal-postal.gif). Para o mudar, é preciso gerar a imagem outra vez.
+  // O texto do postal está na imagem (public/email/natal-postal.png). Para o mudar, é preciso gerar a imagem outra vez.
   const NATAL_ALT = 'Boas Festas. A equipa da ML Seguros deseja-lhe um Feliz Natal e um ótimo 2027. Obrigado pela confiança.';
   const PESSOAS = [
     { nome: 'Vitor Marques', funcao: 'Diretor geral' },
@@ -132,7 +140,7 @@
 
   function postalNatal() {
     return `<tr>
-<td colspan="2" style="padding:18px 0 0"><img src="${ML.imagens}natal-postal.gif" width="480" height="128" alt="${escapar(NATAL_ALT)}" style="display:block;width:480px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none"></td>
+<td colspan="2" style="padding:18px 0 0"><img src="${ML.imagens}natal-postal.png" width="480" height="128" alt="${escapar(NATAL_ALT)}" style="display:block;width:480px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none"></td>
 </tr>`;
   }
 
@@ -142,7 +150,7 @@
     const redes = ML.redes.map(([n, u]) => ligacao(u, n)).join(ponto);
     return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse">
 <tr>
-<td width="64" valign="top" style="width:64px;padding:2px 16px 0 0;vertical-align:top"><a href="${ML.site}" style="text-decoration:none">${imagem('logo-ml-animado.gif', 64, 'ML Seguros')}</a></td>
+<td width="64" valign="top" style="width:64px;padding:2px 16px 0 0;vertical-align:top"><a href="${ML.site}" style="text-decoration:none">${imagem('logo-ml.png', 64, 'ML Seguros')}</a></td>
 <td valign="top" style="padding:0 0 0 16px;border-left:2px solid ${COR.marca};vertical-align:top">
 <p style="margin:0;${LETRA}font-size:18px;line-height:24px;font-weight:700;color:${COR.texto}">${escapar(nome)}</p>
 <p style="margin:0;${LETRA}font-size:13px;line-height:19px;color:${COR.suave}">${escapar(funcao)}${empresa}</p>

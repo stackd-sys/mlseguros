@@ -107,7 +107,7 @@ Dados da empresa, seguros, coberturas e perguntas: `src/data/site.js`. Fotografi
 
 ## Assinatura de email
 
-Abrir `ferramentas/assinatura-email.html` no browser, escolher a pessoa, copiar e colar no Outlook (os passos estão na página). A pasta `ferramentas/` não é publicada. As imagens vêm de `public/email/` (logótipo animado e postal de Natal; o texto do postal está na imagem): não mudar os nomes nem o sítio, ou as assinaturas já feitas ficam sem elas. Os dados da empresa estão repetidos na página: se mudarem em `src/data/site.js`, mudar lá também.
+Página em https://mlseguros.pt/email/assinatura.html (ficheiro `public/email/assinatura.html`, com `noindex` e sem ligações no site). Escolhe-se a pessoa, transferem-se as imagens, copia-se e cola-se no Outlook (os passos estão na página). As imagens (`public/email/logo-ml.png` e `natal-postal.png`) devem ir dentro da assinatura, inseridas no editor do Outlook: ligadas ao site, o Outlook clássico bloqueia-as. Não mudar os nomes nem o sítio das imagens. Os dados da empresa estão repetidos na página: se mudarem em `src/data/site.js`, mudar lá também.
 
 ## Por confirmar com a ML antes de publicar
 
