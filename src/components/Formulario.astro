@@ -154,6 +154,11 @@ const f = (n: string) => `${id}-${n}`;
     <p class="field__error" id={f('ok-err')} hidden>Sem esta autorização não podemos responder.</p>
   </div>
 
+  <div class="field field--full field--check">
+    <input id={f('nov')} name="novidades" type="checkbox" value="sim" />
+    <label for={f('nov')}>Quero receber novidades, campanhas e propostas de novos seguros da ML Seguros, por email, SMS ou telefone. Posso desistir quando quiser.</label>
+  </div>
+
   <div class="hp" aria-hidden="true"><label for={f('hp')}>Não preencher</label><input id={f('hp')} name="_gotcha" type="text" tabindex="-1" autocomplete="off" /></div>
 
   <div class="form__submit"><Btn tipo="submit">{rotulo}</Btn></div>
