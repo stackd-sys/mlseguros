@@ -21,6 +21,7 @@ function guardar(est: boolean, mkt: boolean) {
   const k = mkt ? 'granted' : 'denied';
   g?.('consent', 'update', { analytics_storage: e, ad_storage: k, ad_user_data: k, ad_personalization: k, personalization_storage: k });
   (window as unknown as { dataLayer?: unknown[] }).dataLayer?.push({ event: 'consentimento_atualizado', estatistica: est, marketing: mkt });
+  document.dispatchEvent(new CustomEvent('ml:consentimento', { detail: { estatistica: est, marketing: mkt } }));
   fechar();
 }
 

@@ -69,6 +69,8 @@ export const company = {
   // O CRM da ML: recebe os formulários (PUBLIC_FORM_ENDPOINT) e tem o portal do cliente (PUBLIC_CRM_URL).
   formEndpoint: (import.meta.env.PUBLIC_FORM_ENDPOINT ?? '').trim(),
   crmUrl: semBarra(import.meta.env.PUBLIC_CRM_URL),
+  // Medição própria do site (src/scripts/visitas.ts) para o Marketing do CRM. Sem ele, não mede.
+  medicaoUrl: (import.meta.env.PUBLIC_MEDICAO_URL ?? '').trim(),
 };
 
 // Versão da política de privacidade. Ao alterá-la, subir também VERSAO_POLITICA

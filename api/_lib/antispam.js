@@ -2,6 +2,8 @@
 // uma resposta de sucesso, para o robô não perceber que foi travado.
 const TEMPO_MINIMO_MS = 3000;
 const LIGACAO = /(https?:\/\/|www\.)/gi;
+// Campos postos pelo próprio site (página e origem da visita), fora da verificação.
+const ORIGEM = new Set(['origem', 'canal', 'fonte', 'campanha', 'entrada']);
 const HTML = /<a\s|<\/?[a-z][^>]*>|\[url[=\]]/i;
 
 export function motivoSpam(campos) {
@@ -9,7 +11,7 @@ export function motivoSpam(campos) {
   const tempo = Number(campos._t);
   if (!Number.isFinite(tempo) || tempo < TEMPO_MINIMO_MS) return 'enviado depressa demais ou sem passar pela página';
   const tudo = Object.entries(campos)
-    .filter(([k, v]) => !k.startsWith('_') && k !== 'origem' && typeof v === 'string')
+    .filter(([k, v]) => !k.startsWith('_') && !ORIGEM.has(k) && typeof v === 'string')
     .map(([, v]) => v)
     .join('\n');
   if (HTML.test(tudo)) return 'html';

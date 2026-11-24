@@ -84,6 +84,15 @@ Com `PUBLIC_GTM_ID`, o site carrega o Google Tag Manager com o Consent Mode v2 (
 - Eventos para o GTM (sem dados pessoais): `generate_lead` com `tipo_pedido` (proposta, sinistro, mensagem, ligamos, analise), na página de obrigado e só uma vez por envio; `contacto_clique` com `canal` (telefone, whatsapp, email) e `local`; `consentimento_atualizado`.
 - No GTM: as etiquetas da Google (GA4, Google Ads) respeitam o consentimento sozinhas. Etiquetas de outras plataformas (ex.: Meta) têm de exigir `ad_storage` em "Consentimento adicional".
 
+Medição própria (`src/scripts/visitas.ts`), para o Marketing do CRM. Só com `PUBLIC_MEDICAO_URL` e só para quem aceita a Estatística:
+
+- Mede páginas, tempo ativo, até onde se lê, que secções se veem (cada `section` de topo do `main`, com o nome do `h1`/`h2`), onde se clica e de onde veio a visita (pesquisa, ficha do Google com `utm_source=gbp`, assistentes de IA, redes, anúncios, email, outros sites, direto).
+- Guarda `ml_v` (browser, 13 meses), `ml_s` (visita, 30 minutos) e `ml_o` (última origem, 30 dias) no `localStorage`. Apaga-os se a pessoa retirar o consentimento.
+- Nos formulários, junta os campos `canal`, `fonte`, `campanha` e `entrada`: a lead entra no CRM com a origem e o email do pedido mostra "Como chegou ao site".
+- `?nao-medir=1` deixa de medir esse browser (para a equipa); `?nao-medir=0` volta a medir.
+- `?mapa=1` dentro do CRM desenha o mapa de calor que o CRM envia (sem GTM nem medição).
+- O aviso de cookies e a política de privacidade só falam da medição própria com a variável posta.
+
 ## Variáveis de ambiente (Vercel)
 
 | Variável | Para quê |
@@ -92,6 +101,7 @@ Com `PUBLIC_GTM_ID`, o site carrega o Google Tag Manager com o Consent Mode v2 (
 | `EMAIL_PEDIDOS` | Quem recebe os pedidos por email (`geral@mlseguros.pt`) |
 | `EMAIL_REMETENTE` | Ex.: `Site ML Seguros <pedidos@site.mlseguros.pt>` (domínio verificado no Resend) |
 | `EMAIL_FORNECEDOR`, `RESEND_API_KEY` | `resend` e a chave da conta Resend em nome da ML |
+| `PUBLIC_MEDICAO_URL` | Medição própria para o Marketing do CRM (`https://<domínio do CRM>/api/site/medicao`). Sem ela, não mede |
 | `PUBLIC_CRM_URL` | Endereço do CRM, para o botão "Área de cliente". Sem ele, não há área de cliente no site nem na política de privacidade |
 | `PUBLIC_PUBLICADO` | `true` quando o site estiver no domínio da ML: tira o `noindex` e põe o `canonical` |
 | `PUBLIC_GTM_ID` | Contentor do Google Tag Manager (`GTM-MSFNHBZX`): aviso de cookies, Consent Mode v2 e medição |
@@ -134,3 +144,5 @@ Página em https://mlseguros.pt/email/assinatura.html (ficheiro `public/email/as
 
 - [ ] `PUBLIC_FORM_ENDPOINT` com a rota do CRM e `PUBLIC_CRM_URL` com o endereço do CRM (volta a "Área de cliente" no site e na política de privacidade).
 - [ ] No CRM, `SITE_ORIGENS` com o domínio do site.
+- [ ] `PUBLIC_MEDICAO_URL` com a rota de medição do CRM. Atualizar a data da política (`privacy.updated` em `src/data/site.js`), porque passa a falar da medição própria. A equipa abre uma vez `mlseguros.pt/?nao-medir=1` em cada browser, para não contar como visita.
+- [ ] Na ficha do Google, o botão do site com `https://mlseguros.pt/?utm_source=gbp`, para as visitas da ficha contarem à parte.

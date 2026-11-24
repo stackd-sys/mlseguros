@@ -50,6 +50,28 @@ function tipoDoPedido(d) {
   return { nome: outro, assunto: outro };
 }
 
+// Como a pessoa chegou ao site (campos postos pela medição, só com os cookies de estatística).
+export function origemDoPedido(campos) {
+  const canal = texto(campos.canal, 30);
+  const fonte = texto(campos.fonte, 100);
+  const campanha = texto(campos.campanha, 100);
+  const nomes = {
+    organico: `Pesquisa no ${fonte || 'motor de busca'}`,
+    'anuncios-google': 'Anúncio no Google',
+    'anuncios-meta': `Anúncio no ${fonte || 'Facebook ou Instagram'}`,
+    anuncios: `Anúncio${fonte ? ` (${fonte})` : ''}`,
+    redes: fonte || 'Redes sociais',
+    ia: `${fonte || 'Assistente'} (assistente de IA)`,
+    email: 'Email ou newsletter',
+    'ficha-google': 'Ficha do Google',
+    referencia: `Outro site${fonte ? ` (${fonte})` : ''}`,
+    direto: 'Direto (endereço escrito ou favorito)',
+  };
+  const nome = nomes[canal];
+  if (!nome) return '';
+  return campanha ? `${nome} · campanha ${campanha}` : nome;
+}
+
 // A página de onde veio o pedido, só se for do próprio site.
 function paginaDe(caminho, site) {
   try {
@@ -103,6 +125,7 @@ export function emailDoPedido(campos, { site, agora = new Date() }) {
     d.trabalhadores && ['Trabalhadores', d.trabalhadores],
     d.apolice_ou_matricula && ['Apólice ou matrícula', d.apolice_ou_matricula],
     d.melhor_altura && ['Melhor altura para ligar', d.melhor_altura],
+    origemDoPedido(campos) && ['Como chegou ao site', origemDoPedido(campos)],
   ].filter(Boolean);
 
   const textoSimples = [
