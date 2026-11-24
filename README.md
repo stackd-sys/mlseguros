@@ -92,6 +92,8 @@ Medição própria (`src/scripts/visitas.ts`), para o Marketing do CRM. Só com 
 - Nos formulários, junta os campos `canal`, `fonte`, `campanha` e `entrada`: a lead entra no CRM com a origem e o email do pedido mostra "Como chegou ao site".
 - `?nao-medir=1` deixa de medir esse browser (a equipa, ou quem o pede na política de privacidade); `?nao-medir=0` volta a medir.
 - `?mapa=1` dentro do CRM desenha o mapa de calor que o CRM envia (sem GTM nem medição).
+
+Robôs que leem o site (`middleware.js`, Routing Middleware da Vercel): para cada página pedida por um robô conhecido (Google, Bing, OpenAI, Anthropic, Perplexity, Apple, Meta…), envia o nome e a página para o CRM (`/api/site/robos`). Às pessoas não faz nada e a resposta nunca muda. Precisa de `PUBLIC_MEDICAO_URL` e de `ROBOS_CHAVE` (a mesma no CRM); sem elas, não regista.
 - O aviso de cookies e a política de privacidade só falam da medição própria com a variável posta.
 
 ## Variáveis de ambiente (Vercel)
@@ -102,6 +104,7 @@ Medição própria (`src/scripts/visitas.ts`), para o Marketing do CRM. Só com 
 | `EMAIL_PEDIDOS` | Quem recebe os pedidos por email (`geral@mlseguros.pt`) |
 | `EMAIL_REMETENTE` | Ex.: `Site ML Seguros <pedidos@site.mlseguros.pt>` (domínio verificado no Resend) |
 | `EMAIL_FORNECEDOR`, `RESEND_API_KEY` | `resend` e a chave da conta Resend em nome da ML |
+| `ROBOS_CHAVE` | Chave partilhada com o CRM para o registo dos robôs (`middleware.js`). Sem ela, não regista |
 | `PUBLIC_MEDICAO_URL` | Medição própria para o Marketing do CRM (`https://<domínio do CRM>/api/site/medicao`). Sem ela, não mede |
 | `PUBLIC_CRM_URL` | Endereço do CRM, para o botão "Área de cliente". Sem ele, não há área de cliente no site nem na política de privacidade |
 | `PUBLIC_PUBLICADO` | `true` quando o site estiver no domínio da ML: tira o `noindex` e põe o `canonical` |
