@@ -6,7 +6,7 @@ const mail = `mailto:${company.email}`;
 // Sem o CRM (PUBLIC_CRM_URL) não há área de cliente, e a política não fala dela.
 const area = Boolean(company.crmUrl);
 // Sem PUBLIC_MEDICAO_URL não há medição própria, e a política não fala dela.
-const medicao = Boolean(site.medicaoUrl);
+const medicao = Boolean(company.medicaoUrl);
 ---
 <Base title="Informação legal e privacidade" image="sobre3" description="Informação legal da ML Seguros, mediador registado na ASF, meios de reclamação e como tratamos os dados de quem nos contacta e dos clientes.">
   <LegalPage title="Informação legal e privacidade">
@@ -44,7 +44,8 @@ const medicao = Boolean(site.medicaoUrl);
       {area && <li><strong>Área de cliente:</strong> mostrar-lhe os seus seguros e documentos e receber os seus pedidos. Base legal: a execução do contrato (alínea b).</li>}
       <li><strong>Cumprir obrigações legais:</strong> os deveres de um mediador de seguros perante a ASF, a faturação e as obrigações fiscais, a prevenção do branqueamento de capitais nos seguros de vida e os pedidos de autoridades. Base legal: obrigação legal (alínea c).</li>
       <li><strong>Novidades, campanhas e propostas de novos seguros</strong>, por email, SMS ou telefone. Base legal: o seu consentimento (alínea a), que pode retirar quando quiser. Sem ele, não lhe enviamos campanhas, mas continua a receber tudo o que diz respeito aos seus seguros: renovações, recibos e sinistros.</li>
-      <li><strong>Medir as visitas ao site e o resultado das campanhas</strong>, com o Google Analytics e o Google Ads{medicao && ' e com a medição do próprio site'}. Base legal: o seu consentimento (alínea a), dado no aviso de cookies, que pode mudar quando quiser.</li>
+      <li><strong>Medir as visitas ao site e o resultado das campanhas</strong>, com o Google Analytics e o Google Ads. Base legal: o seu consentimento (alínea a), dado no aviso de cookies, que pode mudar quando quiser.</li>
+      {medicao && <li><strong>Melhorar o site com a nossa própria medição:</strong> que páginas são vistas, quanto tempo se lê, até onde e onde se clica, e de onde chegam as visitas. Base legal: o nosso interesse legítimo em perceber como o site é usado, para o melhorar (alínea f). Pode opor-se, como se explica em <a href="#medicao">Medição do próprio site</a>.</li>}
       <li><strong>Demonstrar as suas escolhas e defender direitos:</strong> guardamos quando e como deu ou retirou o consentimento, e um registo das alterações feitas aos seus dados. Base legal: o nosso interesse legítimo em provar o cumprimento da lei e em nos defendermos num litígio (alínea f).</li>
     </ul>
 
@@ -80,12 +81,22 @@ const medicao = Boolean(site.medicaoUrl);
     <h3>Segurança</h3>
     <p>Só a equipa da {company.name} acede aos dados dos clientes, cada pessoa com a sua conta.{area && ' Na área de cliente, cada cliente vê apenas os seus seguros e os das pessoas que lhe estão associadas (por exemplo, os filhos menores ou a sua empresa).'} As ligações são cifradas e as alterações ficam registadas. Se houver uma violação de dados que o possa afetar, avisamos nos termos da lei.</p>
 
+    {medicao && (
+      <>
+        <h3 id="medicao">Medição do próprio site</h3>
+        <p>Em cada visita, o site envia para o sistema de gestão da {company.name} a página vista, quanto tempo esteve à vista, até onde foi lida, que partes foram vistas e onde se clicou, o tipo de dispositivo e de onde veio a visita (por exemplo, uma pesquisa no Google ou uma campanha). Não envia o seu nome, os seus contactos nem o que escreve nos formulários.</p>
+        <p>Se não aceitar os cookies de estatística, nada fica guardado no seu browser. Para juntar as páginas vistas no mesmo dia, o sistema calcula um código a partir do endereço de rede e do browser, misturado com um valor ao acaso que muda todos os dias e é apagado no dia seguinte. Esse código não permite reconhecer o browser noutro dia nem identificar quem o usa. O endereço de rede não é guardado: fica só, durante um dia, um código tirado dele para travar envios em massa.</p>
+        <p>Se aceitar os cookies de estatística, o site guarda também <code>ml_v</code>, <code>ml_s</code> e <code>ml_o</code> no seu browser (ver <a href="#cookies">Cookies</a>), para reconhecer o regresso ao site e saber de onde veio a visita que levou a um pedido.</p>
+        <p>Os registos ficam só na {company.name}, não são partilhados e são apagados ao fim de 13 meses. <span data-medir-sim>Se não quiser que as suas visitas sejam medidas, <a href="?nao-medir=1#medicao">abra esta ligação</a> e este browser deixa de ser medido.</span><span data-medir-nao hidden>Este browser já não é medido. <a href="?nao-medir=0#medicao">Voltar a medir</a>.</span></p>
+      </>
+    )}
+
     <h3 id="cookies">Cookies</h3>
     <p>Só usamos cookies de estatística e de marketing se os aceitar. Pode mudar a escolha a qualquer momento em «Definições de cookies», no fundo de cada página.</p>
     <ul>
-      <li><strong>Necessários</strong> (sempre ativos): <code>ml_consent</code>, da ML Seguros, guarda a sua escolha sobre cookies durante 6 meses.</li>
+      <li><strong>Necessários</strong> (sempre ativos): <code>ml_consent</code>, da ML Seguros, guarda a sua escolha sobre cookies durante 6 meses.{medicao && <> <code>ml_nm</code>, só se pedir que o browser não seja medido, guarda esse pedido.</>}</li>
       <li><strong>Estatística</strong> (Google Analytics 4): <code>_ga</code> e <code>_ga_*</code>, da Google, distinguem visitas e sessões, para sabermos que páginas são vistas e de onde vêm os visitantes. Duram até 2 anos.</li>
-      {medicao && <li><strong>Estatística</strong> (medição do próprio site): <code>ml_v</code>, <code>ml_s</code> e <code>ml_o</code>, da ML Seguros, guardados no armazenamento local do browser. Distinguem o browser (até 13 meses) e a visita (30 minutos) e guardam de onde veio a última visita (30 dias), para sabermos que páginas são lidas, até onde, onde se clica e de onde chegam os pedidos. Os registos não têm o seu nome, os seus contactos, o que escreve nos formulários nem o seu endereço de rede, e ficam no sistema de gestão da ML Seguros.</li>}
+      {medicao && <li><strong>Estatística</strong> (medição do próprio site): <code>ml_v</code>, <code>ml_s</code> e <code>ml_o</code>, da ML Seguros, guardados no armazenamento local do browser. Distinguem o browser (até 13 meses) e a visita (30 minutos) e guardam de onde veio a última visita (30 dias), para sabermos quem volta ao site e de onde chegam os pedidos. Sem eles, a medição continua sem nada guardado no browser (ver <a href="#medicao">Medição do próprio site</a>).</li>}
       <li><strong>Marketing</strong> (Google Ads): <code>_gcl_au</code> e <code>_gcl_aw</code>, da Google, medem os pedidos que chegam através de anúncios e permitem mostrar anúncios a quem já visitou o site. Duram até 90 dias. A Google pode usar também cookies nos seus próprios domínios.</li>
     </ul>
     <p>Usamos o modo de consentimento da Google (Consent Mode). O Google Tag Manager é carregado em todas as visitas para aplicar a sua escolha. Se recusar, as ferramentas da Google não guardam nem leem cookies no seu browser, mas recebem sinais sem cookies nem identificadores, por exemplo que uma página foi vista ou que foi enviado um pedido. A Google usa esses sinais para estimar estatísticas e conversões de forma agregada, sem o identificar. A Google LLC pode tratar estes dados nos Estados Unidos, ao abrigo do Quadro de Privacidade de Dados UE-EUA.</p>

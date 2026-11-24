@@ -84,12 +84,13 @@ Com `PUBLIC_GTM_ID`, o site carrega o Google Tag Manager com o Consent Mode v2 (
 - Eventos para o GTM (sem dados pessoais): `generate_lead` com `tipo_pedido` (proposta, sinistro, mensagem, ligamos, analise), na página de obrigado e só uma vez por envio; `contacto_clique` com `canal` (telefone, whatsapp, email) e `local`; `consentimento_atualizado`.
 - No GTM: as etiquetas da Google (GA4, Google Ads) respeitam o consentimento sozinhas. Etiquetas de outras plataformas (ex.: Meta) têm de exigir `ad_storage` em "Consentimento adicional".
 
-Medição própria (`src/scripts/visitas.ts`), para o Marketing do CRM. Só com `PUBLIC_MEDICAO_URL` e só para quem aceita a Estatística:
+Medição própria (`src/scripts/visitas.ts`), para o Marketing do CRM. Só com `PUBLIC_MEDICAO_URL`, em todas as visitas (aceitem ou não os cookies):
 
 - Mede páginas, tempo ativo, até onde se lê, que secções se veem (cada `section` de topo do `main`, com o nome do `h1`/`h2`), onde se clica e de onde veio a visita (pesquisa, ficha do Google com `utm_source=gbp`, assistentes de IA, redes, anúncios, email, outros sites, direto).
-- Guarda `ml_v` (browser, 13 meses), `ml_s` (visita, 30 minutos) e `ml_o` (última origem, 30 dias) no `localStorage`. Apaga-os se a pessoa retirar o consentimento.
+- Com a Estatística aceite, guarda `ml_v` (browser, 13 meses), `ml_s` (visita, 30 minutos) e `ml_o` (última origem, 30 dias) no `localStorage`. Apaga-os se a pessoa retirar o consentimento.
+- Sem a Estatística, não guarda nada no browser: envia a página sem visitante nem sessão e o CRM junta as páginas do mesmo dia com um código anónimo, que muda todos os dias. A origem só vai para o pedido se ele sair da primeira página. Base legal na política: interesse legítimo, com a ligação para se opor (`?nao-medir=1`, guarda `ml_nm`).
 - Nos formulários, junta os campos `canal`, `fonte`, `campanha` e `entrada`: a lead entra no CRM com a origem e o email do pedido mostra "Como chegou ao site".
-- `?nao-medir=1` deixa de medir esse browser (para a equipa); `?nao-medir=0` volta a medir.
+- `?nao-medir=1` deixa de medir esse browser (a equipa, ou quem o pede na política de privacidade); `?nao-medir=0` volta a medir.
 - `?mapa=1` dentro do CRM desenha o mapa de calor que o CRM envia (sem GTM nem medição).
 - O aviso de cookies e a política de privacidade só falam da medição própria com a variável posta.
 

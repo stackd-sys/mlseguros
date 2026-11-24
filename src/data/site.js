@@ -77,7 +77,7 @@ export const company = {
 // no CRM (lib/rgpd.ts), para a área de cliente pedir de novo a confirmação.
 export const privacy = {
   version: '2026-11',
-  updated: '17 de novembro de 2026',
+  updated: '24 de novembro de 2026',
 };
 
 // Seguradoras com que a ML trabalha (texto; logótipos só com autorização das marcas).

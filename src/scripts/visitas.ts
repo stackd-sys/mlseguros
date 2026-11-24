@@ -1,9 +1,10 @@
-// Medição própria do site, só com os cookies de estatística aceites: páginas
-// vistas, tempo ativo, até onde se lê, que secções se veem e onde se clica.
-// Vai para o CRM da ML (PUBLIC_MEDICAO_URL). Sem nomes, contactos, o que se
-// escreve nos formulários nem endereço de rede.
+// Medição própria do site, em todas as visitas: páginas vistas, tempo ativo,
+// até onde se lê, que secções se veem e onde se clica. Vai para o CRM da ML
+// (PUBLIC_MEDICAO_URL). Sem nomes, contactos nem o que se escreve nos
+// formulários. Sem os cookies de estatística aceites, nada fica guardado no
+// browser (ver semCookies).
 // Com ?mapa=1, dentro do CRM, desenha o mapa de calor que o CRM lhe envia.
-// ?nao-medir=1 deixa de medir este browser (para a equipa); ?nao-medir=0 volta a medir.
+// ?nao-medir=1 deixa de medir este browser (a equipa, ou quem o pede na política); ?nao-medir=0 volta a medir.
 
 const URL_MEDICAO = (import.meta.env.PUBLIC_MEDICAO_URL ?? '').trim();
 const MINUTO = 60_000;
@@ -147,174 +148,79 @@ function dispositivo(): 'computador' | 'tablet' | 'telemovel' {
 }
 
 // ── Medição ────────────────────────────────────────────────────────────────
-function medir() {
-  if (!URL_MEDICAO || navigator.webdriver || /bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent)) return;
-  let ativa = false;
-  let parar = () => {};
+interface Quem {
+  visitante: string;
+  sessao: string;
+  entrada: boolean;
+  canal: Canal;
+  fonte: string;
+  campanha: string;
+  s: Sessao | null;
+  // De onde veio a visita, para o pedido do formulário (null = não se sabe).
+  pedido: () => Omit<Origem, 'em'> | null;
+}
 
-  function iniciar() {
-    if (ativa) return;
+// Sem os cookies de estatística: nada fica guardado no browser. Visitante e
+// sessão vão vazios e é o CRM que junta as páginas do dia, com um código
+// anónimo. A origem só se sabe na primeira página da visita.
+function semCookies(daqui: Omit<Origem, 'entrada' | 'em'>, interna: boolean): Quem {
+  if (interna) return { visitante: '', sessao: '', entrada: false, canal: 'direto', fonte: '', campanha: '', s: null, pedido: () => null };
+  const o = { ...daqui, entrada: location.pathname };
+  return { visitante: '', sessao: '', entrada: true, ...daqui, s: null, pedido: () => o };
+}
+
+// Com os cookies de estatística: o browser guarda o visitante (13 meses), a
+// sessão (30 minutos) e a origem da última visita (30 dias).
+function comCookies(daqui: Omit<Origem, 'entrada' | 'em'>): Quem {
+  const agora = Date.now();
+  let vis = (() => {
     try {
-      if (localStorage.getItem(K.excluir) === '1') return;
+      return localStorage.getItem(K.visitante);
     } catch {
-      return;
+      return null;
     }
-    ativa = true;
-    const agora = Date.now();
-
-    let vis = (() => {
-      try {
-        return localStorage.getItem(K.visitante);
-      } catch {
-        return null;
-      }
-    })();
-    const [vid, criado] = (vis ?? '').split('.');
-    if (!vid || !Number(criado) || agora - Number(criado) > VISITANTE_MAX) {
-      vis = `${codigo()}.${agora}`;
-      gravar(K.visitante, vis);
-    }
-    const visitante = vis!.split('.')[0];
-
-    const daqui = origemDaVisita(new URL(location.href), document.referrer, location.hostname);
-    let sessao = ler<Sessao>(K.sessao);
-    // Sessão nova ao fim de 30 minutos parado, ou quando a pessoa chega de outro sítio.
-    const outraOrigem = sessao && daqui.canal !== 'direto' && (daqui.canal !== sessao.canal || daqui.fonte !== sessao.fonte || daqui.campanha !== sessao.campanha);
-    const entrada = !sessao || agora - sessao.ultimo > SESSAO_MAX || Boolean(outraOrigem);
-    if (entrada) {
-      sessao = { id: codigo(), ultimo: agora, ...daqui, entrada: location.pathname, em: agora };
-      if (daqui.canal !== 'direto') gravar(K.origem, { ...daqui, entrada: location.pathname, em: agora } satisfies Origem);
-    }
-    const s = sessao!;
-    s.ultimo = agora;
-    gravar(K.sessao, s);
-
-    const id = codigo();
-    const lista = regioes();
-    const cliques: Clique[] = [];
-    let tempo = 0;
-    let scroll = 0;
-    let formulario = false;
-    let mexeu = agora;
-
-    const verScroll = () => {
-      const doc = document.documentElement;
-      const alt = Math.max(doc.scrollHeight, 1);
-      scroll = Math.max(scroll, Math.min(100, Math.round(((scrollY + innerHeight) / alt) * 100)));
-      const vh = innerHeight;
-      for (const r of lista) {
-        const b = r.el.getBoundingClientRect();
-        const visto = Math.max(0, Math.min(b.bottom, vh) - Math.max(b.top, 0));
-        if (b.height > 0 && visto >= Math.min(b.height * 0.5, vh * 0.3)) r.a = 1;
-      }
-    };
-    let pedido = 0;
-    const aoScroll = () => {
-      mexeu = Date.now();
-      if (!pedido) pedido = requestAnimationFrame(() => { pedido = 0; verScroll(); });
-    };
-    const aoMexer = () => { mexeu = Date.now(); };
-    const tic = setInterval(() => {
-      if (document.visibilityState !== 'visible' || Date.now() - mexeu > PARADO) return;
-      tempo += 1000;
-      const vh = innerHeight;
-      for (const r of lista) {
-        const b = r.el.getBoundingClientRect();
-        const visto = Math.max(0, Math.min(b.bottom, vh) - Math.max(b.top, 0));
-        // O cabeçalho está sempre à vista: conta como visto, mas não soma tempo.
-        if (b.height > 0 && visto >= Math.min(b.height * 0.5, vh * 0.3)) { r.a = 1; if (r.n !== 'Cabeçalho') r.v += 1000; }
-      }
-    }, 1000);
-    const aoClicar = (e: MouseEvent) => {
-      mexeu = Date.now();
-      const alvo = e.target instanceof Element ? e.target : null;
-      if (!alvo || cliques.length >= 80) return;
-      const r = regiaoDe(alvo, lista);
-      const b = r?.el.getBoundingClientRect();
-      const tipo = tipoDoClique(alvo);
-      cliques.push({
-        s: r ? r.i : -1,
-        x: b && b.width ? Math.round(((e.clientX - b.left) / b.width) * 1000) : 0,
-        y: b && b.height ? Math.round(((e.clientY - b.top) / b.height) * 1000) : 0,
-        ...tipo,
-      });
-    };
-    const aoFormulario = (e: FocusEvent) => {
-      if (e.target instanceof Element && e.target.closest('form [name]')) formulario = true;
-    };
-    // Origem do pedido: vai com o formulário, para a lead entrar no CRM com o canal.
-    const aoEnviar = (e: SubmitEvent) => {
-      const form = e.target as HTMLFormElement;
-      if (!(form instanceof HTMLFormElement)) return;
-      formulario = true;
-      const ultima = ler<Origem>(K.origem);
-      const o: Omit<Origem, 'em'> = s.canal === 'direto' && ultima && Date.now() - ultima.em < ORIGEM_MAX ? ultima : s;
-      const por = (nome: string, valor: string) => {
-        let campo = form.querySelector<HTMLInputElement>(`input[name="${nome}"]`);
-        if (!campo) {
-          campo = document.createElement('input');
-          campo.type = 'hidden';
-          campo.name = nome;
-          form.append(campo);
-        }
-        campo.value = valor;
-      };
-      por('canal', o.canal);
-      if (o.fonte) por('fonte', o.fonte);
-      if (o.campanha) por('campanha', o.campanha);
-      por('entrada', o.entrada);
-    };
-
-    let ultimoEnvio = '';
-    const enviar = () => {
-      verScroll();
-      const corpo = JSON.stringify({
-        id, visitante, sessao: s.id, pagina: location.pathname, titulo: texto(document.title, 200), entrada,
-        canal: s.canal, fonte: s.fonte, campanha: s.campanha, dispositivo: dispositivo(), largura: innerWidth,
-        tempo_ms: tempo, scroll, formulario,
-        seccoes: lista.map(({ i, n, v, a }) => ({ i, n, v, a })),
-        cliques,
-      });
-      if (corpo === ultimoEnvio) return;
-      ultimoEnvio = corpo;
-      try {
-        navigator.sendBeacon(URL_MEDICAO, new Blob([corpo], { type: 'text/plain' }));
-      } catch {}
-    };
-    const aoEsconder = () => {
-      if (document.visibilityState === 'hidden') enviar();
-      else {
-        s.ultimo = Date.now();
-        gravar(K.sessao, s);
-      }
-    };
-
-    addEventListener('scroll', aoScroll, { passive: true });
-    addEventListener('pointermove', aoMexer, { passive: true });
-    addEventListener('keydown', aoMexer, { passive: true });
-    addEventListener('touchstart', aoMexer, { passive: true });
-    document.addEventListener('click', aoClicar, { capture: true, passive: true });
-    document.addEventListener('focusin', aoFormulario);
-    document.addEventListener('submit', aoEnviar, { capture: true });
-    document.addEventListener('visibilitychange', aoEsconder);
-    addEventListener('pagehide', enviar);
-    verScroll();
-
-    parar = () => {
-      ativa = false;
-      clearInterval(tic);
-      removeEventListener('scroll', aoScroll);
-      removeEventListener('pointermove', aoMexer);
-      removeEventListener('keydown', aoMexer);
-      removeEventListener('touchstart', aoMexer);
-      document.removeEventListener('click', aoClicar, { capture: true });
-      document.removeEventListener('focusin', aoFormulario);
-      document.removeEventListener('submit', aoEnviar, { capture: true });
-      document.removeEventListener('visibilitychange', aoEsconder);
-      removeEventListener('pagehide', enviar);
-    };
+  })();
+  const [vid, criado] = (vis ?? '').split('.');
+  if (!vid || !Number(criado) || agora - Number(criado) > VISITANTE_MAX) {
+    vis = `${codigo()}.${agora}`;
+    gravar(K.visitante, vis);
   }
+  let sessao = ler<Sessao>(K.sessao);
+  // Sessão nova ao fim de 30 minutos parado, ou quando a pessoa chega de outro sítio.
+  const outraOrigem = sessao && daqui.canal !== 'direto' && (daqui.canal !== sessao.canal || daqui.fonte !== sessao.fonte || daqui.campanha !== sessao.campanha);
+  const entrada = !sessao || agora - sessao.ultimo > SESSAO_MAX || Boolean(outraOrigem);
+  if (entrada) {
+    sessao = { id: codigo(), ultimo: agora, ...daqui, entrada: location.pathname, em: agora };
+    if (daqui.canal !== 'direto') gravar(K.origem, { ...daqui, entrada: location.pathname, em: agora } satisfies Origem);
+  }
+  const s = sessao!;
+  s.ultimo = agora;
+  gravar(K.sessao, s);
+  return {
+    visitante: vis!.split('.')[0], sessao: s.id, entrada, canal: s.canal, fonte: s.fonte, campanha: s.campanha, s,
+    pedido: () => {
+      const ultima = ler<Origem>(K.origem);
+      return s.canal === 'direto' && ultima && Date.now() - ultima.em < ORIGEM_MAX ? ultima : s;
+    },
+  };
+}
 
+function excluido(): boolean {
+  try {
+    return localStorage.getItem(K.excluir) === '1';
+  } catch {
+    return false;
+  }
+}
+
+// Na política de privacidade: a ligação para deixar de medir, ou o aviso de que já não mede.
+function mostrarEscolha() {
+  const nao = excluido();
+  document.querySelectorAll<HTMLElement>('[data-medir-sim]').forEach((el) => (el.hidden = nao));
+  document.querySelectorAll<HTMLElement>('[data-medir-nao]').forEach((el) => (el.hidden = !nao));
+}
+
+function medir() {
   const nm = new URLSearchParams(location.search).get('nao-medir');
   if (nm === '1') {
     gravar(K.excluir, '1');
@@ -324,13 +230,139 @@ function medir() {
       localStorage.removeItem(K.excluir);
     } catch {}
   }
+  mostrarEscolha();
+  if (!URL_MEDICAO || navigator.webdriver || /bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent) || excluido()) return;
 
-  if (estatisticaAceite()) iniciar();
+  const daqui = origemDaVisita(new URL(location.href), document.referrer, location.hostname);
+  const interna = (() => {
+    try {
+      return new URL(document.referrer).host === location.host;
+    } catch {
+      return false;
+    }
+  })();
+  let quem = estatisticaAceite() ? comCookies(daqui) : semCookies(daqui, interna);
+
+  const id = codigo();
+  const lista = regioes();
+  const cliques: Clique[] = [];
+  let tempo = 0;
+  let scroll = 0;
+  let formulario = false;
+  let mexeu = Date.now();
+
+  const verScroll = () => {
+    const doc = document.documentElement;
+    const alt = Math.max(doc.scrollHeight, 1);
+    scroll = Math.max(scroll, Math.min(100, Math.round(((scrollY + innerHeight) / alt) * 100)));
+    const vh = innerHeight;
+    for (const r of lista) {
+      const b = r.el.getBoundingClientRect();
+      const visto = Math.max(0, Math.min(b.bottom, vh) - Math.max(b.top, 0));
+      if (b.height > 0 && visto >= Math.min(b.height * 0.5, vh * 0.3)) r.a = 1;
+    }
+  };
+  let pedido = 0;
+  const aoScroll = () => {
+    mexeu = Date.now();
+    if (!pedido) pedido = requestAnimationFrame(() => { pedido = 0; verScroll(); });
+  };
+  const aoMexer = () => { mexeu = Date.now(); };
+  setInterval(() => {
+    if (document.visibilityState !== 'visible' || Date.now() - mexeu > PARADO) return;
+    tempo += 1000;
+    const vh = innerHeight;
+    for (const r of lista) {
+      const b = r.el.getBoundingClientRect();
+      const visto = Math.max(0, Math.min(b.bottom, vh) - Math.max(b.top, 0));
+      // O cabeçalho está sempre à vista: conta como visto, mas não soma tempo.
+      if (b.height > 0 && visto >= Math.min(b.height * 0.5, vh * 0.3)) { r.a = 1; if (r.n !== 'Cabeçalho') r.v += 1000; }
+    }
+  }, 1000);
+  const aoClicar = (e: MouseEvent) => {
+    mexeu = Date.now();
+    const alvo = e.target instanceof Element ? e.target : null;
+    if (!alvo || cliques.length >= 80) return;
+    const r = regiaoDe(alvo, lista);
+    const b = r?.el.getBoundingClientRect();
+    const tipo = tipoDoClique(alvo);
+    cliques.push({
+      s: r ? r.i : -1,
+      x: b && b.width ? Math.round(((e.clientX - b.left) / b.width) * 1000) : 0,
+      y: b && b.height ? Math.round(((e.clientY - b.top) / b.height) * 1000) : 0,
+      ...tipo,
+    });
+  };
+  const aoFormulario = (e: FocusEvent) => {
+    if (e.target instanceof Element && e.target.closest('form [name]')) formulario = true;
+  };
+  // Origem do pedido: vai com o formulário, para a lead entrar no CRM com o canal.
+  const aoEnviar = (e: SubmitEvent) => {
+    const form = e.target as HTMLFormElement;
+    if (!(form instanceof HTMLFormElement)) return;
+    formulario = true;
+    const o = quem.pedido();
+    if (!o) return;
+    const por = (nome: string, valor: string) => {
+      let campo = form.querySelector<HTMLInputElement>(`input[name="${nome}"]`);
+      if (!campo) {
+        campo = document.createElement('input');
+        campo.type = 'hidden';
+        campo.name = nome;
+        form.append(campo);
+      }
+      campo.value = valor;
+    };
+    por('canal', o.canal);
+    if (o.fonte) por('fonte', o.fonte);
+    if (o.campanha) por('campanha', o.campanha);
+    por('entrada', o.entrada);
+  };
+
+  let ultimoEnvio = '';
+  const enviar = () => {
+    verScroll();
+    const corpo = JSON.stringify({
+      id, visitante: quem.visitante, sessao: quem.sessao, pagina: location.pathname, titulo: texto(document.title, 200), entrada: quem.entrada,
+      canal: quem.canal, fonte: quem.fonte, campanha: quem.campanha, dispositivo: dispositivo(), largura: innerWidth,
+      tempo_ms: tempo, scroll, formulario,
+      seccoes: lista.map(({ i, n, v, a }) => ({ i, n, v, a })),
+      cliques,
+    });
+    if (corpo === ultimoEnvio) return;
+    ultimoEnvio = corpo;
+    try {
+      navigator.sendBeacon(URL_MEDICAO, new Blob([corpo], { type: 'text/plain' }));
+    } catch {}
+  };
+  const aoEsconder = () => {
+    if (document.visibilityState === 'hidden') enviar();
+    else if (quem.s) {
+      quem.s.ultimo = Date.now();
+      gravar(K.sessao, quem.s);
+    }
+  };
+
+  addEventListener('scroll', aoScroll, { passive: true });
+  addEventListener('pointermove', aoMexer, { passive: true });
+  addEventListener('keydown', aoMexer, { passive: true });
+  addEventListener('touchstart', aoMexer, { passive: true });
+  document.addEventListener('click', aoClicar, { capture: true, passive: true });
+  document.addEventListener('focusin', aoFormulario);
+  document.addEventListener('submit', aoEnviar, { capture: true });
+  document.addEventListener('visibilitychange', aoEsconder);
+  addEventListener('pagehide', enviar);
+  verScroll();
+
+  // Aceitar a meio da página passa-a para a sessão do browser; retirar apaga o que estava guardado.
   document.addEventListener('ml:consentimento', (e) => {
-    if ((e as CustomEvent<{ estatistica: boolean }>).detail?.estatistica) iniciar();
-    else {
-      parar();
+    const sim = Boolean((e as CustomEvent<{ estatistica: boolean }>).detail?.estatistica);
+    if (sim && !quem.visitante) {
+      quem = comCookies(daqui);
+      enviar();
+    } else if (!sim && quem.visitante) {
       apagar();
+      quem = semCookies(daqui, interna);
     }
   });
 }
